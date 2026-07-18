@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZRT Protein Structure Review Set</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Local Offline jQuery -->
+    <script src="js/jquery.min.js"></script>
+    <!-- Local Offline 3Dmol.js -->
+    <script src="js/3Dmol-min.js"></script>
+    <!-- GSAP (GreenSock Animation Platform) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #00f2fe;
+            --primary-rgb: 0, 242, 254;
+            --secondary: #4facfe;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 172, 254, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(0, 242, 254, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(11, 15, 25, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 2rem;
+            height: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0b0f19;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #ffffff, #d1d5db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge {
+            background: rgba(var(--primary-rgb), 0.15);
+            border: 1px solid rgba(var(--primary-rgb), 0.3);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        a.badge {
+            text-decoration: none;
+        }
+        a.badge:focus-visible {
+            outline: 2px solid #fff08a;
+            outline-offset: 3px;
+            box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.18);
+        }
+        .badge-current {
+            border-color: rgba(16, 185, 129, 0.5);
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .page-nav {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        main {
+            flex: 1;
+            max-width: 1520px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1.4rem 1.5rem 1.75rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .board {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(var(--primary-rgb), 0.2);
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.5rem;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .metric-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .metric-value.highlight {
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.3);
+        }
+
+        .lede-card {
+            gap: 0.9rem;
+        }
+
+        .lede-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.05;
+            color: var(--text-main);
+        }
+
+        .lede-text {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        .chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .info-chip {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .specimen-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .specimen-item {
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 0.8rem 0.9rem;
+            background: rgba(255, 255, 255, 0.025);
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .specimen-item.active {
+            border-color: rgba(var(--primary-rgb), 0.35);
+            background: rgba(var(--primary-rgb), 0.08);
+        }
+
+        .specimen-item-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .specimen-item-meta {
+            margin-top: 0.25rem;
+            font-size: 0.76rem;
+            line-height: 1.4;
+            color: var(--text-muted);
+        }
+
+        .specimen-note {
+            font-size: 0.84rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            padding: 0.7rem 0.9rem;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .top-strip,
+        .meta-strip,
+        .bottom-strip {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .top-strip {
+            grid-template-columns: 1.2fr 1.1fr 0.9fr;
+            align-items: stretch;
+        }
+
+        .meta-strip {
+            grid-template-columns: 1.1fr 1fr 1fr;
+        }
+
+        .compact-card {
+            min-height: 0;
+            padding: 1rem 1.15rem;
+        }
+
+        .lede-card .lede-title {
+            font-size: 1.32rem;
+        }
+
+        .lede-card .lede-text {
+            font-size: 0.86rem;
+            line-height: 1.45;
+        }
+
+        .specimen-switcher {
+            display: grid;
+            grid-template-columns: auto minmax(220px, 280px) 1fr;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.8rem;
+        }
+
+        .summary-cell {
+            padding: 0.75rem 0.85rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .summary-cell .metric-label {
+            display: block;
+            font-size: 0.73rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+        }
+
+        .summary-cell .metric-value {
+            font-size: 0.96rem;
+        }
+
+        .sequence-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.65rem 0.75rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            word-break: break-all;
+            max-height: 112px;
+            overflow-y: auto;
+            color: #d1d5db;
+        }
+
+        .viewer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            min-height: 0;
+        }
+
+        .viewer-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .viewer-card:hover {
+            border-color: rgba(var(--primary-rgb), 0.35);
+            box-shadow: 0 12px 40px rgba(0, 242, 254, 0.1);
+        }
+
+        .viewer-label {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 10;
+            background: rgba(11, 15, 25, 0.85);
+            border: 1px solid var(--border-color);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-main);
+            pointer-events: none;
+            transform: translateZ(20px);
+        }
+
+        .mol-viewer {
+            width: 100%;
+            height: 360px;
+            background-color: #080b11;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            transform: translateZ(10px);
+        }
+
+        .controls-card {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.95rem 1.15rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .controls-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            min-width: 250px;
+        }
+
+        .controls-inline {
+            display: flex;
+            gap: 1.1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-inline {
+            display: flex;
+            gap: 0.45rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: #0b0f19;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: box-shadow 0.2s ease;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            box-shadow: none;
+        }
+
+        .color-scheme-select {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .color-scheme-select:hover {
+            border-color: var(--primary);
+        }
+
+        .hotspot-panel {
+            opacity: 0;
+            transform: translateY(30px);
+            display: grid;
+            grid-template-columns: 1.15fr 1fr 1fr;
+            gap: 0.9rem;
+        }
+
+        .hotspot-column {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .hotspot-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .hotspot-chip {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+            border-radius: 999px;
+            padding: 0.45rem 0.72rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+        }
+
+        .hotspot-chip.active,
+        .hotspot-chip:hover {
+            border-color: rgba(var(--primary-rgb), 0.45);
+            background: rgba(var(--primary-rgb), 0.12);
+            transform: translateY(-1px);
+        }
+
+        .insight-box,
+        .seq-box-wrap,
+        .utility-box {
+            padding: 0.85rem 0.95rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .insight-title {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .insight-meta {
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+        }
+
+        .insight-copy {
+            font-size: 0.84rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .utility-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .utility-item {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .utility-item strong {
+            color: var(--text-main);
+        }
+
+        @media (max-width: 1180px) {
+            .top-strip,
+            .meta-strip,
+            .hotspot-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .viewer-container {
+                grid-template-columns: 1fr;
+            }
+
+            .controls-card,
+            .specimen-switcher {
+                flex-direction: column;
+                grid-template-columns: 1fr;
+                align-items: stretch;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 760px) {
+            main {
+                padding: 1rem;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .mol-viewer {
+                height: 290px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="mainHeader">
+            <div class="logo-container">
+            <div class="logo-icon">Z</div>
+            <h1>ZRT Protein Structure Review</h1>
+        </div>
+        <nav class="page-nav" aria-label="Primary">
+            <a href="/" class="badge">Home / Lab</a>
+            <a href="/learning_pack.html" class="badge">Learning Pack</a>
+            <div class="badge">Local host Active</div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="board">
+            <div class="top-strip">
+                <div class="card compact-card lede-card sidebar-card">
+                    <div class="card-title">Specimen set</div>
+                    <div class="lede-title">Three local proteins, one centered review board.</div>
+                    <div class="lede-text">
+                        Keep the original generated proteins intact, compare backbone against folded structure,
+                        and use curated regions to explain what changes on screen without leaving the first frame.
+                    </div>
+                    <div class="chip-row">
+                        <span class="info-chip">Local only</span>
+                        <span class="info-chip">Demo artifacts</span>
+                        <span class="info-chip">3 specimens</span>
+                    </div>
+                </div>
+                <div class="card compact-card sidebar-card">
+                    <div class="card-title">Featured specimen</div>
+                    <div class="specimen-switcher">
+                        <label class="metric-label" for="proteinSelect">Select specimen</label>
+                        <select class="color-scheme-select" id="proteinSelect" onchange="loadSelectedProtein()">
+                            <option value="helical">Specimen A - Helical bundle</option>
+                            <option value="mixed">Specimen B - Mixed alpha/beta</option>
+                            <option value="default">Specimen C - Default de novo</option>
+                        </select>
+                        <div id="specimenClass" class="specimen-note">Compact helical architecture.</div>
+                    </div>
+                    <div class="specimen-list" style="flex-direction: row;">
+                        <div class="specimen-item active" id="specimen-helical">
+                            <div class="specimen-item-title">Specimen A</div>
+                            <div class="specimen-item-meta">80 residues ? helical fold</div>
+                        </div>
+                        <div class="specimen-item" id="specimen-mixed">
+                            <div class="specimen-item-title">Specimen B</div>
+                            <div class="specimen-item-meta">120 residues ? mixed topology</div>
+                        </div>
+                        <div class="specimen-item" id="specimen-default">
+                            <div class="specimen-item-title">Specimen C</div>
+                            <div class="specimen-item-meta">100 residues ? baseline fold</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card compact-card sidebar-card" id="uploadCard">
+                    <div class="card-title">Upload Custom PDB</div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; justify-content: center; height: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
+                            <div style="flex: 1;">
+                                <label class="metric-label" style="display: block; margin-bottom: 0.15rem; font-size: 0.72rem;">Backbone (Target)</label>
+                                <input type="file" id="uploadBackbone" accept=".pdb" style="display: none;" onchange="handlePDBUpload('backbone')">
+                                <button class="btn btn-outline" style="width: 100%; font-size: 0.72rem; padding: 0.35rem 0.5rem; white-space: nowrap;" onclick="document.getElementById('uploadBackbone').click()">Choose PDB...</button>
+                            </div>
+                            <div style="flex: 1;">
+                                <label class="metric-label" style="display: block; margin-bottom: 0.15rem; font-size: 0.72rem;">Folded (Prediction)</label>
+                                <input type="file" id="uploadFolded" accept=".pdb" style="display: none;" onchange="handlePDBUpload('folded')">
+                                <button class="btn btn-outline" style="width: 100%; font-size: 0.72rem; padding: 0.35rem 0.5rem; white-space: nowrap;" onclick="document.getElementById('uploadFolded').click()">Choose PDB...</button>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; font-size: 0.65rem; color: var(--text-muted);">
+                            <span id="backboneFileName" style="flex: 1; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">No backbone</span>
+                            <span id="foldedFileName" style="flex: 1; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">No prediction</span>
+                        </div>
+                        <button class="btn" style="width: 100%; font-size: 0.75rem; padding: 0.45rem; margin-top: 0.2rem;" id="btnApplyUpload" onclick="applyUploadedPDBs()">Load & Validate</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meta-strip">
+                <div class="card compact-card sidebar-card">
+                    <div class="card-title">Figure notes</div>
+                    <div class="summary-grid">
+                        <div class="summary-cell">
+                            <span class="metric-label">Specimen</span>
+                            <span id="specimenName" class="metric-value">Specimen A</span>
+                        </div>
+                        <div class="summary-cell">
+                            <span class="metric-label">Structure class</span>
+                            <span id="specimenType" class="metric-value">Helical bundle</span>
+                        </div>
+                        <div class="summary-cell">
+                            <span class="metric-label">Residues</span>
+                            <span id="metricRes" class="metric-value">80 residues</span>
+                        </div>
+                        <div class="summary-cell">
+                            <span class="metric-label">Source</span>
+                            <span id="specimenSource" class="metric-value">Local design loop</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card compact-card sidebar-card">
+                    <div class="card-title">Confidence summary</div>
+                    <div class="summary-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+                        <div class="summary-cell">
+                            <span class="metric-label">Pipeline</span>
+                            <span class="metric-value">De novo design</span>
+                        </div>
+                        <div class="summary-cell">
+                            <span id="metricConfLabel" class="metric-label">OpenFold3 confidence</span>
+                            <span id="metricConf" class="metric-value highlight">0.0000</span>
+                        </div>
+                        <div class="summary-cell">
+                            <span id="metricPlddtLabel" class="metric-label">pLDDT score</span>
+                            <span id="metricPlddt" class="metric-value highlight">0.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card compact-card sidebar-card">
+                    <div class="card-title">Comparison board</div>
+                    <div class="lede-text" id="specimenNarrative">
+                        Featured specimen opens in a side-by-side backbone and folded-structure review.
+                    </div>
+                    <div class="chip-row">
+                        <span class="info-chip">Backbone target</span>
+                        <span class="info-chip">Folded validation</span>
+                        <span class="info-chip">Curated regions</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card controls-card" id="controlsCard">
+                <div class="controls-copy">
+                    <div class="card-title" style="border-bottom: none; padding-bottom: 0;">Display controls</div>
+                    <div class="lede-text">Keep the viewers visible while switching style, color, alignment, and motion.</div>
+                </div>
+                <div class="controls-inline">
+                    <div>
+                        <label class="metric-label" style="margin-right: 0.5rem;">Representation</label>
+                        <select class="color-scheme-select" id="repStyle" onchange="updateStyle()">
+                            <option value="cartoon">Cartoon</option>
+                            <option value="sphere">Space-Filling</option>
+                            <option value="stick">Stick</option>
+                            <option value="line">Line</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="metric-label" style="margin-right: 0.5rem;">Color scheme</label>
+                        <select class="color-scheme-select" id="colorScheme" onchange="updateColors()">
+                            <option value="spectrum">Secondary structure</option>
+                            <option value="chain">Chain</option>
+                            <option value="b">B-factor / pLDDT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="action-inline">
+                    <button class="btn btn-outline" id="btnReset" onclick="resetViews()">Reset</button>
+                    <button class="btn btn-outline" id="btnSuperimpose" onclick="toggleSuperimpose()">Superimpose</button>
+                    <button class="btn" id="btnSpin" onclick="toggleSpin()">Spin</button>
+                </div>
+            </div>
+            <div class="viewer-container">
+                <div class="viewer-card" id="backboneCard">
+                    <div class="viewer-label">RFDiffusion Backbone (Target)</div>
+                    <div id="backboneViewer" class="mol-viewer"></div>
+                </div>
+                <div class="viewer-card" id="foldedCard">
+                    <div class="viewer-label">OpenFold3 Folded Structure (Designed)</div>
+                    <div id="foldedViewer" class="mol-viewer"></div>
+                </div>
+            </div>
+            <div class="card hotspot-panel" id="techStackCard">
+                <div class="hotspot-column">
+                    <div class="card-title">Curated regions</div>
+                    <div id="hotspotGrid" class="hotspot-grid"></div>
+                </div>
+                <div class="hotspot-column">
+                    <div class="card-title">Region insight</div>
+                    <div class="insight-box">
+                        <div id="hotspotTitle" class="insight-title">Select a highlighted region</div>
+                        <div id="hotspotMeta" class="insight-meta">Residue anchor</div>
+                        <div id="hotspotTooltip" class="insight-copy">Curated hotspot notes stay inside the board so the page remains readable in one frame.</div>
+                        <div id="hotspotInterpretation" class="specimen-note" style="margin-top: 0.65rem;">Short local interpretation appears here.</div>
+                    </div>
+                </div>
+                <div class="hotspot-column">
+                    <div class="card-title">Sequence and utilities</div>
+                    <div class="seq-box-wrap">
+                        <div class="metric-label" style="margin-bottom: 0.45rem;">Designed sequence</div>
+                        <div id="seqBox" class="sequence-box">
+                            AEKEKLREKLSELLERLKEAKEDESKEEEREELIEELKELLREEGFEELEEKLEEAEEEEDRIELTMELIEEEIERLEEE
+                        </div>
+                    </div>
+                    <div class="utility-box">
+                        <div class="utility-list">
+                            <div class="utility-item"><strong>Tip:</strong> hover any sequence residue for temporary highlighting; curated regions remain the default story.</div>
+                            <div class="utility-item"><strong>Export:</strong> download the target or folded structure without leaving the viewer.</div>
+                        </div>
+                        <div class="action-inline" style="margin-top: 0.75rem; justify-content: flex-start;">
+                            <button class="btn btn-outline" id="btnDownloadBackbone" onclick="downloadFile('backbone')">Backbone PDB</button>
+                            <button class="btn" id="btnDownloadFolded" onclick="downloadFile('folded')">Folded PDB</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let viewerB, viewerF;
+        let isSpinning = false;
+
+        const proteinData = {
+            helical: {
+                backbone: "helical_bundle_backbone.pdb",
+                folded: "helical_bundle_folded.pdb",
+                sequence: "SAELEKIEKLLEEYAKNIKEVKEDEKVKEALKKELVKIKKITEAKAKAYIKKLEEEVEDIDKLKEELLKEVERLLKEEEE",
+                conf: 0.0916,
+                plddt: 64.43,
+                res: "80 residues",
+                specimen: "Specimen A",
+                name: "Helical bundle",
+                classLabel: "Compact helical architecture",
+                source: "Local design loop",
+                narrative: "A compact, high-regularity specimen used as the cleanest first-pass structural example in the set.",
+                hotspots: [
+                    { id: "core-turn", label: "Core turn", residue: 18, shortTitle: "Core turn anchor", tooltip: "Residue 18 sits inside the early helical turn that stabilizes the compact bundle silhouette.", interpretation: "Useful for showing how the designed fold stays visually tight near the helical core.", color: "#38bdf8" },
+                    { id: "central-pack", label: "Central pack", start: 34, end: 38, shortTitle: "Central packing zone", tooltip: "This short mid-chain region reads as the densest packing area in the specimen.", interpretation: "Highlights where the backbone-to-fold comparison looks most compact and internally reinforced.", color: "#22c55e" },
+                    { id: "tail-close", label: "Tail closure", residue: 67, shortTitle: "Tail closure", tooltip: "Late-chain residues bend back toward the main body and help close the outer contour.", interpretation: "Useful for explaining end-region positioning without overclaiming function.", color: "#f59e0b" }
+                ]
+            },
+            mixed: {
+                backbone: "mixed_fold_backbone.pdb",
+                folded: "mixed_fold_folded.pdb",
+                sequence: "ETVAKIKIKLEADEEKLEIEVEATEEDAEEKQEKVADILFEFIKKNDEEVKITVEVDTLESIDFAKATLERLAEKLTEEWWEEEAEKIQKLKEELTSKAKEAKKIKDVKIKVSMTFRRSR",
+                conf: 0.1601,
+                plddt: 83.28,
+                res: "120 residues",
+                specimen: "Specimen B",
+                name: "Mixed alpha/beta",
+                classLabel: "Broader mixed-topology fold",
+                source: "Local design loop",
+                narrative: "A more varied specimen with mixed secondary structure, useful when you want a stronger topology contrast on screen.",
+                hotspots: [
+                    { id: "entry-helix", label: "Entry helix", residue: 15, shortTitle: "Entry helix", tooltip: "An early helical segment provides a clear structural entry point before the topology broadens.", interpretation: "Good first hotspot for reading how the mixed specimen departs from the simpler helical bundle.", color: "#38bdf8" },
+                    { id: "beta-core", label: "Beta-rich core", start: 54, end: 61, shortTitle: "Beta-rich core", tooltip: "This region marks the more sheet-like middle of the fold and creates the biggest topology contrast.", interpretation: "Useful when explaining why this specimen looks structurally broader and more varied.", color: "#a855f7" },
+                    { id: "terminal-return", label: "Terminal return", residue: 92, shortTitle: "Terminal return", tooltip: "The later chain folds back across the structure instead of extending outward.", interpretation: "Supports a concise explanation of how the mixed topology closes on itself.", color: "#f59e0b" }
+                ]
+            },
+            default: {
+                backbone: "default_backbone.pdb",
+                folded: "default_folded.pdb",
+                sequence: "SEAERLQLLSELLSLFEQAVEVEDLEELQKLLKQAKELLTKLRYEEQAKKLEQALSLDRESKLELLQEVLAELTELLKEESQELAEQVEALAQKVEEKLK",
+                conf: 0.1557,
+                plddt: 84.82,
+                res: "100 residues",
+                specimen: "Specimen C",
+                name: "Default de novo",
+                classLabel: "Balanced baseline fold",
+                source: "Local design loop",
+                narrative: "A balanced baseline specimen that sits between the helical and mixed examples in complexity and visual density.",
+                hotspots: [
+                    { id: "front-arc", label: "Front arc", residue: 12, shortTitle: "Front arc", tooltip: "An early arc-like section gives the baseline specimen a readable opening contour.", interpretation: "Useful as a starter region when introducing the default specimen.", color: "#38bdf8" },
+                    { id: "mid-bend", label: "Mid bend", start: 43, end: 47, shortTitle: "Mid-chain bend", tooltip: "The center of the chain bends enough to create a visible break in the overall flow.", interpretation: "Shows where the baseline fold gains shape variation without becoming topologically busy.", color: "#22c55e" },
+                    { id: "late-lock", label: "Late lock", residue: 78, shortTitle: "Late-chain lock", tooltip: "A later residue cluster helps visually lock the final third back into the body of the fold.", interpretation: "Good region for explaining how the default specimen stays balanced and self-contained.", color: "#f59e0b" }
+                ]
+            }
+        };
+
+        let currentMetrics = { conf: 0.0, plddt: 0.0 };
+        let isSuperimposed = false;
+        let backboneRawData = "";
+        let foldedRawData = "";
+        let modelB = null;
+        let modelF = null;
+        let modelSuperB = null;
+        let modelSuperF = null;
+        
+        let activeHighlightB = null;
+        let activeHighlightF = null;
+        let activeLabelB = null;
+        let activeLabelF = null;
+        let activeHotspotId = null;
+        let activeSpecimenKey = "helical";
+        let activeHighlightShapesB = [];
+        let activeHighlightShapesF = [];
+
+        $(document).ready(() => {
+            console.log("Document ready, initializing 3Dmol viewers and GSAP...");
+            
+            viewerB = $3Dmol.createViewer($("#backboneViewer"), { 
+                defaultcolors: $3Dmol.rasmolElementColors,
+                backgroundColor: '#080b11' 
+            });
+            viewerF = $3Dmol.createViewer($("#foldedViewer"), { 
+                defaultcolors: $3Dmol.rasmolElementColors,
+                backgroundColor: '#080b11' 
+            });
+            
+            // GSAP Entrance Animations
+            const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 0.8 } });
+            tl.to("#mainHeader", { opacity: 1, y: 0 })
+              .to(".sidebar-card", { opacity: 1, x: 0, stagger: 0.15 }, "-=0.4")
+              .to("#controlsCard", { opacity: 1, y: 0 }, "-=0.6")
+              .to(".viewer-card", { opacity: 1, y: 0, stagger: 0.2 }, "-=0.6")
+              .to("#techStackCard", { opacity: 1, y: 0 }, "-=0.6");
+
+            // Button Hover Animations
+            gsap.utils.toArray(".btn").forEach(btn => {
+                btn.addEventListener("mouseenter", () => {
+                    gsap.to(btn, { scale: 1.05, duration: 0.2, ease: "power1.out" });
+                });
+                btn.addEventListener("mouseleave", () => {
+                    gsap.to(btn, { scale: 1.0, duration: 0.2, ease: "power1.out" });
+                });
+            });
+
+            // Metric Rows Hover Slide Effect (Framer Motion style)
+            gsap.utils.toArray(".metric-row").forEach(row => {
+                row.addEventListener("mouseenter", () => {
+                    gsap.to(row, { x: 5, duration: 0.2, ease: "power2.out" });
+                });
+                row.addEventListener("mouseleave", () => {
+                    gsap.to(row, { x: 0, duration: 0.2, ease: "power2.out" });
+                });
+            });
+
+            // Tech Stack Hover Pop Effect (Framer Motion style spring)
+            gsap.utils.toArray(".tech-item").forEach(item => {
+                item.addEventListener("mouseenter", () => {
+                    gsap.to(item, { scale: 1.03, y: -2, borderColor: "rgba(0, 242, 254, 0.3)", duration: 0.3, ease: "back.out(1.7)" });
+                });
+                item.addEventListener("mouseleave", () => {
+                    gsap.to(item, { scale: 1.0, y: 0, borderColor: "rgba(255, 255, 255, 0.04)", duration: 0.3, ease: "power2.out" });
+                });
+            });
+
+            loadSelectedProtein();
+        });
+
+        // 3x3 SVD Analytical solver using Jacobi sweep method
+        function jacobiSVD(A) {
+            let U_mat = JSON.parse(JSON.stringify(A));
+            let V_mat = [[1,0,0],[0,1,0],[0,0,1]];
+            let S = [0,0,0];
+            
+            const max_sweeps = 10;
+            const eps = 1e-15;
+            
+            for (let sweep = 0; sweep < max_sweeps; sweep++) {
+                let converged = true;
+                for (let p = 0; p < 2; p++) {
+                    for (let q = p + 1; q < 3; q++) {
+                        let a = 0, b = 0, c = 0;
+                        for (let i = 0; i < 3; i++) {
+                            a += U_mat[i][p] * U_mat[i][p];
+                            b += U_mat[i][q] * U_mat[i][q];
+                            c += U_mat[i][p] * U_mat[i][q];
+                        }
+                        
+                        if (Math.abs(c) > eps * Math.sqrt(a * b)) {
+                            converged = false;
+                            let zeta = (b - a) / (2.0 * c);
+                            let t = Math.sign(zeta) / (Math.abs(zeta) + Math.sqrt(1.0 + zeta*zeta));
+                            let cos_theta = 1.0 / Math.sqrt(1.0 + t*t);
+                            let sin_theta = t * cos_theta;
+                            
+                            for (let i = 0; i < 3; i++) {
+                                let temp_u = U_mat[i][p];
+                                U_mat[i][p] = cos_theta * temp_u - sin_theta * U_mat[i][q];
+                                U_mat[i][q] = sin_theta * temp_u + cos_theta * U_mat[i][q];
+                                
+                                let temp_v = V_mat[i][p];
+                                V_mat[i][p] = cos_theta * temp_v - sin_theta * V_mat[i][q];
+                                V_mat[i][q] = sin_theta * temp_v + cos_theta * V_mat[i][q];
+                            }
+                        }
+                    }
+                }
+                if (converged) break;
+            }
+            
+            for (let j = 0; j < 3; j++) {
+                let norm = 0;
+                for (let i = 0; i < 3; i++) norm += U_mat[i][j] * U_mat[i][j];
+                norm = Math.sqrt(norm);
+                S[j] = norm;
+                if (norm > eps) {
+                    for (let i = 0; i < 3; i++) U_mat[i][j] /= norm;
+                } else {
+                    for (let i = 0; i < 3; i++) U_mat[i][j] = 0;
+                }
+            }
+            
+            return { U: U_mat, S: S, V: V_mat };
+        }
+
+        function getKabschRotation(bb, fd) {
+            let Cov = [
+                [0,0,0],
+                [0,0,0],
+                [0,0,0]
+            ];
+            for (let i = 0; i < bb.length; i++) {
+                Cov[0][0] += bb[i].x * fd[i].x; Cov[0][1] += bb[i].x * fd[i].y; Cov[0][2] += bb[i].x * fd[i].z;
+                Cov[1][0] += bb[i].y * fd[i].x; Cov[1][1] += bb[i].y * fd[i].y; Cov[1][2] += bb[i].y * fd[i].z;
+                Cov[2][0] += bb[i].z * fd[i].x; Cov[2][1] += bb[i].z * fd[i].y; Cov[2][2] += bb[i].z * fd[i].z;
+            }
+            
+            let svd = jacobiSVD(Cov);
+            
+            let R = [
+                [0,0,0],
+                [0,0,0],
+                [0,0,0]
+            ];
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    for (let k = 0; k < 3; k++) {
+                        R[i][j] += svd.U[i][k] * svd.V[j][k];
+                    }
+                }
+            }
+            
+            let det = R[0][0] * (R[1][1]*R[2][2] - R[1][2]*R[2][1]) -
+                      R[0][1] * (R[1][0]*R[2][2] - R[1][2]*R[2][0]) +
+                      R[0][2] * (R[1][0]*R[2][1] - R[1][1]*R[2][0]);
+                      
+            if (det < 0) {
+                for (let i = 0; i < 3; i++) svd.U[i][2] = -svd.U[i][2];
+                R = [
+                    [0,0,0],
+                    [0,0,0],
+                    [0,0,0]
+                ];
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        for (let k = 0; k < 3; k++) {
+                            R[i][j] += svd.U[i][k] * svd.V[j][k];
+                        }
+                    }
+                }
+            }
+            
+            return R;
+        }
+
+        function parseCA(pdbText) {
+            const lines = pdbText.split('\n');
+            const atoms = [];
+            for (let line of lines) {
+                if (line.startsWith('ATOM  ') || line.startsWith('HETATM')) {
+                    const atomName = line.substring(12, 16).trim();
+                    if (atomName === 'CA') {
+                        const resName = line.substring(17, 20).trim();
+                        const chain = line.substring(21, 22).trim();
+                        const resSeq = parseInt(line.substring(22, 26).trim(), 10);
+                        const x = parseFloat(line.substring(30, 38).trim());
+                        const y = parseFloat(line.substring(38, 46).trim());
+                        const z = parseFloat(line.substring(46, 54).trim());
+                        atoms.push({ resSeq, resName, chain, x, y, z });
+                    }
+                }
+            }
+            return atoms;
+        }
+
+        function getCentroid(atoms) {
+            let sumX = 0, sumY = 0, sumZ = 0;
+            for (let a of atoms) {
+                sumX += a.x;
+                sumY += a.y;
+                sumZ += a.z;
+            }
+            return {
+                x: sumX / atoms.length,
+                y: sumY / atoms.length,
+                z: sumZ / atoms.length
+            };
+        }
+
+        function alignPDBText(backboneText, foldedText) {
+            const bbCA = parseCA(backboneText);
+            const fdCA = parseCA(foldedText);
+            
+            const bbMap = new Map(bbCA.map(a => [a.resSeq, a]));
+            const matchedBB = [];
+            const matchedFD = [];
+            
+            for (let fd of fdCA) {
+                if (bbMap.has(fd.resSeq)) {
+                    matchedBB.push(bbMap.get(fd.resSeq));
+                    matchedFD.push(fd);
+                }
+            }
+            
+            if (matchedBB.length === 0) return { alignedPDB: foldedText, rmsd: 0, matchedBB: [], alignedFD: [] };
+            
+            const cBB = getCentroid(matchedBB);
+            const cFD = getCentroid(matchedFD);
+            
+            const bbCentered = matchedBB.map(a => ({ x: a.x - cBB.x, y: a.y - cBB.y, z: a.z - cBB.z }));
+            const fdCentered = matchedFD.map(a => ({ x: a.x - cFD.x, y: a.y - cFD.y, z: a.z - cFD.z }));
+            
+            const R = getKabschRotation(bbCentered, fdCentered);
+            
+            const lines = foldedText.split('\n');
+            const alignedLines = [];
+            let sumSqDist = 0;
+            
+            for (let line of lines) {
+                if (line.startsWith('ATOM  ') || line.startsWith('HETATM')) {
+                    let x = parseFloat(line.substring(30, 38).trim());
+                    let y = parseFloat(line.substring(38, 46).trim());
+                    let z = parseFloat(line.substring(46, 54).trim());
+                    
+                    let tx = x - cFD.x;
+                    let ty = y - cFD.y;
+                    let tz = z - cFD.z;
+                    
+                    let rx = R[0][0]*tx + R[0][1]*ty + R[0][2]*tz;
+                    let ry = R[1][0]*tx + R[1][1]*ty + R[1][2]*tz;
+                    let rz = R[2][0]*tx + R[2][1]*ty + R[2][2]*tz;
+                    
+                    let finalX = rx + cBB.x;
+                    let finalY = ry + cBB.y;
+                    let finalZ = rz + cBB.z;
+                    
+                    let newXStr = finalX.toFixed(3).padStart(8);
+                    let newYStr = finalY.toFixed(3).padStart(8);
+                    let newZStr = finalZ.toFixed(3).padStart(8);
+                    
+                    let newLine = line.substring(0, 30) + newXStr + newYStr + newZStr + line.substring(54);
+                    alignedLines.push(newLine);
+                } else {
+                    alignedLines.push(line);
+                }
+            }
+            
+            let AlignedFD = [];
+            for (let i = 0; i < matchedFD.length; i++) {
+                let tx = matchedFD[i].x - cFD.x;
+                let ty = matchedFD[i].y - cFD.y;
+                let tz = matchedFD[i].z - cFD.z;
+                let rx = R[0][0]*tx + R[0][1]*ty + R[0][2]*tz;
+                let ry = R[1][0]*tx + R[1][1]*ty + R[1][2]*tz;
+                let rz = R[2][0]*tx + R[2][1]*ty + R[2][2]*tz;
+                let finalX = rx + cBB.x;
+                let finalY = ry + cBB.y;
+                let finalZ = rz + cBB.z;
+                
+                let dx = finalX - matchedBB[i].x;
+                let dy = finalY - matchedBB[i].y;
+                let dz = finalZ - matchedBB[i].z;
+                sumSqDist += dx*dx + dy*dy + dz*dz;
+                
+                AlignedFD.push({ resSeq: matchedFD[i].resSeq, x: finalX, y: finalY, z: finalZ });
+            }
+            
+            const rmsd = Math.sqrt(sumSqDist / matchedFD.length);
+            
+            return {
+                alignedPDB: alignedLines.join('\n'),
+                rmsd: rmsd,
+                matchedBB: matchedBB,
+                alignedFD: AlignedFD
+            };
+        }
+
+        function toggleSuperimpose() {
+            isSuperimposed = !isSuperimposed;
+            if (isSuperimposed) {
+                $("#btnSuperimpose").text("Side-by-Side");
+                $("#btnSuperimpose").css("border-color", "var(--primary)");
+                
+                gsap.to("#backboneCard", { opacity: 0, scale: 0.95, duration: 0.3, onComplete: () => {
+                    $("#backboneCard").css("display", "none");
+                    $(".viewer-container").css("grid-template-columns", "1fr");
+                    viewerF.resize();
+                    renderSuperimposed();
+                }});
+            } else {
+                $("#btnSuperimpose").text("Superimpose View");
+                $("#btnSuperimpose").css("border-color", "var(--border-color)");
+                
+                $("#backboneCard").css("display", "flex");
+                $(".viewer-container").css("grid-template-columns", "1fr 1fr");
+                gsap.to("#backboneCard", { opacity: 1, scale: 1.0, duration: 0.3, onComplete: () => {
+                    viewerB.resize();
+                    viewerF.resize();
+                    loadSelectedProtein();
+                }});
+            }
+        }
+
+        function renderSuperimposed() {
+            if (!backboneRawData || !foldedRawData) return;
+            
+            viewerF.clear();
+            const alignment = alignPDBText(backboneRawData, foldedRawData);
+            
+            modelSuperB = viewerF.addModel(backboneRawData, "pdb");
+            viewerF.setStyle({model: modelSuperB.getID()}, {cartoon: {color: '#4b5563', opacity: 0.5}});
+            
+            modelSuperF = viewerF.addModel(alignment.alignedPDB, "pdb");
+            
+            const styleName = $("#repStyle").val();
+            const colorName = $("#colorScheme").val();
+            let styleObj = {};
+            let colorVal = colorName === "spectrum" ? "spectrum" : (colorName === "chain" ? "chain" : undefined);
+            let colorschemeObj = colorName === "b" ? { prop: 'b', gradient: 'redwhiteblue', min: 50, max: 90 } : undefined;
+            
+            if (styleName === "cartoon") {
+                styleObj.cartoon = colorVal ? { color: colorVal } : (colorschemeObj ? { colorscheme: colorschemeObj } : {});
+            } else if (styleName === "sphere") {
+                styleObj.sphere = { scale: 0.8 };
+                if (colorVal) styleObj.sphere.color = colorVal;
+                if (colorschemeObj) styleObj.sphere.colorscheme = colorschemeObj;
+            } else if (styleName === "stick") {
+                styleObj.stick = { radius: 0.25 };
+                if (colorVal) styleObj.stick.color = colorVal;
+                if (colorschemeObj) styleObj.stick.colorscheme = colorschemeObj;
+            } else if (styleName === "line") {
+                styleObj.line = { linewidth: 1.5 };
+                if (colorVal) styleObj.line.color = colorVal;
+                if (colorschemeObj) styleObj.line.colorscheme = colorschemeObj;
+            }
+            viewerF.setStyle({model: modelSuperF.getID()}, styleObj);
+            
+            const bbCA = alignment.matchedBB;
+            const fdCA = alignment.alignedFD;
+            
+            for (let i = 0; i < Math.min(bbCA.length, fdCA.length); i++) {
+                const p1 = bbCA[i];
+                const p2 = fdCA[i];
+                const dist = Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2 + (p1.z - p2.z)**2);
+                if (dist > 0.1) {
+                    viewerF.addCylinder({
+                        start: {x: p1.x, y: p1.y, z: p1.z},
+                        end: {x: p2.x, y: p2.y, z: p2.z},
+                        radius: 0.04,
+                        color: dist > 1.5 ? '#f87171' : '#34d399',
+                        dashed: true
+                    });
+                }
+            }
+            
+            $("#metricConf").text("Centroid Aligned");
+            $("#metricPlddt").text(alignment.rmsd.toFixed(3) + " Å");
+            $(".metric-row:nth-child(2) .metric-label").text("Alignment:");
+            $(".metric-row:nth-child(3) .metric-label").text("C-α RMSD:");
+            
+            viewerF.zoomTo();
+            viewerF.render();
+            if (isSpinning) viewerF.spin(true);
+        }
+
+        function loadSelectedProtein() {
+            const selected = $("#proteinSelect").val();
+            const data = proteinData[selected];
+
+            $("#metricConfLabel").text("OpenFold3 confidence");
+            $("#metricPlddtLabel").text("pLDDT score");
+
+            gsap.to(currentMetrics, {
+                conf: data.conf,
+                plddt: data.plddt,
+                duration: 1.2,
+                ease: "power2.out",
+                onUpdate: () => {
+                    if (!isSuperimposed) {
+                        $("#metricConf").text(currentMetrics.conf.toFixed(4));
+                        $("#metricPlddt").text(currentMetrics.plddt.toFixed(2));
+                    }
+                }
+            });
+
+            $("#metricRes").text(data.res);
+            $("#specimenName").text(data.specimen);
+            $("#specimenType").text(data.name);
+            $("#specimenSource").text(data.source);
+            $("#specimenClass").text(data.classLabel);
+            $("#specimenNarrative").text(data.narrative);
+            $(".specimen-item").removeClass("active");
+            $(`#specimen-${selected}`).addClass("active");
+            activeSpecimenKey = selected;
+            renderHotspots(selected);
+            
+            gsap.fromTo("#seqBox", { opacity: 0 }, { opacity: 1, duration: 0.5 });
+            
+            // Build interactive sequence list
+            const seqContainer = $("#seqBox");
+            seqContainer.empty();
+            const seqText = data.sequence;
+            const spans = [];
+            for (let i = 0; i < seqText.length; i++) {
+                const char = seqText[i];
+                const resNum = i + 1;
+                const span = $(`<span class="seq-char" data-resnum="${resNum}">${char}</span>`);
+                
+                span.css({
+                    display: "inline-block",
+                    cursor: "pointer",
+                    padding: "0 1px",
+                    opacity: 0,
+                    transform: "translateY(5px)",
+                    transition: "background-color 0.15s ease, color 0.15s ease, transform 0.15s ease",
+                    borderRadius: "2px"
+                });
+                
+                span.on("mouseenter", () => {
+                    span.css({
+                        background: "var(--primary)",
+                        color: "#0b0f19",
+                        fontWeight: "700",
+                        transform: "scale(1.2)"
+                    });
+                    highlightResidue3D(resNum);
+                });
+                
+                span.on("mouseleave", () => {
+                    span.css({
+                        background: "transparent",
+                        color: "#d1d5db",
+                        fontWeight: "400",
+                        transform: "scale(1.0)"
+                    });
+                    restoreActiveHotspot();
+                });
+                
+                seqContainer.append(span);
+                spans.push(span[0]);
+            }
+
+            // Framer Motion style spring-stagger sequence reveal
+            gsap.to(spans, {
+                opacity: 1,
+                y: 0,
+                stagger: 0.004,
+                duration: 0.3,
+                ease: "back.out(1.5)"
+            });
+
+            if (selected === "custom") {
+                gsap.to(["#backboneViewer", "#foldedViewer"], {
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => {
+                        viewerB.clear();
+                        modelB = viewerB.addModel(backboneRawData, "pdb");
+                        updateStyle();
+                        viewerB.zoomTo();
+                        viewerB.render();
+                        if (isSpinning) viewerB.spin(true);
+                        gsap.to("#backboneViewer", { opacity: 1, duration: 0.4 });
+
+                        viewerF.clear();
+                        modelF = viewerF.addModel(foldedRawData, "pdb");
+                        updateStyle();
+                        viewerF.zoomTo();
+                        viewerF.render();
+                        if (isSpinning) viewerF.spin(true);
+                        gsap.to("#foldedViewer", { opacity: 1, duration: 0.4 });
+
+                        if (isSuperimposed) renderSuperimposed();
+                        else restoreActiveHotspot();
+                    }
+                });
+                return;
+            }
+
+            gsap.to(["#backboneViewer", "#foldedViewer"], {
+                opacity: 0,
+                duration: 0.3,
+                onComplete: () => {
+                    fetch(data.backbone)
+                        .then(res => res.text())
+                        .then(pdbData => {
+                            backboneRawData = pdbData;
+                            viewerB.clear();
+                            modelB = viewerB.addModel(pdbData, "pdb");
+                            updateStyle();
+                            viewerB.zoomTo();
+                            viewerB.render();
+                            if (isSpinning) viewerB.spin(true);
+                            gsap.to("#backboneViewer", { opacity: 1, duration: 0.4 });
+                            
+                            if (isSuperimposed) renderSuperimposed();
+                            else restoreActiveHotspot();
+                        })
+                        .catch(err => console.error("Error loading backbone PDB:", err));
+
+                    fetch(data.folded)
+                        .then(res => res.text())
+                        .then(pdbData => {
+                            foldedRawData = pdbData;
+                            viewerF.clear();
+                            modelF = viewerF.addModel(pdbData, "pdb");
+                            updateStyle();
+                            viewerF.zoomTo();
+                            viewerF.render();
+                            if (isSpinning) viewerF.spin(true);
+                            gsap.to("#foldedViewer", { opacity: 1, duration: 0.4 });
+                            
+                            if (isSuperimposed) renderSuperimposed();
+                            else restoreActiveHotspot();
+                        })
+                        .catch(err => console.error("Error loading folded PDB:", err));
+                }
+            });
+        }
+
+        function highlightResidue3D(resNum, color = '#f59e0b', labelText = null) {
+            clearResidue3DHighlight();
+            
+            if (isSuperimposed) {
+                if (!modelSuperF) return;
+                const atom = getResidueCAAtom(modelSuperF, resNum);
+                if (atom) {
+                    activeHighlightF = viewerF.addSphere({
+                        center: {x: atom.x, y: atom.y, z: atom.z},
+                        color: color,
+                        radius: 1.2
+                    });
+                    activeLabelF = viewerF.addLabel(labelText || `${atom.resn}-${resNum}`, {
+                        position: {x: atom.x, y: atom.y, z: atom.z},
+                        backgroundColor: 'rgba(11, 15, 25, 0.85)',
+                        borderColor: 'var(--border-color)',
+                        fontColor: '#fff',
+                        fontSize: 10
+                    });
+                    viewerF.render();
+                }
+            } else {
+                if (modelB) {
+                    const atom = getResidueCAAtom(modelB, resNum);
+                    if (atom) {
+                        activeHighlightB = viewerB.addSphere({
+                            center: {x: atom.x, y: atom.y, z: atom.z},
+                            color: color,
+                            radius: 1.2
+                        });
+                        activeLabelB = viewerB.addLabel(labelText || `${atom.resn}-${resNum}`, {
+                            position: {x: atom.x, y: atom.y, z: atom.z},
+                            backgroundColor: 'rgba(11, 15, 25, 0.85)',
+                            borderColor: 'var(--border-color)',
+                            fontColor: '#fff',
+                            fontSize: 10
+                        });
+                        viewerB.render();
+                    }
+                }
+                if (modelF) {
+                    const atom = getResidueCAAtom(modelF, resNum);
+                    if (atom) {
+                        activeHighlightF = viewerF.addSphere({
+                            center: {x: atom.x, y: atom.y, z: atom.z},
+                            color: color,
+                            radius: 1.2
+                        });
+                        activeLabelF = viewerF.addLabel(labelText || `${atom.resn}-${resNum}`, {
+                            position: {x: atom.x, y: atom.y, z: atom.z},
+                            backgroundColor: 'rgba(11, 15, 25, 0.85)',
+                            borderColor: 'var(--border-color)',
+                            fontColor: '#fff',
+                            fontSize: 10
+                        });
+                        viewerF.render();
+                    }
+                }
+            }
+        }
+
+        function renderHotspots(specimenKey) {
+            const data = proteinData[specimenKey];
+            const hotspotGrid = $("#hotspotGrid");
+            hotspotGrid.empty();
+            data.hotspots.forEach((hotspot, index) => {
+                const chip = $(`<button class="hotspot-chip" data-hotspot-id="${hotspot.id}">${hotspot.label}</button>`);
+                chip.on("click", () => activateHotspot(specimenKey, hotspot.id));
+                hotspotGrid.append(chip);
+                if (index === 0) activeHotspotId = hotspot.id;
+            });
+            activateHotspot(specimenKey, activeHotspotId || data.hotspots[0].id);
+        }
+
+        function activateHotspot(specimenKey, hotspotId) {
+            const data = proteinData[specimenKey];
+            const hotspot = data.hotspots.find((item) => item.id === hotspotId);
+            if (!hotspot) return;
+            activeHotspotId = hotspotId;
+            $(".hotspot-chip").removeClass("active");
+            $(`.hotspot-chip[data-hotspot-id="${hotspotId}"]`).addClass("active");
+            $("#hotspotTitle").text(hotspot.shortTitle);
+            $("#hotspotMeta").text(hotspot.start ? `Residues ${hotspot.start}-${hotspot.end}` : `Residue ${hotspot.residue}`);
+            $("#hotspotTooltip").text(hotspot.tooltip);
+            $("#hotspotInterpretation").text(hotspot.interpretation);
+            highlightHotspot(hotspot);
+        }
+
+        function highlightHotspot(hotspot) {
+            clearResidue3DHighlight();
+            const residues = hotspot.start ? Array.from({ length: hotspot.end - hotspot.start + 1 }, (_, i) => hotspot.start + i) : [hotspot.residue];
+            const anchor = hotspot.start ? hotspot.start : hotspot.residue;
+            highlightResidue3D(anchor, hotspot.color || '#f59e0b', hotspot.label);
+            residues.filter((residue) => residue !== anchor).forEach((residue) => addResidueShape(residue, hotspot.color || '#f59e0b'));
+            renderAuxiliaryHighlights();
+        }
+
+        function addResidueShape(resNum, color) {
+            if (isSuperimposed) {
+                if (!modelSuperF) return;
+                const atom = getResidueCAAtom(modelSuperF, resNum);
+                if (!atom) return;
+                activeHighlightShapesF.push(viewerF.addSphere({ center: { x: atom.x, y: atom.y, z: atom.z }, color: color, radius: 0.7, opacity: 0.65 }));
+                return;
+            }
+            if (modelB) {
+                const atomB = getResidueCAAtom(modelB, resNum);
+                if (atomB) activeHighlightShapesB.push(viewerB.addSphere({ center: { x: atomB.x, y: atomB.y, z: atomB.z }, color: color, radius: 0.65, opacity: 0.55 }));
+            }
+            if (modelF) {
+                const atomF = getResidueCAAtom(modelF, resNum);
+                if (atomF) activeHighlightShapesF.push(viewerF.addSphere({ center: { x: atomF.x, y: atomF.y, z: atomF.z }, color: color, radius: 0.7, opacity: 0.7 }));
+            }
+        }
+
+        function renderAuxiliaryHighlights() {
+            if (viewerB) viewerB.render();
+            if (viewerF) viewerF.render();
+        }
+
+        function getResidueCAAtom(model, resNum) {
+            if (!model) return null;
+            const atoms = typeof model.getAtoms === 'function'
+                ? model.getAtoms()
+                : (typeof model.selectedAtoms === 'function' ? model.selectedAtoms({}) : (model.atoms || []));
+            for (let a of atoms) {
+                if (a.resi === resNum && a.name === 'CA') {
+                    return a;
+                }
+            }
+            for (let a of atoms) {
+                if (a.resi === resNum) return a;
+            }
+            return null;
+        }
+
+        function clearResidue3DHighlight() {
+            if (viewerB && activeHighlightB) {
+                viewerB.removeShape(activeHighlightB);
+                activeHighlightB = null;
+            }
+            if (viewerB && activeHighlightShapesB.length) {
+                activeHighlightShapesB.forEach((shape) => viewerB.removeShape(shape));
+                activeHighlightShapesB = [];
+            }
+            if (viewerF && activeHighlightF) {
+                viewerF.removeShape(activeHighlightF);
+                activeHighlightF = null;
+            }
+            if (viewerF && activeHighlightShapesF.length) {
+                activeHighlightShapesF.forEach((shape) => viewerF.removeShape(shape));
+                activeHighlightShapesF = [];
+            }
+            if (viewerB && activeLabelB) {
+                viewerB.removeLabel(activeLabelB);
+                activeLabelB = null;
+            }
+            if (viewerF && activeLabelF) {
+                viewerF.removeLabel(activeLabelF);
+                activeLabelF = null;
+            }
+            if (viewerB) viewerB.render();
+            if (viewerF) viewerF.render();
+        }
+
+        function updateStyle() {
+            const styleName = $("#repStyle").val();
+            const colorName = $("#colorScheme").val();
+            
+            let styleObj = {};
+            let colorVal = colorName === "spectrum" ? "spectrum" : (colorName === "chain" ? "chain" : undefined);
+            let colorschemeObj = colorName === "b" ? { prop: 'b', gradient: 'redwhiteblue', min: 50, max: 90 } : undefined;
+            
+            if (styleName === "cartoon") {
+                styleObj.cartoon = colorVal ? { color: colorVal } : (colorschemeObj ? { colorscheme: colorschemeObj } : {});
+            } else if (styleName === "sphere") {
+                styleObj.sphere = { scale: 0.8 };
+                if (colorVal) styleObj.sphere.color = colorVal;
+                if (colorschemeObj) styleObj.sphere.colorscheme = colorschemeObj;
+            } else if (styleName === "stick") {
+                styleObj.stick = { radius: 0.25 };
+                if (colorVal) styleObj.stick.color = colorVal;
+                if (colorschemeObj) styleObj.stick.colorscheme = colorschemeObj;
+            } else if (styleName === "line") {
+                styleObj.line = { linewidth: 1.5 };
+                if (colorVal) styleObj.line.color = colorVal;
+                if (colorschemeObj) styleObj.line.colorscheme = colorschemeObj;
+            }
+
+            if (isSuperimposed) {
+                if (modelSuperF) {
+                    viewerF.setStyle({model: modelSuperF.getID()}, styleObj);
+                    viewerF.render();
+                }
+            } else {
+                if (viewerB && modelB) {
+                    viewerB.setStyle({model: modelB.getID()}, styleObj);
+                    viewerB.render();
+                }
+                if (viewerF && modelF) {
+                    viewerF.setStyle({model: modelF.getID()}, styleObj);
+                    viewerF.render();
+                }
+            }
+        }
+
+        function updateColors() {
+            updateStyle();
+        }
+
+        function resetViews() {
+            gsap.fromTo("#btnReset", { scale: 0.95 }, { scale: 1.0, duration: 0.2 });
+            if (viewerB) {
+                viewerB.zoomTo();
+                viewerB.render();
+            }
+            if (viewerF) {
+                viewerF.zoomTo();
+                viewerF.render();
+            }
+        }
+
+        function toggleSpin() {
+            isSpinning = !isSpinning;
+            gsap.fromTo("#btnSpin", { scale: 0.95 }, { scale: 1.0, duration: 0.2 });
+            if (viewerB) viewerB.spin(isSpinning);
+            if (viewerF) viewerF.spin(isSpinning);
+        }
+
+        function restoreActiveHotspot() {
+            if (!activeSpecimenKey) return;
+            const data = proteinData[activeSpecimenKey];
+            const hotspot = data.hotspots.find((item) => item.id === activeHotspotId) || data.hotspots[0];
+            if (hotspot) activateHotspot(activeSpecimenKey, hotspot.id);
+        }
+
+        function downloadFile(type) {
+            const selected = $("#proteinSelect").val();
+            const data = proteinData[selected];
+            const url = type === "backbone" ? data.backbone : data.folded;
+            const filename = url.substring(url.lastIndexOf('/') + 1);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        let customBackbonePDB = null;
+        let customFoldedPDB = null;
+        let customBackboneName = "Custom Backbone";
+        let customFoldedName = "Custom Folded";
+
+        function handlePDBUpload(type) {
+            const fileInput = document.getElementById(type === 'backbone' ? 'uploadBackbone' : 'uploadFolded');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                if (type === 'backbone') {
+                    customBackbonePDB = text;
+                    customBackboneName = file.name;
+                    $("#backboneFileName").text(file.name).css("color", "var(--primary)");
+                } else {
+                    customFoldedPDB = text;
+                    customFoldedName = file.name;
+                    $("#foldedFileName").text(file.name).css("color", "var(--primary)");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function getSequenceFromPDB(pdbText) {
+            const threeToOne = {
+                'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C',
+                'GLU':'E', 'GLN':'Q', 'GLY':'G', 'HIS':'H', 'ILE':'I',
+                'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 'PRO':'P',
+                'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'
+            };
+            const caAtoms = parseCA(pdbText);
+            caAtoms.sort((a, b) => a.resSeq - b.resSeq);
+            
+            let seq = "";
+            let lastResSeq = null;
+            for (let atom of caAtoms) {
+                if (atom.resSeq !== lastResSeq) {
+                    const oneLetter = threeToOne[atom.resName.toUpperCase()] || 'X';
+                    seq += oneLetter;
+                    lastResSeq = atom.resSeq;
+                }
+            }
+            return seq;
+        }
+
+        function calculateAveragePlddt(pdbText) {
+            const lines = pdbText.split('\n');
+            let sum = 0;
+            let count = 0;
+            for (let line of lines) {
+                if (line.startsWith('ATOM  ') || line.startsWith('HETATM')) {
+                    const atomName = line.substring(12, 16).trim();
+                    if (atomName === 'CA') {
+                        const bFactor = parseFloat(line.substring(60, 66).trim());
+                        if (!isNaN(bFactor)) {
+                            sum += bFactor;
+                            count++;
+                        }
+                    }
+                }
+            }
+            return count > 0 ? (sum / count) : 0.0;
+        }
+
+        function applyUploadedPDBs() {
+            if (!customFoldedPDB) {
+                alert("Please upload at least the Folded PDB (Prediction) file.");
+                return;
+            }
+
+            const sequence = getSequenceFromPDB(customFoldedPDB);
+            const residuesCount = parseCA(customFoldedPDB).length;
+            const plddtVal = calculateAveragePlddt(customFoldedPDB);
+
+            proteinData["custom"] = {
+                backbone: "custom_backbone",
+                folded: "custom_folded",
+                sequence: sequence,
+                conf: 0.0,
+                plddt: plddtVal,
+                res: `${residuesCount} residues`,
+                specimen: "Custom Upload",
+                name: customFoldedName.replace(".pdb", ""),
+                classLabel: "User Uploaded Structure",
+                source: "Uploaded PDB",
+                narrative: "A user-uploaded structure analyzed in real-time in the browser.",
+                hotspots: []
+            };
+
+            backboneRawData = customBackbonePDB || customFoldedPDB;
+            foldedRawData = customFoldedPDB;
+
+            if ($("#proteinSelect option[value='custom']").length === 0) {
+                $("#proteinSelect").append('<option value="custom">Custom Uploaded PDB</option>');
+            }
+
+            $("#proteinSelect").val("custom");
+            loadSelectedProtein();
+        }
+    </script>
+</body>
+</html>
