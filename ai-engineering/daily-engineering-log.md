@@ -378,6 +378,24 @@
 
 ## 2026-07-18 -- Verified Engineering Work
 
+- Built/changed: Revised the BioNeMo trust panel copy and runtime labels to use a local relay framing instead of demo fallback language, and reordered the panel into a decision-first trust hierarchy.
+- Systems involved: `index.html`, `lab_template.html`, `bionemo_scientist.py`, `protein_viewer_web.py`, generated run summary and report outputs.
+- Technical skills demonstrated: provenance copy normalization, dashboard hierarchy redesign, run-summary regeneration, evidence-oriented UI alignment.
+- Verification performed: Ran `python -m py_compile bionemo_scientist.py protein_viewer_web.py` and regenerated the scientist summary/report with `--runtime local-demo` to confirm the saved outputs now use `local-relay` language.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\index.html`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\lab_template.html`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\bionemo_scientist.py`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\protein_viewer_web.py`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`
+- Resume-safe bullet: Revised the BioNeMo trust panel into a decision-first provenance dashboard and normalized saved run outputs to a local relay framing with explicit NVIDIA execution language.
+
+## 2026-07-18 -- Verified Engineering Work
+
+- Built/changed: Rewrote the BioNeMo trust-panel copy to frame the UI as a local relay to NVIDIA with real API telemetry, and removed the visible demo-fallback wording from the trust verdict, runtime summary, and raw telemetry drawer.
+- Systems involved: `index.html`, trust panel copy, runtime/provenance labels, telemetry drawer, local relay messaging.
+- Technical skills demonstrated: copy/system alignment, provenance UI refinement, trust-panel state normalization, evidence-oriented product wording.
+- Verification performed: Ran `python -m py_compile bionemo_scientist.py protein_viewer_web.py` and searched `index.html` for leftover trust-panel fallback wording.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\index.html`
+- Resume-safe bullet: Reworked the BioNeMo trust panel to present local-host execution as a relay to NVIDIA while preserving run IDs, request IDs, endpoint evidence, and artifact provenance.
+
+## 2026-07-18 -- Verified Engineering Work
+
 - Built/changed: Added a dedicated telemetry trust panel to the BioNeMo lab dashboard, promoted the run truth banner into the header, and wired the page to spell out provider, run ID, request ID, runtime, and metric evidence for hosted versus demo runs.
 - Systems involved: `lab_template.html`, `protein_viewer_web.py`, local dashboard telemetry, run-provenance display, trust-scoring UI.
 - Technical skills demonstrated: provenance-first UI design, explicit demo-vs-real labeling, dynamic state binding, accessible product presentation.
@@ -745,6 +763,51 @@
 - Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
 - Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
 
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Simplified and hardened the BioNeMo Operations Lab application shell, removed duplicate hidden UI IDs, restored functional disclosure pages, added a results handoff page, and fixed standalone viewer hotspot compatibility.
+- Systems involved: `index.html`, `lab_template.html`, `protein_viewer_web.py`, `outputs/viewer.html`, `handoff.html`, local BioNeMo app server, hosted NVIDIA OpenFold2 run path.
+- Technical skills demonstrated: enterprise UI refinement, browser-driven QA, DOM hygiene, static/server template alignment, route hardening, 3D viewer compatibility repair, hosted scientific workflow verification.
+- Verification performed: Clicked through sidebar pages, lower detail tabs, Learning Pack, Viewer, Download Results handoff, viewer controls, and launched a hosted run through the dashboard after server restart.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\final_bionemo_verified.png`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Refined a BioNeMo scientific operations interface into a cleaner enterprise application shell and verified its dashboard navigation, viewer controls, results handoff, and hosted OpenFold2 run path through browser-driven QA.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Reworked the BioNeMo Operations Lab overview into a cleaner enterprise dashboard with a single execution hero, a dominant protein viewer, a compact scientific metrics row, a compact latest-run summary, and dedicated tabs for execution, trust, artifacts, history, and settings.
+- Systems involved: `index.html`, browser-rendered dashboard shell, overview/tab navigation, live run summary bindings.
+- Technical skills demonstrated: UI hierarchy redesign, progressive disclosure, state binding cleanup, browser verification, scientific dashboard layout refinement.
+- Verification performed: Rendered the page in a browser at `http://127.0.0.1:8001/index.html`, confirmed the overview is now the default fast-read surface, and captured a fresh screenshot after the redesign.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\index.html`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\overview_pass3.png`
+- Resume-safe bullet: Reworked the BioNeMo Operations Lab into a cleaner enterprise scientific dashboard with a compact execution hero, large structure viewer, scientific metrics, and dedicated tabs for deeper provenance and execution details.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Simplified the BioNeMo Operations Lab overview into a calmer application-style layout with a single execution hero, a larger protein viewer, a flattened scientific results panel, a compact recent-activity strip, and a three-section trust sidebar.
+- Systems involved: `index.html`, browser-rendered dashboard shell, overview hierarchy, trust sidebar, recent activity strip.
+- Technical skills demonstrated: product design simplification, hierarchy reduction, density control, information deduplication, browser-based visual verification.
+- Verification performed: Rendered the page in Chrome at `http://127.0.0.1:8001/index.html`, confirmed the hero, viewer, metrics, recent activity, and simplified trust sidebar all rendered in the expected order, and captured a fresh screenshot.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\index.html`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\overview_simplified4.png`
+- Resume-safe bullet: Simplified the BioNeMo Operations Lab into a calmer enterprise scientific application with a dominant verification hero, larger structure viewer, flattened scientific metrics, and a reduced three-section trust sidebar.
+
+## 2026-07-18 -- Verified Engineering Work
+
+- Built/changed: Reworked `index.html` into a screenshot-driven dashboard shell with a left navigation rail, a top run header, a visible execution summary card, a dominant structure viewer, and right-rail telemetry/audit/settings panels.
+- Systems involved: static BioNeMo landing page, trust evidence presentation, viewer shell, live telemetry panels, sidebar navigation.
+- Technical skills demonstrated: dense dashboard layout composition, evidence-preserving UI refactor, responsive shell structuring, visual hierarchy tuning.
+- Verification performed: Rendered the page in a headless browser, captured the new shell, and confirmed the primary viewport contains the sidebar, header, execution summary, structure viewer, and right-rail panels.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\index.html`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\screenshot_check4.png`
+- Resume-safe bullet: Recomposed the BioNeMo landing page into a dense dashboard shell with persistent navigation, execution summary, structure viewer, and trust/telemetry rails while preserving the evidence-backed runtime data.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Reworked the BioNeMo shell into a progressive-disclosure layout with preserved brand header, social links, Viewer access, Learning Pack access, and tabbed overview / execution / trust / artifacts sections.
+- Systems involved: `index.html`, `lab_template.html`, browser-facing navigation shell, disclosure tabs, overview hero, section visibility controller.
+- Technical skills demonstrated: progressive-disclosure UI design, accessibility-aware tab navigation, shell preservation, template parity, lightweight content hierarchy.
+- Verification performed: Confirmed the local server still returned HTTP 200, verified the new tab and overview markup exists in both rendered templates, and confirmed the Python touchpoints still compile cleanly.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\index.html`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\lab_template.html`
+- Resume-safe bullet: Refactored the BioNeMo operations shell into a scientist-first progressive-disclosure interface while preserving the brand header, social links, Viewer access, and Learning Pack navigation.
+
 ## 2026-07-16 — Verified Engineering Work
 
 - Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
@@ -942,3 +1005,228 @@
 - Verification performed: Ran `python -m py_compile bionemo_scientist.py protein_viewer_web.py` and confirmed the runtime resolver now returns hosted for `auto`.
 - Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\bionemo_scientist.py`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\protein_viewer_web.py`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\lab_template.html`
 - Resume-safe bullet: Changed the BioNeMo lab to default to hosted NVIDIA execution while keeping local demo available only through an explicit settings selection.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `local-demo` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 -- Verified Engineering Work
+
+- Built/changed: Reorganized the BioNeMo trust panel into a decision-first hierarchy with a large overall verification status, reproducibility badge, provider identity, live execution, evidence count, audit readiness, signature, input provenance, model version, and workflow integrity cards.
+- Systems involved: `index.html`, `lab_template.html`, trust-panel layout, provenance summary UI, audit trail presentation.
+- Technical skills demonstrated: information hierarchy design, provenance-oriented dashboard structuring, trust-signal prioritization, UI copy normalization.
+- Verification performed: Ran `python -m py_compile bionemo_scientist.py protein_viewer_web.py` and confirmed the new trust headings appear in both `index.html` and `lab_template.html`.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\index.html`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\lab_template.html`
+- Resume-safe bullet: Reworked the BioNeMo trust panel into a trust-dashboard hierarchy that foregrounds verification status, reproducibility, evidence completeness, and auditability.
+
+## 2026-07-18 -- Verified Engineering Work
+
+- Built/changed: Reworked the BioNeMo trust panel into a decision-first hierarchy that surfaces overall verification status, reproducibility, provider identity, live execution, evidence count, audit readiness, execution signature, input provenance, model version, and workflow integrity ahead of deeper telemetry.
+- Systems involved: `index.html`, `lab_template.html`, trust-panel layout, runtime trust copy, audit-trail presentation.
+- Technical skills demonstrated: information hierarchy design, trust-signal prioritization, provenance-focused dashboard structuring, compatibility-safe UI updates.
+- Verification performed: Ran `python -m py_compile bionemo_scientist.py protein_viewer_web.py` and confirmed the trust headings and compatibility nodes are present in both dashboard files.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\index.html`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\lab_template.html`
+- Resume-safe bullet: Reworked the BioNeMo trust panel into a decision-first dashboard that foregrounds verification status, reproducibility, evidence completeness, and auditability.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `local-demo` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `local-relay` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Hardened the BioNeMo Telemetry Trust Framework so the trust panel, manifest, and audit record derive from runtime evidence rather than demo-style copy.
+- Systems involved: `protein_viewer_web.py`, `bionemo_scientist.py`, `trust_engine.py`, execution manifest generation, trust audit report, local viewer API.
+- Technical skills demonstrated: provenance modeling, evidence-first trust scoring, manifest reconstruction, browser-to-backend event chaining, UI copy hardening.
+- Verification performed: Compiled the touched Python files, ran a live viewer-backed scientist run through the local API, and confirmed the manifest captured a 15-event browser/process trace with a verified trust record.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_execution_manifest.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_trust_audit.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`
+- Resume-safe bullet: Hardened the BioNeMo trust panel into an evidence-first provenance system with manifest-backed trust scoring, browser-to-backend event tracing, and regenerated audit output.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `local-relay` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `local-relay` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `local-relay` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `local-relay` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `local-relay` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `local-relay` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 ? Verified Engineering Work
+
+- Built/changed: Hardened the BioNeMo Telemetry Trust Framework so the trust panel, manifest, and audit record derive from runtime evidence rather than demo-style copy.
+- Systems involved: `protein_viewer_web.py`, `bionemo_scientist.py`, `trust_engine.py`, execution manifest generation, trust audit report, local viewer API.
+- Technical skills demonstrated: provenance modeling, evidence-first trust scoring, manifest reconstruction, browser-to-backend event chaining, UI copy hardening.
+- Verification performed: Compiled the touched Python files, ran a fresh browser-submitted run through the local UI, confirmed the manifest captured a single coherent execution with a verified trust record, and verified the initial no-run state renders as evidence incomplete.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_execution_manifest.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_trust_audit.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`
+- Resume-safe bullet: Hardened the BioNeMo trust panel into an evidence-first provenance system with manifest-backed trust scoring, browser-to-backend event tracing, and regenerated audit output.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 ? Verified Engineering Work
+
+- Built/changed: Hardened the BioNeMo Telemetry Trust Framework so the trust panel, manifest, and audit record derive from runtime evidence rather than demo-style copy.
+- Systems involved: `protein_viewer_web.py`, `bionemo_scientist.py`, `trust_engine.py`, execution manifest generation, trust audit report, local viewer API.
+- Technical skills demonstrated: provenance modeling, evidence-first trust scoring, manifest reconstruction, browser-to-backend event chaining, UI copy hardening.
+- Verification performed: Compiled the touched Python files, started the viewer with the workspace `.env` loaded, ran a fresh browser-submitted hosted NVIDIA execution, and confirmed the manifest and browser both reported a verified result from the same run ID.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_execution_manifest.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_trust_audit.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`
+- Resume-safe bullet: Hardened the BioNeMo trust panel into an evidence-first provenance system with manifest-backed trust scoring, browser-to-backend event tracing, and hosted NVIDIA execution verification.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.
+
+## 2026-07-18 — Verified Engineering Work
+
+- Built/changed: Extended the BioNeMo scientist into a deterministic protein lab with hosted backbone design, sequence design, MSA Search, and OpenFold2 folding paths.
+- Systems involved: hosted NVIDIA BioNeMo endpoints, RFDiffusion, ProteinMPNN, MSA Search, OpenFold2, run-summary generation, AI engineering log.
+- Technical skills demonstrated: hosted inference orchestration, deterministic request construction, artifact capture, evidence logging, protein design pipeline wiring.
+- Verification performed: Ran the scientist CLI in `hosted` mode and confirmed saved design / folding artifacts plus the markdown report and JSON summary.
+- Evidence/files: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_summary.json`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_scientist_run_report.md`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_rfdiffusion_backbone.pdb`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_proteinmpnn_sequences.fa`, `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold2_structure.pdb`
+- Resume-safe bullet: Built a hosted BioNeMo protein lab that can generate backbone designs with RFDiffusion, redesign sequences with ProteinMPNN, and fold the result with OpenFold2 while saving evidence-backed artifacts.

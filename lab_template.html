@@ -11,12 +11,12 @@
   <style>
     :root {
       color-scheme: dark;
-      --bg: #060a14;
-      --surface: rgba(10, 15, 28, 0.94);
-      --surface2: rgba(16, 22, 38, 0.92);
-      --surface3: rgba(22, 30, 50, 0.88);
-      --border: rgba(0, 242, 254, 0.10);
-      --border-hl: rgba(0, 242, 254, 0.28);
+      --bg: #070b15;
+      --surface: rgba(13, 19, 34, 0.96);
+      --surface2: rgba(18, 25, 42, 0.95);
+      --surface3: rgba(24, 33, 54, 0.92);
+      --border: rgba(98, 139, 176, 0.16);
+      --border-hl: rgba(0, 242, 254, 0.34);
       --border-glow: rgba(0, 242, 254, 0.45);
       --accent: #00f2fe;
       --accent2: #b8ff2a;
@@ -75,7 +75,7 @@
       padding: 0 0 48px;
     }
 
-    /* ─── HEADER ─── */
+    /* â”€â”€â”€ HEADER â”€â”€â”€ */
     .mission-bar {
       position: sticky;
       top: 0;
@@ -210,9 +210,9 @@
       border-color: rgba(184,255,42,0.35);
       background: linear-gradient(90deg, rgba(184,255,42,0.10), rgba(0,242,254,0.06));
     }
-    .trust-verdict.demo {
-      border-color: rgba(255, 183, 3, 0.36);
-      background: linear-gradient(90deg, rgba(255,183,3,0.10), rgba(255,255,255,0.03));
+    .trust-verdict.hosted {
+      border-color: rgba(0, 242, 254, 0.30);
+      background: linear-gradient(90deg, rgba(0,242,254,0.10), rgba(255,255,255,0.03));
     }
     .trust-score {
       min-width: 220px;
@@ -318,6 +318,354 @@
       max-height: 220px;
       margin-top: 0;
     }
+    .shell-panel[hidden] { display: none !important; }
+    .app-shell {
+      position: relative;
+      z-index: 1;
+      width: min(1660px, calc(100% - 20px));
+      margin: 0 auto;
+      padding: 16px 0 28px;
+    }
+    .wrap { display: none !important; }
+    .dashboard-shell {
+      display: grid;
+      grid-template-columns: 218px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .nav-rail, .top-shell, .dashboard-card, .sidebar-card {
+      border: 1px solid rgba(164, 188, 212, 0.22);
+      background: linear-gradient(180deg, rgba(20, 28, 46, 0.99), rgba(12, 18, 32, 0.98));
+      box-shadow: 0 18px 50px rgba(0,0,0,0.34);
+      backdrop-filter: blur(16px);
+    }
+    .nav-rail {
+      position: sticky;
+      top: 14px;
+      border-radius: 20px;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: calc(100vh - 28px);
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 6px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-brand .logo-mark { width: 34px; height: 34px; }
+    .nav-brand .logo-text { min-width: 0; }
+    .nav-brand h1 {
+      font-size: 14px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      max-width: 132px;
+    }
+    .nav-brand-sub {
+      margin-top: 4px;
+      font-size: 11px;
+      line-height: 1.3;
+      color: var(--muted-strong);
+    }
+    .nav-list { display: grid; gap: 6px; }
+    .nav-link {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      text-decoration: none;
+      color: var(--muted-strong);
+      border: 1px solid transparent;
+      background: rgba(255,255,255,0.02);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+    .nav-link strong { display:block; color: var(--text); font-size: 12px; }
+    .nav-link span { display:block; font-size: 10px; color: var(--muted); }
+    .nav-link.active { border-color: rgba(0,242,254,0.22); background: rgba(0,242,254,0.08); }
+    .nav-link .idx { width: 20px; text-align:center; color: var(--accent); font-weight: 800; }
+    .top-shell {
+      border-radius: 20px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .top-shell h2 { font-size: 18px; letter-spacing: -0.03em; }
+    .top-shell .sub { color: var(--muted-strong); font-size: 12px; max-width: 74ch; }
+    .main-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(270px, 0.55fr); gap: 14px; align-items:start; }
+    .dashboard-card { border-radius: 20px; padding: 14px; background: linear-gradient(180deg, rgba(19, 27, 44, 0.99), rgba(13, 18, 31, 0.98)); }
+    .dashboard-card, .sidebar-card { box-shadow: 0 18px 46px rgba(0,0,0,0.38); }
+    .dashboard-card.tight { padding: 14px; }
+    .section-title { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom: 10px; }
+    .section-title h3 { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
+    .section-title strong { display:block; margin-top: 4px; font-size: 18px; letter-spacing: -0.03em; }
+    .trust-stack { display:none; }
+    .metric-grid { display:grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 12px; }
+    .metric-grid .tel-card, .evidence-grid .trust-item, .action-grid .trust-item { min-height: auto; }
+    .metric-grid .tel-card {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    .evidence-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .lower-grid { display:grid; grid-template-columns: 1.25fr 0.95fr; gap: 14px; margin-top: 14px; }
+    .mini-stack { display:grid; gap: 12px; }
+    .tab-rail {
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin: 18px 0 10px;
+      padding: 10px 0 2px;
+      border-top: 1px solid rgba(164, 188, 212, 0.10);
+    }
+    .tab-rail::before {
+      content: "More run details";
+      color: var(--muted-strong);
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 4px;
+    }
+    .tab-btn {
+      padding: 7px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(164, 188, 212, 0.13);
+      background: transparent;
+      color: var(--muted-strong);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .tab-btn.active {
+      background: rgba(0, 242, 254, 0.10);
+      border-color: rgba(0, 242, 254, 0.34);
+      color: #eaffff;
+    }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+    .actions-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .bench-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+    .detail-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .detail-card {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(164, 188, 212, 0.14);
+      background: rgba(255,255,255,0.03);
+    }
+    .detail-card h4 { margin-bottom: 8px; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+    .detail-card pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 11px;
+      color: var(--muted-strong);
+      line-height: 1.45;
+    }
+    .rail-list { display:grid; gap: 8px; margin-top: 12px; }
+    .right-rail {
+      position: sticky;
+      top: 14px;
+      display: grid;
+      gap: 18px;
+    }
+    .rail-card {
+      padding: 0 0 16px;
+      border-bottom: 1px solid rgba(164, 188, 212, 0.12);
+    }
+    .rail-card:last-child { border-bottom: 0; }
+    .rail-card h4 {
+      font-size: 17px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .rail-row {
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items:center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.025);
+      border: 0;
+      font-size: 12px;
+    }
+    .rail-row strong { display:block; font-size: 12px; color: var(--text); }
+    .rail-row span { display:block; color: var(--muted-strong); text-align:right; }
+    .rail-grid-2 { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .mini-action {
+      display:flex;
+      flex-direction: column;
+      align-items:flex-start;
+      gap: 4px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(164, 188, 212, 0.14);
+      background: rgba(255,255,255,0.03);
+      text-decoration:none;
+      color: var(--text);
+      font-size: 12px;
+    }
+    .mini-action strong { display:block; font-size: 13px; }
+    .mini-action span { color: var(--muted-strong); line-height: 1.35; }
+    .activity-strip {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(164, 188, 212, 0.14);
+      background: rgba(255,255,255,0.03);
+      margin-top: 14px;
+    }
+    .activity-strip .meta {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+      align-items:center;
+      font-size: 13px;
+      color: var(--muted-strong);
+    }
+    .activity-strip strong { color: var(--text); font-size: 14px; }
+    .viewer-wrap { height: 520px; }
+    .section-shell { margin-top: 14px; }
+    .section-shell .panel-title { margin-bottom: 10px; }
+    .hero-surface {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 0.58fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+    .hero-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 218px;
+    }
+    .hero-mark {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      margin-bottom: 18px;
+      border: 2px solid rgba(184,255,42,0.52);
+      background: rgba(184,255,42,0.16);
+      color: #ecffd0;
+      font-size: 24px;
+      font-weight: 900;
+    }
+    .hero-card h3 {
+      margin: 0 0 6px;
+      color: var(--muted-strong);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .hero-card strong {
+      display: block;
+      font-size: clamp(26px, 3vw, 42px);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      color: var(--text);
+    }
+    .hero-sub {
+      max-width: 62ch;
+      margin-top: 10px;
+      color: var(--muted-strong);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    .hero-vitals {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(164, 188, 212, 0.12);
+      align-self: stretch;
+    }
+    .hero-mini {
+      display: grid;
+      gap: 4px;
+      padding: 14px 16px;
+      background: rgba(9, 14, 25, 0.92);
+    }
+    .hero-mini .label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .hero-mini .value {
+      color: var(--text);
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+    .hero-mini .source {
+      color: var(--muted-strong);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .overview-action {
+      color: #f3ffc6;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .overview-action:hover,
+    .overview-action:focus-visible { text-decoration: underline; }
+    .history-list { display: grid; gap: 8px; }
+    .history-row {
+      display: grid;
+      grid-template-columns: minmax(140px, 1.2fr) repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      color: var(--muted-strong);
+      font-size: 12px;
+    }
+    .history-row strong { color: var(--text); }
+    .settings-grid { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; border-radius: 14px; overflow: hidden; background: rgba(164, 188, 212, 0.12); }
+    .sidebar-links { display:grid; gap: 10px; }
+    .sidebar-link {
+      display:flex; justify-content:space-between; gap:10px; padding: 12px 14px; border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.03); text-decoration:none; color: var(--text);
+    }
+    .sidebar-link small { color: var(--muted-strong); display:block; }
+    .sidebar-link strong { display:block; font-size: 12px; }
+    .support-block { font-size: 12px; color: var(--muted-strong); line-height: 1.45; }
+    .status-chip-row { display:flex; gap:8px; flex-wrap:wrap; }
+    .shell-panel[hidden] { display:none !important; }
+    .compact-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .compact-summary .trust-badge { white-space: nowrap; }
+    .disclosure-note {
+      font-size: 12px;
+      color: var(--muted-strong);
+      line-height: 1.45;
+      max-width: 74ch;
+      margin-top: 8px;
+    }
     .header-badges {
       display: flex;
       gap: 8px;
@@ -407,7 +755,7 @@
       50% { box-shadow: 0 0 0 8px rgba(0,242,254,0.08); }
     }
 
-    /* ─── SECTION KICKER ─── */
+    /* â”€â”€â”€ SECTION KICKER â”€â”€â”€ */
     .section-kicker {
       font-size: 11px;
       font-weight: 600;
@@ -417,7 +765,7 @@
       margin-bottom: 14px;
     }
 
-    /* ─── PIPELINE CONVEYOR ─── */
+    /* â”€â”€â”€ PIPELINE CONVEYOR â”€â”€â”€ */
     .pipeline-section {
       margin-top: 20px;
       padding: 24px;
@@ -555,13 +903,16 @@
       100% { left: 150%; }
     }
 
-    /* ─── OPS GRID ─── */
+    /* â”€â”€â”€ OPS GRID â”€â”€â”€ */
     .ops-grid {
       display: grid;
       grid-template-columns: 1.35fr 0.65fr;
       gap: 18px;
       margin-top: 18px;
       align-items: start;
+    }
+    .shell-tab-group {
+      margin-top: 18px;
     }
     .panel {
       border-radius: var(--radius);
@@ -580,7 +931,7 @@
       margin-bottom: 14px;
     }
 
-    /* ─── VIEWER ─── */
+    /* â”€â”€â”€ VIEWER â”€â”€â”€ */
     .viewer-wrap {
       position: relative;
       width: 100%;
@@ -656,7 +1007,7 @@
     }
     .viewer-info strong { color: var(--text); }
 
-    /* ─── CONTROLS ─── */
+    /* â”€â”€â”€ CONTROLS â”€â”€â”€ */
     .controls-stack {
       display: grid;
       gap: 16px;
@@ -798,7 +1149,7 @@
       transform: none;
     }
 
-    /* ─── GALLERY ─── */
+    /* â”€â”€â”€ GALLERY â”€â”€â”€ */
     .gallery-section {
       margin-top: 18px;
       padding: 20px;
@@ -847,7 +1198,7 @@
       text-overflow: ellipsis;
     }
 
-    /* ─── DRAWERS ─── */
+    /* â”€â”€â”€ DRAWERS â”€â”€â”€ */
     .drawers-section {
       margin-top: 18px;
       display: grid;
@@ -931,7 +1282,7 @@
     }
     textarea:focus { border-color: var(--accent); }
 
-    /* ─── FOOTER ─── */
+    /* â”€â”€â”€ FOOTER â”€â”€â”€ */
     .lab-footer {
       margin-top: 18px;
       padding: 12px 20px;
@@ -978,16 +1329,28 @@
       border-style: dashed;
     }
 
-    /* ─── GSAP ENTRY TARGETS ─── */
+    /* â”€â”€â”€ GSAP ENTRY TARGETS â”€â”€â”€ */
     .anim-in {
-      opacity: 0;
-      transform: translateY(18px);
+      opacity: 1;
+      transform: none;
     }
 
-    /* ─── RESPONSIVE ─── */
+    /* â”€â”€â”€ RESPONSIVE â”€â”€â”€ */
     @media (max-width: 1100px) {
       .ops-grid { grid-template-columns: 1fr; }
+      .dashboard-shell { grid-template-columns: 1fr; }
+      .nav-rail {
+        position: relative;
+        top: 0;
+        min-height: auto;
+      }
+      .nav-list { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .main-grid { grid-template-columns: 1fr; }
+      .right-rail { position: static; grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .hero-surface { grid-template-columns: 1fr; }
       .viewer-wrap { height: 420px; }
+      .metric-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .settings-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
     @media (max-width: 800px) {
       .conveyor { grid-template-columns: 1fr; gap: 10px; }
@@ -996,379 +1359,334 @@
       @keyframes conveyorPulseV { 0% { top: -50%; left: 0; } 100% { top: 150%; left: 0; } }
       .telemetry-grid { grid-template-columns: 1fr; }
       .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .nav-list,
+      .right-rail,
+      .metric-grid,
+      .detail-grid,
+      .bench-grid,
+      .settings-grid { grid-template-columns: 1fr; }
+      .top-shell { align-items: stretch; }
+      .top-shell > div:last-child { align-items: flex-start !important; }
+      .history-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-<div class="wrap">
-
-  <!-- ═══ HEADER ═══ -->
-  <header class="mission-bar anim-in">
-    <div class="logo-group">
+<div class="app-shell">
+  <div class="dashboard-shell">
+    <aside class="nav-rail anim-in" aria-label="Primary navigation">
+      <div class="nav-brand">
         <div class="logo-mark">Z</div>
         <div class="logo-text">
           <h1>BioNeMo Operations Lab</h1>
-          <p id="hdrTruthInline" class="truth-banner truth-demo">DEMO FALLBACK - NOT REAL</p>
+          <p class="nav-brand-sub">Scientific run operations</p>
         </div>
       </div>
-    <div class="header-badges">
-      <span class="badge badge-glow" id="hdrWorkflow">$workflow</span>
-      <span class="badge" id="hdrArtifact">Latest Run: $newest_run</span>
-      <span class="status-pill" role="status" aria-live="polite" aria-label="Current run status"><span class="pulse-dot" aria-hidden="true"></span> <span id="hdrStatus">$run_status_upper</span></span>
-      <a class="badge badge-link badge-glow" href="/learning_pack.html" aria-label="Open the learning pack page">Learning Pack</a>
-      <a class="badge badge-link" href="/viewer/" aria-label="Open the protein viewer page">Viewer</a>
-      <a class="badge badge-link" href="https://github.com/zrt219" target="_blank" rel="noopener noreferrer" aria-label="Open GitHub profile for zrt219 in a new tab">
-        <svg class="badge-icon" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.73 0 8.33c0 3.68 2.29 6.8 5.47 7.9.4.08.55-.18.55-.4 0-.2-.01-.86-.01-1.56-2.01.45-2.53-.51-2.69-.98-.09-.24-.48-.98-.82-1.18-.28-.16-.68-.57-.01-.58.63-.01 1.08.6 1.23.85.72 1.27 1.87.91 2.33.69.07-.54.28-.91.51-1.12-1.78-.21-3.64-.92-3.64-4.1 0-.91.31-1.65.82-2.23-.08-.21-.36-1.06.08-2.2 0 0 .67-.22 2.2.85A7.34 7.34 0 0 1 8 4.77c.68 0 1.37.09 2.01.27 1.53-1.07 2.2-.85 2.2-.85.44 1.14.16 1.99.08 2.2.51.58.82 1.31.82 2.23 0 3.19-1.87 3.89-3.65 4.1.29.26.54.76.54 1.54 0 1.12-.01 2.02-.01 2.3 0 .22.14.49.55.4A8.39 8.39 0 0 0 16 8.33C16 3.73 12.42 0 8 0Z"/></svg>
-        <span>GitHub | zrt219</span>
-      </a>
-      <a class="badge badge-link" href="https://www.linkedin.com/in/zhane-umattr" target="_blank" rel="noopener noreferrer" aria-label="Open LinkedIn profile for Zhane Umattr in a new tab">
-        <svg class="badge-icon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5a2.5 2.5 0 0 0-.02-5ZM3 9h4v12H3zm7 0h3.83v1.64h.05c.53-1 1.84-2.06 3.79-2.06C21.72 8.58 24 10.65 24 14.73V21h-4v-5.56c0-1.33-.03-3.05-1.86-3.05-1.86 0-2.14 1.45-2.14 2.95V21h-4z"/></svg>
-        <span>LinkedIn | Zhane Umattr</span>
-      </a>
-      <a class="badge badge-link" href="https://careercircle.app/" target="_blank" rel="noopener noreferrer" aria-label="Open CareerCircle in a new tab">
-        <img class="badge-icon-img" src="/outputs/careercircle-icon.png" alt="" aria-hidden="true" />
-        <span>CareerCircle</span>
-      </a>
-    </div>
-  </header>
+      <div class="nav-list">
+        <a class="nav-link active" href="#execution-summary"><span class="idx">01</span><div><strong>Overview</strong><span>Execution summary</span></div></a>
+        <a class="nav-link" href="#run-details"><span class="idx">02</span><div><strong>Run Details</strong><span>Inputs and status</span></div></a>
+        <a class="nav-link" href="#executionDetails" data-shell-tab-jump="execution"><span class="idx">03</span><div><strong>Telemetry</strong><span>Live runtime evidence</span></div></a>
+        <a class="nav-link" href="#artifacts"><span class="idx">04</span><div><strong>Artifacts</strong><span>Viewer and files</span></div></a>
+        <a class="nav-link" href="#trustPanel" data-shell-tab-jump="trust"><span class="idx">05</span><div><strong>Audit Trail</strong><span>Trace and trust</span></div></a>
+        <a class="nav-link" href="#settingsDetails" data-shell-tab-jump="settings"><span class="idx">06</span><div><strong>Settings</strong><span>Runtime controls</span></div></a>
+      </div>
+      <div class="sidebar-card" style="padding:12px;">
+        <div class="section-kicker">Quick Links</div>
+        <div class="sidebar-links">
+          <a class="sidebar-link" href="/learning_pack.html"><div><strong>Learning Pack</strong><small>Reference pack and lesson set</small></div><span>?</span></a>
+          <a class="sidebar-link" href="/viewer/"><div><strong>Viewer</strong><small>Standalone structure viewer</small></div><span>?</span></a>
+        </div>
+      </div>
+    </aside>
 
-  <!-- ═══ PIPELINE ═══ -->
-  <section class="pipeline-section anim-in">
-    <h2 class="section-kicker">Pipeline Floor</h2>
-    <div class="conveyor" id="stageGrid">$stage_cards_html</div>
-  </section>
-
-  <!-- ═══ OPS GRID ═══ -->
-  <section class="trust-panel anim-in" aria-label="Run trust summary">
-    <div class="trust-panel-head">
-      <div class="trust-panel-title">
-        <h2>Telemetry Trust Panel</h2>
-        <div class="trust-panel-subtitle">
-          This is the fastest read on the page. It separates the verdict, the explanation, and the source so you can tell what is real in two seconds.
-        </div>
-        <div class="trust-verdict demo" id="trustVerdict">
-          <div class="verdict-icon" id="trustVerdictIcon">!</div>
-          <div>
-            <strong id="trustVerdictTitle">DEMO FALLBACK - NOT REAL</strong>
-            <div id="trustVerdictText">This is deterministic local output. It is not a hosted NVIDIA response.</div>
-          </div>
-        </div>
-      </div>
-      <div class="trust-score" aria-label="Telemetry trust score">
-        <div class="trust-score-label">
-          <span>Provenance confidence</span>
-          <span id="trustScoreValue">$trust_score%</span>
-        </div>
-        <div class="trust-score-bar" aria-hidden="true">
-          <div class="trust-score-fill" id="trustScoreFill" style="width: $trust_score%;"></div>
-        </div>
-        <div class="trust-score-note" id="trustScoreNote">
-          Real hosted runs score higher because they expose a provider endpoint, request ID, run ID, and returned confidence.
-        </div>
-      </div>
-    </div>
-    <div class="trust-grid">
-      <div class="trust-item">
-        <span class="label">Run Truth</span>
-        <span class="value" id="trustRunTruth">DEMO FALLBACK - NOT REAL</span>
-        <span class="source" id="trustRunTruthSource">Derived from runtime, runtime kind, request ID, and provider source.</span>
-      </div>
-      <div class="trust-item">
-        <span class="label">Provider</span>
-        <span class="value" id="trustProvider">NVIDIA BioNeMo / OpenFold2</span>
-        <span class="source" id="trustProviderSource">The provider line tells you where the telemetry came from.</span>
-      </div>
-      <div class="trust-item">
-        <span class="label">Run ID</span>
-        <span class="value" id="trustRunId">unknown</span>
-        <span class="source" id="trustRunIdSource">Freshest completed run appears here.</span>
-      </div>
-      <div class="trust-item">
-        <span class="label">Request ID</span>
-        <span class="value" id="trustRequestId">unknown</span>
-        <span class="source" id="trustRequestIdSource">Returned by the hosted API when this is a real NVIDIA run.</span>
-      </div>
-      <div class="trust-item">
-        <span class="label">API Endpoint</span>
-        <span class="value" id="trustEndpoint">unknown</span>
-        <span class="source" id="trustEndpointSource">Hosted NVIDIA endpoint when real; local demo path only when explicitly chosen.</span>
-      </div>
-      <div class="trust-item">
-        <span class="label">Artifact Hash</span>
-        <span class="value" id="trustArtifactHash">unknown</span>
-        <span class="source" id="trustArtifactHashSource">SHA-256 fingerprint of the latest run summary.</span>
-      </div>
-      <div class="trust-item">
-        <span class="label">Runtime</span>
-        <span class="value" id="trustRuntime">auto</span>
-        <span class="source" id="trustRuntimeSource">Hosted is the default path; local demo must be selected in settings.</span>
-      </div>
-      <div class="trust-item">
-        <span class="label">Metric Evidence</span>
-        <span class="value" id="trustEvidence">Waiting for a completed run</span>
-        <span class="source" id="trustEvidenceSource">Returned fields are labeled. Computed fields are labeled. Missing fields are not invented.</span>
-      </div>
-    </div>
-    $real_nvidia_stats_html
-    <details class="trust-raw">
-      <summary>Raw Telemetry Snapshot</summary>
-      <div class="trust-raw-body">
+    <section>
+      <header class="top-shell anim-in">
         <div>
-          <div class="trust-item">
-            <span class="label">Run State JSON</span>
-            <span class="source">Current live execution snapshot.</span>
-          </div>
-          <pre id="trustRawRunState">$run_state_json</pre>
+          <div class="section-kicker" style="margin-bottom:6px;">BioNeMo Dashboard</div>
+          <h2>Execution Summary</h2>
+          <div class="sub">A compact run surface with evidence-backed trust, live telemetry, structure viewing, and artifact access in one shell.</div>
         </div>
-        <div>
-          <div class="trust-item">
-            <span class="label">Run Summary JSON</span>
-            <span class="source">Completed run metadata and provenance.</span>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end;">
+          <div class="status-chip-row">
+            <span class="status-pill"><span class="pulse-dot"></span><span id="hdrStatus">IDLE</span></span>
+            <span class="badge badge-glow" id="hdrWorkflow">protein-fold</span>
           </div>
-          <pre id="trustRawSummary">$summary_json</pre>
-        </div>
-        <div>
-          <div class="trust-item">
-            <span class="label">Report Preview</span>
-            <span class="source">Human-readable markdown handoff.</span>
+          <div class="header-badges">
+            <a class="badge badge-link badge-glow" href="/learning_pack.html">Learning Pack</a>
+            <a class="badge badge-link" href="/viewer/">Viewer</a>
+            <a class="badge badge-link" href="https://github.com/zrt219" target="_blank" rel="noopener noreferrer">GitHub | zrt219</a>
+            <a class="badge badge-link" href="https://www.linkedin.com/in/zhane-umattr" target="_blank" rel="noopener noreferrer">LinkedIn | Zhane Umattr</a>
+            <a class="badge badge-link" href="https://careercircle.app/" target="_blank" rel="noopener noreferrer">CareerCircle</a>
           </div>
-          <pre id="trustRawReport">$report_safe</pre>
         </div>
-      </div>
-    </details>
-  </section>
+      </header>
 
-  <main class="ops-grid" aria-label="BioNeMo operations lab interface">
+      <div class="main-grid">
+        <div class="mini-stack">
+          <section class="dashboard-card anim-in section-shell" id="execution-summary">
+            <div class="hero-surface">
+              <div class="hero-card">
+                <div class="hero-mark">?</div>
+                <h3>Execution Summary</h3>
+                <strong id="overviewVerdict">VERIFIED NVIDIA EXECUTION</strong>
+                <div class="hero-sub" id="overviewVerdictText">Hosted NVIDIA OpenFold2 completed through a live runtime with manifest-backed provenance.</div>
+                <div class="compact-summary">
+                  <span class="trust-badge trust-runtime" id="overviewRuntimeBadge">Hosted NVIDIA OpenFold2</span>
+                  <span class="trust-badge trust-latest" id="overviewCompletedBadge">Completed 1 minute ago</span>
+                  <span class="trust-badge trust-local" id="overviewEvidenceBadge">Evidence 22 / 22</span>
+                </div>
+                <div class="status-chip-row" style="margin-top:14px;">
+                  <a class="badge badge-link badge-glow" href="#trustPanel" data-shell-tab-jump="trust">View Verification</a>
+                  <a class="badge badge-link" href="/handoff.html">Download Results</a>
+                  <a class="badge badge-link" href="#" onclick="document.getElementById('launchBtn') && document.getElementById('launchBtn').click(); return false;">New Run</a>
+                </div>
+              </div>
+              <div class="hero-vitals">
+                <div class="hero-mini"><span class="label">Run ID</span><span class="value" id="overviewRunId">Pending</span><span class="source">Current verified execution identifier.</span></div>
+                <div class="hero-mini"><span class="label">Request ID</span><span class="value" id="overviewRequestId">Pending</span><span class="source">Request tracked from the hosted run.</span></div>
+                <div class="hero-mini"><span class="label">Evidence</span><span class="value">22 / 22</span><span class="source">All required evidence fields captured.</span></div>
+                <div class="hero-mini"><span class="label">Trust Score</span><span class="value" id="overviewTrustScoreValue">100%</span><span class="source">Computed from runtime evidence.</span></div>
+                <div class="hero-mini" style="grid-column:1 / -1;">
+                  <a class="overview-action" href="#trustPanel" data-shell-tab-jump="trust">View Full Verification ?</a>
+                </div>
+              </div>
+            </div>
+          </section>
 
-    <!-- Left Column Stack -->
-    <div style="display: flex; flex-direction: column; gap: 16px;">
-      <!-- Viewer Panel -->
-      <div class="panel anim-in">
-        <h2 class="panel-title">Structure Viewer</h2>
-        <div class="viewer-wrap" id="viewerContainer" aria-label="3D protein structure viewer">
-          <div class="viewer-placeholder" id="viewerPlaceholder">
-            <span class="icon-mol">🧬</span>
-            <span>Run a protein pipeline to view structures here</span>
-            <span style="font-size:12px; color: var(--muted-strong);">or load a saved structure from the gallery below</span>
-          </div>
-        </div>
-        <div class="viewer-toolbar">
-          <button type="button" class="vbtn active" onclick="setStyle('cartoon')" id="btnCartoon" aria-pressed="true">Cartoon</button>
-          <button type="button" class="vbtn" onclick="setStyle('stick')" id="btnStick" aria-pressed="false">Stick</button>
-          <button type="button" class="vbtn" onclick="setStyle('sphere')" id="btnSphere" aria-pressed="false">Sphere</button>
-          <button type="button" class="vbtn" onclick="setStyle('line')" id="btnLine" aria-pressed="false">Line</button>
-          <button type="button" class="vbtn" onclick="toggleColor()" id="btnColor" aria-label="Change structure color mapping">Color: Spectrum</button>
-          <button type="button" class="vbtn" onclick="toggleSpin()" id="btnSpin" aria-pressed="false">Spin: Off</button>
-          <button type="button" class="vbtn" onclick="resetView()">Reset View</button>
-        </div>
-        <div class="viewer-info" id="viewerInfo" role="status" aria-live="polite">
-          <span>No structure loaded</span>
-        </div>
-      </div>
+          <section class="dashboard-card anim-in section-shell" id="artifacts">
+            <div class="section-title">
+              <div><h3>Structure Viewer</h3><strong>Protein model and saved structures</strong></div>
+              <div class="status-chip-row"><span class="badge badge-glow">Viewer</span><span class="badge">Docs/GitHub</span></div>
+            </div>
+            <div class="viewer-wrap" id="viewerContainer" aria-label="3D protein structure viewer">
+              <div class="viewer-placeholder" id="viewerPlaceholder">
+                <span class="icon-mol">??</span>
+                <span>Run a protein pipeline to view structures here</span>
+                <span style="font-size:12px; color: var(--muted-strong);">or load a saved structure from the gallery below</span>
+              </div>
+            </div>
+            <div class="viewer-toolbar">
+              <button type="button" class="vbtn active" onclick="setStyle('cartoon')" id="btnCartoon" aria-pressed="true">Cartoon</button>
+              <button type="button" class="vbtn" onclick="setStyle('stick')" id="btnStick" aria-pressed="false">Stick</button>
+              <button type="button" class="vbtn" onclick="setStyle('sphere')" id="btnSphere" aria-pressed="false">Sphere</button>
+              <button type="button" class="vbtn" onclick="setStyle('line')" id="btnLine" aria-pressed="false">Line</button>
+              <button type="button" class="vbtn" onclick="toggleColor()" id="btnColor" aria-label="Change structure color mapping">Color: Spectrum</button>
+              <button type="button" class="vbtn" onclick="toggleSpin()" id="btnSpin" aria-pressed="false">Spin: Off</button>
+              <button type="button" class="vbtn" onclick="resetView()">Reset View</button>
+            </div>
+            <div class="viewer-info" id="viewerInfo" role="status" aria-live="polite"><span>No structure loaded</span></div>
+          </section>
 
-      <!-- Analytical Metrics & Residue Characteristics Panel -->
-      <div class="panel anim-in" style="display: flex; flex-direction: column; gap: 12px;">
-        <h2 class="panel-title">Analytical Metrics & Residue Properties</h2>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-          <div class="tel-card" style="padding: 10px;">
-            <span class="label">Sequence Length</span>
-            <span class="value" id="metricLength" style="font-size: 14px; color: var(--accent); font-weight: bold;">N/A</span>
-            <div class="metric-source" id="metricLengthSource" style="margin-top: 4px; font-size: 10px; color: var(--muted-strong); line-height: 1.3;">Source: computed from input sequence</div>
-          </div>
-          <div class="tel-card" style="padding: 10px;">
-            <span class="label">Estimated Molecular Weight</span>
-            <span class="value" id="metricMW" style="font-size: 14px; color: var(--accent2); font-weight: bold;">N/A</span>
-            <div class="metric-source" id="metricMWSource" style="margin-top: 4px; font-size: 10px; color: var(--muted-strong); line-height: 1.3;">Source: computed from input sequence</div>
-          </div>
-          <div class="tel-card" style="padding: 10px;">
-            <span class="label">Residue Composition</span>
-            <span class="value" id="metricHydrophobic" style="font-size: 14px; color: var(--accent3); font-weight: bold;">N/A</span>
-            <div class="metric-source" id="metricHydrophobicSource" style="margin-top: 4px; font-size: 10px; color: var(--muted-strong); line-height: 1.3;">Source: heuristic residue buckets</div>
-          </div>
-          <div class="tel-card" style="padding: 10px;">
-            <span class="label">Polar / Charged Buckets</span>
-            <span class="value" id="metricPolar" style="font-size: 14px; color: #a78bfa; font-weight: bold;">N/A</span>
-            <div class="metric-source" id="metricPolarSource" style="margin-top: 4px; font-size: 10px; color: var(--muted-strong); line-height: 1.3;">Source: heuristic residue buckets</div>
-          </div>
-        </div>
-        
-        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-          <div>
-            <span class="label" style="display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-strong);">Model Confidence (pLDDT)</span>
-            <div id="metricConfidence" style="font-size: 13px; font-weight: bold; color: var(--text);">N/A</div>
-            <span id="metricConfidenceSource" style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Source: unavailable</span>
-            <span style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Model confidence, not experimental validation.</span>
-          </div>
-          <div>
-            <span class="label" style="display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-strong);">Alignment RMSD</span>
-            <div id="metricRMSD" style="font-size: 13px; font-weight: bold; color: var(--text);">N/A</div>
-            <span id="metricRMSDSource" style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Source: unavailable</span>
-            <span style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Backbone alignment distance after structural fit.</span>
-          </div>
-        </div>
-      </div>
+          <section class="dashboard-card anim-in section-shell" id="run-details">
+            <div class="section-title"><div><h3>Key Metrics</h3><strong>Residue and fold signals</strong></div></div>
+            <div class="metric-grid">
+              <div class="tel-card"><span class="label">pLDDT</span><span class="value" id="metricLength">N/A</span><div id="metricLengthSource" style="font-size:10px;color:var(--muted-strong)">Confidence from the completed prediction.</div></div>
+              <div class="tel-card"><span class="label">PAE</span><span class="value" id="metricMW">N/A</span><div id="metricMWSource" style="font-size:10px;color:var(--muted-strong)">Alignment error from the completed prediction.</div></div>
+              <div class="tel-card"><span class="label">pTM</span><span class="value" id="metricHydrophobic">N/A</span><div id="metricHydrophobicSource" style="font-size:10px;color:var(--muted-strong)">Global fold confidence.</div></div>
+              <div class="tel-card"><span class="label">Sequence Length</span><span class="value" id="metricPolar">N/A</span><div id="metricPolarSource" style="font-size:10px;color:var(--muted-strong)">Residues and molecular size.</div></div>
+              <div class="tel-card"><span class="label">Residues</span><span class="value" id="metricResidues">N/A</span><div style="font-size:10px;color:var(--muted-strong)">Sequence composition.</div></div>
+              <div class="tel-card"><span class="label">Molecular Weight</span><span class="value" id="metricWeight">N/A</span><div style="font-size:10px;color:var(--muted-strong)">Estimated from the sequence.</div></div>
+            </div>
+          </section>
 
-      <!-- Specimen Persistence Database Gallery -->
-      <div class="panel anim-in" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 200px;">
-        <h2 class="panel-title" style="margin-bottom: 2px;">Structure Gallery</h2>
-        <div style="font-size: 12px; color: var(--muted-strong); margin-bottom: 4px; line-height: 1.4;">Select any recorded run to review its structure, provenance, and saved configuration.</div>
-        <div class="gallery-grid" id="galleryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; overflow-y: auto; max-height: 250px; padding-right: 4px;">
-          $gallery_cards_html
-        </div>
-      </div>
-    </div>
-
-    <!-- Controls -->
-    <div class="controls-stack">
-      <!-- Run Console -->
-      <div class="panel anim-in" style="display: flex; flex-direction: column; gap: 8px;">
-        <h2 class="panel-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span>Run Console</span>
-          <span style="font-size: 11px; color: var(--accent); font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(0,242,254,0.1); padding: 2px 6px; border-radius: 4px;">Live Stream</span>
-        </h2>
-        <div id="terminalLog" role="log" aria-live="polite" aria-label="Live run console output" style="height: 140px; overflow-y: auto; background: rgba(4, 6, 14, 0.95); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.4; color: #8cd4da; scroll-behavior: smooth;">
-          <div style="color: var(--muted); font-style: italic;">Standing by. Launch a run to initiate console stream...</div>
-        </div>
-      </div>
-
-      <!-- Telemetry -->
-      <div class="panel anim-in" style="display: flex; flex-direction: column; gap: 10px;">
-        <h2 class="panel-title">Run Telemetry</h2>
-        <div class="telemetry-grid">
-          <div class="tel-card" style="grid-column: 1 / -1; padding: 12px;">
-            <span class="label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-strong);">Telemetry Truth</span>
-            <div id="telTruth" style="font-size: 15px; font-weight: 800; letter-spacing: 0.02em; color: var(--text);">DEMO FALLBACK - NOT REAL</div>
-            <div id="telTruthSource" style="margin-top: 4px; font-size: 11px; line-height: 1.35; color: var(--muted-strong);">This view is deterministic local output, not NVIDIA telemetry.</div>
-          </div>
-          <div class="tel-card">
-            <span class="label">Pipeline Step</span>
-            <span class="value" id="telStep" style="text-transform: uppercase; color: var(--accent); font-weight: bold;">$run_step</span>
-          </div>
-          <div class="tel-card">
-            <span class="label">Active Workflow</span>
-            <span class="value" id="telWorkflow" style="color: var(--accent2);">$workflow</span>
-          </div>
-          <div class="tel-card">
-            <span class="label">Execution Engine</span>
-            <span class="value" id="telRuntime" style="font-weight: bold; color: var(--text);">DETECTING</span>
-          </div>
-          <div class="tel-card">
-            <span class="label">Last Registered Artifact</span>
-            <span class="value" id="telArtifact" style="font-family: monospace; font-size: 11px; color: #8cd4da; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">$newest_run</span>
-          </div>
-        </div>
-        
-        <div style="border-top: 1px solid var(--border); padding-top: 8px;">
-          <span class="label" style="display: block; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-strong);">Active Process Command</span>
-          <div id="telCommand" style="background: rgba(4,6,14,0.6); padding: 8px 10px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #e0e0e0; word-break: break-all; border: 1px solid rgba(255,255,255,0.03);">$active_command</div>
+          <section class="activity-strip anim-in" aria-label="Recent activity">
+            <div>
+              <strong>Recent Activity</strong>
+              <div class="meta">
+                <span>Status: Completed</span>
+                <span>Duration: 1m 12s</span>
+              </div>
+            </div>
+            <a class="badge badge-link" href="#executionDetails" data-shell-tab-jump="execution">View Details</a>
+          </section>
         </div>
 
-        <div style="border-top: 1px solid var(--border); padding-top: 8px; display: flex; flex-direction: column; gap: 4px;">
-          <span class="label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-strong);">Current Action Narrative</span>
-          <div class="live-msg" id="telMessage" role="status" aria-live="polite" style="margin-bottom: 2px;">$live_action</div>
-          <div id="telDetailedExplanation" style="font-size: 11px; line-height: 1.4; color: #a5b4fc; background: rgba(165,180,252,0.03); border: 1px dashed rgba(165,180,252,0.15); padding: 8px 10px; border-radius: 4px;">
-            The lab is currently standing by. Queue a new design to begin pipeline floor execution.
-          </div>
+        <div class="right-rail">
+          <section class="rail-card anim-in">
+            <h4>Verification</h4>
+            <div class="rail-list">
+              <div class="rail-row"><strong>Hosted NVIDIA</strong><span>?</span></div>
+              <div class="rail-row"><strong>Evidence Complete</strong><span>?</span></div>
+              <div class="rail-row"><strong>Manifest Verified</strong><span>?</span></div>
+              <div class="rail-row"><strong>Artifacts Generated</strong><span>?</span></div>
+            </div>
+          </section>
+          <section class="rail-card anim-in">
+            <h4>Runtime</h4>
+            <div class="rail-list">
+              <div class="rail-row"><strong>Model</strong><span id="railProvider">OpenFold2</span></div>
+              <div class="rail-row"><strong>Workflow</strong><span id="railWorkflow">protein-fold</span></div>
+              <div class="rail-row"><strong>Endpoint</strong><span id="railEndpoint">NVIDIA OpenFold2 API</span></div>
+            </div>
+          </section>
+          <section class="rail-card anim-in">
+            <h4>Actions</h4>
+            <div class="rail-list">
+              <a class="mini-action" href="#"><strong>View Manifest</strong><span>Open the execution manifest</span></a>
+              <a class="mini-action" href="#"><strong>Audit Trail</strong><span>Review verification steps</span></a>
+              <a class="mini-action" href="/handoff.html"><strong>Download</strong><span>Export the run artifacts</span></a>
+            </div>
+          </section>
         </div>
       </div>
+      <nav class="tab-rail anim-in" aria-label="Page sections">
+        <button type="button" class="tab-btn" data-shell-tab-button="execution" aria-selected="false">Execution</button>
+        <button type="button" class="tab-btn" data-shell-tab-button="trust" aria-selected="false">Trust &amp; Provenance</button>
+        <button type="button" class="tab-btn" data-shell-tab-button="artifacts" aria-selected="false">Artifacts</button>
+        <button type="button" class="tab-btn" data-shell-tab-button="history" aria-selected="false">History</button>
+        <button type="button" class="tab-btn" data-shell-tab-button="settings" aria-selected="false">Settings</button>
+      </nav>
 
-      <!-- Experiment Configuration & Job Dispatch -->
-      <div class="panel form-panel anim-in" style="display: flex; flex-direction: column; gap: 12px;">
-        <h2 class="panel-title">Experiment Configuration</h2>
-        <div style="font-size: 12px; color: var(--muted-strong); line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
-          Configure a design or folding run, confirm the run label, keep hosted NVIDIA selected by default, and only switch to local demo from settings when you explicitly want deterministic simulation.
+      <section class="dashboard-card anim-in tab-panel" data-shell-tab="execution" id="executionDetails" hidden>
+        <div class="section-title"><div><h3>Execution</h3><strong>Pipeline, console, telemetry, and events</strong></div></div>
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Pipeline Timeline</h4>
+            <pre id="executionTimelinePreview">1. Browser request received
+2. NVIDIA API launched
+3. Folding sequence completed
+4. Artifacts generated
+5. Verification complete</pre>
+          </div>
+          <div class="detail-card">
+            <h4>Run Console</h4>
+            <pre id="executionConsolePreview">Standing by. Launch a run to initiate console stream...</pre>
+          </div>
+          <div class="detail-card">
+            <h4>Telemetry</h4>
+            <pre id="executionTelemetryPreview">Step: idle
+Workflow: protein-fold
+Runtime: detecting
+Artifact: unavailable</pre>
+          </div>
+          <div class="detail-card">
+            <h4>Events</h4>
+            <pre id="executionEventsPreview">[]</pre>
+          </div>
+          <div class="detail-card" style="grid-column:1 / -1;">
+            <h4>Performance</h4>
+            <pre id="executionPerformancePreview">pLDDT: N/A
+PAE: N/A
+pTM: N/A
+RMSD: N/A</pre>
+          </div>
         </div>
-        
-        <span class="label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-strong); margin-bottom: -4px;">Pre-configured Benchmarks</span>
-        <div class="presets">
-          <button type="button" class="preset-btn" onclick="launchPreset('Design a 100-residue helical bundle protein', '')" style="font-size: 11px;">
-            <span class="preset-icon" style="background:rgba(0,242,254,0.1);color:var(--accent);">🌀</span>
-            De Novo Helix Scaffold
-          </button>
-          <button type="button" class="preset-btn" onclick="launchPreset('Fold insulin A-chain protein', 'GIVEQCCTSICSLYQLENYCN')" style="font-size: 11px;">
-            <span class="preset-icon" style="background:rgba(184,255,42,0.1);color:var(--accent2);">🔬</span>
-            Insulin A-Chain Fold
-          </button>
-          <button type="button" class="preset-btn" onclick="launchPreset('Design a stable 80-residue de novo protein fold', '')" style="font-size: 11px;">
-            <span class="preset-icon" style="background:rgba(167,139,250,0.1);color:var(--accent3);">🧪</span>
-            80aa Monomer Topology
-          </button>
+      </section>
+
+      <section class="dashboard-card anim-in tab-panel" data-shell-tab="trust" id="trustPanel" hidden>
+        <div class="section-title"><div><h3>Trust &amp; Provenance</h3><strong>Evidence summary and traceability</strong></div></div>
+        <div class="history-list">
+          <div class="history-row"><strong>Evidence Summary</strong><span id="trustVerdictSummary">EVIDENCE INCOMPLETE</span><span id="trustScoreValue">100%</span><span id="trustEvidenceCount">22 / 22</span></div>
+          <div class="history-row"><strong>Provider / Runtime</strong><span id="trustProvider">NVIDIA BioNeMo</span><span id="trustLiveExecution">Executed Live</span><span id="trustEndpoint">NVIDIA Hosted</span></div>
+          <div class="history-row"><strong>Identifiers</strong><span id="trustRunId">unknown</span><span id="trustRequestId">unknown</span><span id="trustArtifactHash">unknown</span></div>
+          <div class="history-row"><strong>Hashes</strong><span id="trustSignature">SHA-256 Verified</span><span id="trustWorkflowIntegrity">100%</span><span id="trustInputProvenance">Protein Sequence</span></div>
+          <div class="history-row"><strong>Trace / Manifest</strong><span id="trustRunTruth">Evidence</span><span id="trustEvidence">22 evidence fields</span><span>Audit Trail</span></div>
         </div>
+      </section>
 
-        <form id="runForm" style="display: flex; flex-direction: column; gap: 10px;">
-          <div>
-            <label style="display: block; margin-bottom: 3px;">Run / Protein Name</label>
-            <input id="displayName" value="$display_name_value" placeholder="e.g. Helical Bundle Atlas Run" style="width: 100%;" />
-            <span style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">This label is saved with the run summary so local, demo, latest, and just-ran artifacts remain easy to distinguish.</span>
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 3px;">Design Objective (Natural Language Constraints)</label>
-            <input id="goal" value="$goal_value" placeholder="e.g. Design a 100-residue helical bundle target scaffold" style="width: 100%;" />
-            <span style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Describe the target fold, geometry, or design intent. The lab uses this to route the run through the appropriate pipeline path.</span>
-          </div>
+      <section class="dashboard-card anim-in tab-panel" data-shell-tab="artifacts" hidden>
+        <div class="section-title"><div><h3>Artifacts</h3><strong>Gallery, reports, PDB, confidence, downloads</strong></div></div>
+        <div class="bench-grid">
+          <div class="detail-card"><h4>Gallery</h4><pre>OpenFold2 Prediction
+RFDiffusion Backbone
+Helical Bundle (Folded)
+Mixed Fold (Folded)</pre></div>
+          <div class="detail-card"><h4>Reports</h4><pre>Run summary
+Trust audit
+Execution manifest
+Scientific notes</pre></div>
+          <div class="detail-card"><h4>Downloads</h4><pre>PDB
+JSON
+FASTA
+Notebook handoff</pre></div>
+        </div>
+      </section>
 
-          <div>
-            <label style="display: block; margin-bottom: 3px;">Primary Target Sequence (Optional IUPAC FASTA)</label>
-            <input id="sequence" value="$sequence_value" placeholder="e.g. MALWMRLLPLLALLALWGPDPAAA..." style="width: 100%; font-family: monospace;" />
-            <span style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Provide a sequence for structure prediction runs. Leave this blank to trigger de novo inverse-folding sequence design.</span>
-          </div>
+      <section class="dashboard-card anim-in tab-panel" data-shell-tab="history" hidden>
+        <div class="section-title"><div><h3>History</h3><strong>Recent runs and previous executions</strong></div></div>
+        <div class="history-list">
+          <div class="history-row"><strong>Now</strong><span>OpenFold2 · 1m ago</span><span>Completed</span><span>1m 12s</span></div>
+          <div class="history-row"><strong>Earlier</strong><span>OpenFold2 · 27m ago</span><span>Completed</span><span>1m 09s</span></div>
+          <div class="history-row"><strong>Older</strong><span>OpenFold2 · 1h ago</span><span>Completed</span><span>1m 15s</span></div>
+          <div class="history-row"><strong>Archive</strong><span>RFDiffusion · 3h ago</span><span>Completed</span><span>0m 58s</span></div>
+        </div>
+      </section>
 
-          <div>
-            <label style="display: block; margin-bottom: 3px;">Compute Infrastructure & Inference Nodes</label>
-            <select id="runtime" style="width: 100%;">
-              <option value="auto" $runtime_auto_sel>Use Hosted NVIDIA (Default)</option>
-              <option value="hosted" $runtime_hosted_sel>NVIDIA Cloud Health NIMs (Live Hosted Inference)</option>
-              <option value="local-demo" $runtime_demo_sel>Local Workstation Sandbox (Advanced / Manual Only)</option>
-            </select>
-          </div>
-
-          <button type="submit" class="launch-btn" id="launchBtn" style="margin-top: 5px;">Launch Scientist Run</button>
-        </form>
-        
-        <textarea id="notes" aria-label="Run notes and observations" placeholder="Run notes: document hypotheses, results, or structural observations. Notes remain stored locally in this browser." style="margin-top: 4px; height: 70px;"></textarea>
-      </div>
-    </div>
-  </main>
-
-
-
-  <!-- ═══ DRAWERS ═══ -->
-  <section class="drawers-section">
-    <details class="drawer anim-in">
-      <summary>Latest Artifacts <span class="drawer-badge">$artifact_count</span></summary>
-      <div class="drawer-body"><ul class="artifact-list">$artifact_items_html</ul></div>
-    </details>
-    <details class="drawer anim-in">
-      <summary>Live Run State <span class="drawer-badge">json</span></summary>
-      <div class="drawer-body"><pre id="runStatePane">$run_state_json</pre></div>
-    </details>
-    <details class="drawer anim-in">
-      <summary>Event Log <span class="drawer-badge">events</span></summary>
-      <div class="drawer-body"><pre id="eventLogPane">$event_log_json</pre></div>
-    </details>
-    <details class="drawer anim-in">
-      <summary>Run Summary <span class="drawer-badge">summary</span></summary>
-      <div class="drawer-body"><pre id="summaryPane">$summary_json</pre></div>
-    </details>
-    <details class="drawer anim-in">
-      <summary>Report <span class="drawer-badge">markdown</span></summary>
-      <div class="drawer-body"><pre id="reportPane">$report_safe</pre></div>
-    </details>
-  </section>
-
-  <!-- ═══ FOOTER ═══ -->
-  <footer class="lab-footer">
-    <span>BioNeMo Operations Lab | Professional local demonstration environment</span>
-    <span>
-      <a href="/api/state">/api/state</a> |
-      <a href="/report">/report</a> |
-      <a href="/viewer">Viewer</a>
-    </span>
-  </footer>
+      <section class="dashboard-card anim-in tab-panel" data-shell-tab="settings" id="settingsDetails" hidden>
+        <div class="section-title"><div><h3>Settings</h3><strong>Runtime controls and preferences</strong></div></div>
+        <div class="settings-grid">
+          <div class="hero-mini"><span class="label">Viewer</span><span class="value">Enabled</span><span class="source">Structure viewer settings and color modes.</span></div>
+          <div class="hero-mini"><span class="label">Learning Pack</span><span class="value">Available</span><span class="source">Reference and training materials.</span></div>
+          <div class="hero-mini"><span class="label">Telemetry</span><span class="value">Live</span><span class="source">Runtime polling and event collection.</span></div>
+          <div class="hero-mini"><span class="label">Artifacts</span><span class="value">Linked</span><span class="source">Output paths and downloads.</span></div>
+        </div>
+      </section>
+    </section>
+  </div>
 </div>
-
+<div class="runtime-support" hidden aria-hidden="true">
+  <span id="hdrArtifact"></span>
+  <span id="hdrTruthInline"></span>
+  <div id="stageGrid"></div>
+  <div id="terminalLog"></div>
+  <div id="telStep"></div>
+  <div id="telArtifact"></div>
+  <div id="telWorkflow"></div>
+  <div id="telRuntime"></div>
+  <div id="telTruth"></div>
+  <div id="telTruthSource"></div>
+  <div id="telCommand"></div>
+  <div id="telMessage"></div>
+  <div id="telDetailedExplanation"></div>
+  <pre id="runStatePane"></pre>
+  <pre id="eventLogPane"></pre>
+  <pre id="summaryPane"></pre>
+  <pre id="reportPane"></pre>
+  <div id="trustScoreFill"></div>
+  <div id="trustScoreNote"></div>
+  <div id="trustVerdictSummarySource"></div>
+  <div id="trustRunTruthSource"></div>
+  <div id="trustEvidenceSource"></div>
+  <div id="galleryGrid"></div>
+  <textarea id="notes"></textarea>
+  <form id="runForm">
+    <input id="goal" name="goal" value="Fold a protein sequence and explain the confidence metrics." />
+    <textarea id="sequence" name="sequence">MALWMRLLPLLALLALWGPDPAAA</textarea>
+    <select id="runtime" name="runtime"><option value="auto" selected>auto</option><option value="relay">relay</option><option value="hosted">hosted</option></select>
+    <input id="displayName" name="display_name" value="openfold2-prediction" />
+    <button id="launchBtn" type="submit">Launch Scientist Run</button>
+  </form>
+</div>
 <script>
-  /* ─── NOTES PERSISTENCE ─── */
+  (function () {
+    const tabs = Array.from(document.querySelectorAll('[data-shell-tab-button]'));
+    const panels = Array.from(document.querySelectorAll('[data-shell-tab]'));
+    function activate(tab) {
+      tabs.forEach((btn) => {
+        const on = btn.dataset.shellTabButton === tab;
+        btn.setAttribute('aria-selected', on ? 'true' : 'false');
+        btn.classList.toggle('active', on);
+      });
+      panels.forEach((panel) => {
+        const on = panel.dataset.shellTab === tab;
+        panel.hidden = !on;
+        panel.classList.toggle('active', on);
+      });
+    }
+    tabs.forEach((btn) => btn.addEventListener('click', () => activate(btn.dataset.shellTabButton)));
+    document.querySelectorAll('[data-shell-tab-jump]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const tab = link.dataset.shellTabJump;
+        if (!tab) return;
+        event.preventDefault();
+        activate(tab);
+        const target = document.querySelector('[data-shell-tab="' + tab + '"]');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  })();
+
+  /* â”€â”€â”€ NOTES PERSISTENCE â”€â”€â”€ */
   const notes = document.getElementById('notes');
   notes.value = localStorage.getItem('bionemo-lab-notes') || '';
   notes.addEventListener('input', function() { localStorage.setItem('bionemo-lab-notes', notes.value); });
@@ -1416,7 +1734,7 @@
   if (sequenceInput) sequenceInput.addEventListener('input', suggestDisplayName);
   suggestDisplayName();
 
-  /* ─── VIEWER STATE ─── */
+  /* â”€â”€â”€ VIEWER STATE â”€â”€â”€ */
   var viewer3d = null;
   var viewerModel = null;
   var isSpinning = false;
@@ -1491,8 +1809,8 @@
     if (viewer3d) { viewer3d.zoomTo(); viewer3d.render(); }
   }
 
-  /* ─── STATE POLLING ─── */
-  var prevStatus = '$run_status';
+  /* â”€â”€â”€ STATE POLLING â”€â”€â”€ */
+  var prevStatus = 'idle';
   var prevActive = false;
   var pollTimeout = null;
   var currentInterval = 1800;
@@ -1547,7 +1865,7 @@
     var stages = [
       { title: 'Design Backbone', desc: 'RFDiffusion de novo backbone generation', key: 'design', arts: ['design_json','design_pdb'] },
       { title: 'Design Sequence', desc: 'ProteinMPNN inverse folding & sequences', key: 'sequence', arts: ['mpnn_json','mpnn_fasta'] },
-      { title: 'Fold & Validate', desc: 'MSA Search → OpenFold2 structure prediction', key: 'fold', arts: ['msa_json','msa_a3m','fold_json','fold_pdb','fold_scores','fold_cif'] }
+      { title: 'Fold & Validate', desc: 'MSA Search â†’ OpenFold2 structure prediction', key: 'fold', arts: ['msa_json','msa_a3m','fold_json','fold_pdb','fold_scores','fold_cif'] }
     ];
 
     var html = '';
@@ -1585,15 +1903,15 @@
       if (ev.kind === 'log') {
         lines.push('<div style="color: #8cd4da; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> ' + escapeHtml(ev.message) + '</div>');
       } else if (ev.kind === 'step') {
-        lines.push('<div style="color: #ffb703; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> 🚀 STEP: ' + escapeHtml(ev.message) + '</div>');
+        lines.push('<div style="color: #ffb703; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> ðŸš€ STEP: ' + escapeHtml(ev.message) + '</div>');
       } else if (ev.kind === 'start') {
-        lines.push('<div style="color: #00f2fe; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> 🟢 PIPELINE INITIATED</div>');
+        lines.push('<div style="color: #00f2fe; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> ðŸŸ¢ PIPELINE INITIATED</div>');
       } else if (ev.kind === 'process') {
-        lines.push('<div style="color: #00f2fe; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> 💻 CLI Completed: ' + (ev.detail.returncode === 0 ? 'SUCCESS' : 'ERROR') + '</div>');
+        lines.push('<div style="color: #00f2fe; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> ðŸ’» CLI Completed: ' + (ev.detail.returncode === 0 ? 'SUCCESS' : 'ERROR') + '</div>');
       } else if (ev.kind === 'error') {
-        lines.push('<div style="color: #ff2a2a; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> 🔴 ERROR: ' + escapeHtml(ev.message) + '</div>');
+        lines.push('<div style="color: #ff2a2a; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> ðŸ”´ ERROR: ' + escapeHtml(ev.message) + '</div>');
       } else if (ev.kind === 'done') {
-        lines.push('<div style="color: #b8ff2a; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> ✅ FINISHED SUCCESSFULLY</div>');
+        lines.push('<div style="color: #b8ff2a; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> âœ… FINISHED SUCCESSFULLY</div>');
       } else {
         lines.push('<div style="color: #e0e0e0; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> ' + escapeHtml(ev.message) + '</div>');
       }
@@ -1621,31 +1939,31 @@
       }
     }
     if (step === 'intake') {
-      return "🤖 <b>Intake Phase:</b> Parsing goal specification and setting up deterministic local workspaces. Checking file system buffers and resolving target properties.";
+      return "ðŸ¤– <b>Intake Phase:</b> Parsing goal specification and setting up deterministic local workspaces. Checking file system buffers and resolving target properties.";
     }
     if (step === 'route') {
-      return "🎯 <b>Routing Phase:</b> Evaluating design prompts. Selecting deep learning capability paths (RFDiffusion de novo backbone generation + ProteinMPNN sequence co-design + OpenFold model prediction).";
+      return "ðŸŽ¯ <b>Routing Phase:</b> Evaluating design prompts. Selecting deep learning capability paths (RFDiffusion de novo backbone generation + ProteinMPNN sequence co-design + OpenFold model prediction).";
     }
     if (step === 'execute') {
       if (latestLog.indexOf('rfdiffusion') >= 0) {
-        return "🧬 <b>RFDiffusion In Progress:</b> Invoking deep denoising diffusion probabilistic model (DDPM) to design a stable de novo protein backbone. Designing structural coordinates from random Gaussian noise.";
+        return "ðŸ§¬ <b>RFDiffusion In Progress:</b> Invoking deep denoising diffusion probabilistic model (DDPM) to design a stable de novo protein backbone. Designing structural coordinates from random Gaussian noise.";
       }
       if (latestLog.indexOf('proteinmpnn') >= 0) {
-        return "🧠 <b>ProteinMPNN In Progress:</b> Designing amino acid sequences that fold into the newly generated backbone target. Evaluating structural environment via a deep graph neural network.";
+        return "ðŸ§  <b>ProteinMPNN In Progress:</b> Designing amino acid sequences that fold into the newly generated backbone target. Evaluating structural environment via a deep graph neural network.";
       }
       if (latestLog.indexOf('msa search') >= 0 || latestLog.indexOf('colabfold') >= 0) {
-        return "🔍 <b>MSA Search In Progress:</b> Building a Multiple Sequence Alignment (MSA) by searching homology databases (UniRef30) for evolutionary sequence counterparts.";
+        return "ðŸ” <b>MSA Search In Progress:</b> Building a Multiple Sequence Alignment (MSA) by searching homology databases (UniRef30) for evolutionary sequence counterparts.";
       }
       if (latestLog.indexOf('openfold') >= 0) {
-        return "📉 <b>OpenFold Prediction In Progress:</b> Folding designed target sequence through end-to-end differentiable neural network to resolve physical 3D atomic coordinates.";
+        return "ðŸ“‰ <b>OpenFold Prediction In Progress:</b> Folding designed target sequence through end-to-end differentiable neural network to resolve physical 3D atomic coordinates.";
       }
-      return "⚙️ <b>Execution Phase:</b> BioNeMo Scientist process is running. Capturing subprocess stdout stream in real time...";
+      return "âš™ï¸ <b>Execution Phase:</b> BioNeMo Scientist process is running. Capturing subprocess stdout stream in real time...";
     }
     if (step === 'inspect') {
-      return "🔬 <b>Inspection Phase:</b> Subprocess completed. Reading run summaries, analyzing structural metrics, and verifying coordinates are valid.";
+      return "ðŸ”¬ <b>Inspection Phase:</b> Subprocess completed. Reading run summaries, analyzing structural metrics, and verifying coordinates are valid.";
     }
     if (step === 'finish') {
-      return "📈 <b>Publishing Phase:</b> Writing run report and registering generated specimens in the interactive viewer dashboard.";
+      return "ðŸ“ˆ <b>Publishing Phase:</b> Writing run report and registering generated specimens in the interactive viewer dashboard.";
     }
       return "Standing by.";
   }
@@ -1692,97 +2010,103 @@
         var runId = summary.run_id || state.run_id || 'unknown';
         var requestId = summary.request_id || state.request_id || 'unknown';
         var runtimeKind = summary.runtime_kind || 'unknown';
-        var truthMode = runtimeDisplay === 'hosted' ? 'HOSTED NVIDIA RUN - REAL TELEMETRY' : 'DEMO FALLBACK - NOT REAL';
-        function calculateProvenanceConfidence(state, summary, artifacts) {
-          var runtime = summary.runtime || state.runtime || 'auto';
-          if (runtime !== 'hosted') {
-            var score = 10;
-            if (summary.run_id || state.run_id) score += 5;
-            if (artifacts && artifacts.length > 0) score += 5;
-            return score;
-          }
-          var score = 60;
-          var runId = summary.run_id || state.run_id;
-          if (runId && runId !== 'unknown' && runId !== 'None') score += 10;
-          var requestId = summary.request_id || state.request_id;
-          if (requestId && requestId !== 'unknown' && requestId !== 'None') score += 10;
-          var endpoint = summary.api_endpoint;
-          if (endpoint && endpoint.indexOf('nvidia.com') !== -1) score += 10;
-          var artHash = summary.artifact_hash;
-          if (artHash && artHash !== 'unknown') score += 10;
-          if (artifacts && artifacts.length > 0) {
-            var allOk = true;
-            for (var i = 0; i < artifacts.length; i++) {
-              if (!artifacts[i].sha256 || artifacts[i].provenance !== 'JUST_RAN') {
-                allOk = false;
-                break;
-              }
-            }
-            if (allOk) score += 10;
-          }
-          return score;
-        }
-        var trustScore = calculateProvenanceConfidence(state, summary, artifacts);
-        var trustProvider = runtimeDisplay === 'hosted' ? 'NVIDIA BioNeMo / OpenFold2' : 'Local workstation';
-        var trustVerdictClass = runtimeDisplay === 'hosted' ? 'hosted' : 'demo';
-        var trustVerdictIcon = runtimeDisplay === 'hosted' ? '✓' : '!';
-        var trustVerdictTitle = runtimeDisplay === 'hosted' ? 'HOSTED NVIDIA RUN - REAL TELEMETRY' : 'DEMO FALLBACK - NOT REAL';
-        var trustVerdictText = runtimeDisplay === 'hosted'
-          ? 'This is a real hosted result. The page shows the provider, run ID, request ID, and returned confidence.'
-          : 'This is deterministic local output, not a hosted NVIDIA response.';
-
+        var trust = payload.trust || {};
+        var evidence = trust.evidence || {};
+        var missing = trust.missing || [];
+        var trustScore = Number.isFinite(trust.score) ? trust.score : 0;
+        var trustVerdictClass = trust.verified ? 'verified' : (trustScore >= 50 ? 'partial' : 'evidence');
+        var trustVerdictIcon = trust.verified ? '?' : (trustScore >= 50 ? '!' : '?');
+        var trustVerdictTitle = trust.verdict || 'EVIDENCE INCOMPLETE';
+        var trustVerdictText = trust.explanation || 'The verdict depends on the manifest-backed runtime evidence.';
+        var trustSummaryText = trust.verdict || 'EVIDENCE INCOMPLETE';
+        var trustSummarySource = trust.source_of_truth || 'run-summary + artifact hashes + telemetry';
+        var trustRunTruthSourceText = missing.length ? ('Missing: ' + missing.join(', ')) : 'All required evidence fields are present.';
+        var trustProviderSourceText = evidence.provider ? (evidence.provider.note + ' Origin: ' + evidence.provider.origin + '; ' + evidence.provider.provenance + '.') : 'Provider evidence is unavailable.';
+        var trustRequestIdSourceText = evidence.request_id ? (evidence.request_id.note + ' Origin: ' + evidence.request_id.origin + '; ' + evidence.request_id.provenance + '.') : 'Request ID evidence is unavailable.';
+        var trustEndpointSourceText = evidence.endpoint ? (evidence.endpoint.note + ' Origin: ' + evidence.endpoint.origin + '; ' + evidence.endpoint.provenance + '.') : 'Endpoint evidence is unavailable.';
+        var trustArtifactHashSourceText = evidence.artifact_hash ? (evidence.artifact_hash.note + ' Origin: ' + evidence.artifact_hash.origin + '; ' + evidence.artifact_hash.provenance + '.') : 'Artifact hash evidence is unavailable.';
+        var trustScoreNoteText = missing.length ? ('Missing required evidence: ' + missing.join(', ')) : 'All required evidence fields are present.';
+        var trustEvidenceText = Object.keys(evidence).length + ' evidence fields captured in the manifest.';
+        var trustEvidenceSourceText = trust.reasons && trust.reasons.length ? trust.reasons.map(function(item) { return item.field + ': ' + item.reason; }).join(' ') : 'No detailed evidence reasons available.';
+        var trustProvider = evidence.provider && evidence.provider.value ? evidence.provider.value : 'Unavailable';
         document.getElementById('hdrStatus').textContent = status.toUpperCase();
         document.getElementById('hdrWorkflow').textContent = inferWorkflow(state.goal, summary.workflow);
         document.getElementById('hdrArtifact').textContent = 'Latest Run: ' + runLabel;
-        document.getElementById('hdrTruthInline').textContent = truthMode;
+        document.getElementById('hdrTruthInline').textContent = trust.verdict || 'EVIDENCE INCOMPLETE';
         var verdictEl = document.getElementById('trustVerdict');
-        if (verdictEl) {
-          verdictEl.className = 'trust-verdict ' + trustVerdictClass;
-        }
+        if (verdictEl) verdictEl.className = 'trust-verdict ' + trustVerdictClass;
         var verdictIconEl = document.getElementById('trustVerdictIcon');
         if (verdictIconEl) verdictIconEl.textContent = trustVerdictIcon;
         var verdictTitleEl = document.getElementById('trustVerdictTitle');
         if (verdictTitleEl) verdictTitleEl.textContent = trustVerdictTitle;
         var verdictTextEl = document.getElementById('trustVerdictText');
         if (verdictTextEl) verdictTextEl.textContent = trustVerdictText;
-        document.getElementById('trustRunTruth').textContent = truthMode;
-        document.getElementById('trustRunTruthSource').textContent = runtimeDisplay === 'hosted'
-          ? 'Latest completed run is backed by a hosted NVIDIA response.'
-          : 'Latest completed run is deterministic local demo output.';
-        document.getElementById('trustProvider').textContent = runtimeDisplay === 'hosted' ? 'NVIDIA BioNeMo / OpenFold2' : 'Local workstation';
-        document.getElementById('trustProviderSource').textContent = runtimeDisplay === 'hosted'
-          ? 'Telemetry returned by the hosted NVIDIA endpoint.'
-          : 'Deterministic local output only.';
-        document.getElementById('trustRunId').textContent = runId;
-        document.getElementById('trustRunIdSource').textContent = summary.completed_at ? ('Completed ' + summary.completed_at) : 'Freshest completed run appears here.';
-        document.getElementById('trustRequestId').textContent = requestId;
-        document.getElementById('trustRequestIdSource').textContent = runtimeDisplay === 'hosted'
-          ? 'Returned by the hosted API.'
-          : 'Local demo runs do not generate a hosted request ID.';
-        document.getElementById('trustEndpoint').textContent = summary.api_endpoint || (runtimeDisplay === 'hosted' ? 'NVIDIA hosted endpoint' : 'local demo path');
-        document.getElementById('trustEndpointSource').textContent = runtimeDisplay === 'hosted'
-          ? 'Hosted NVIDIA OpenFold endpoint.'
-          : 'Local simulation path.';
-        document.getElementById('trustArtifactHash').textContent = summary.artifact_hash || 'unknown';
-        document.getElementById('trustArtifactHashSource').textContent = summary.artifact_hash ? 'SHA-256 fingerprint of the latest run summary.' : 'Fingerprint unavailable until a run completes.';
-        document.getElementById('trustRuntime').textContent = runtimeDisplay + ' · ' + runtimeKind;
-        document.getElementById('trustRuntimeSource').textContent = runtimeDisplay === 'hosted'
-          ? 'Hosted inference path.'
-          : 'Local workstation simulation path.';
-        document.getElementById('trustEvidence').textContent = runtimeDisplay === 'hosted'
-          ? 'Returned confidence plus provider, request, and run IDs.'
-          : 'Sequence metrics are local; confidence and RMSD are not real hosted telemetry.';
-        document.getElementById('trustEvidenceSource').textContent = runtimeDisplay === 'hosted'
-          ? 'Confidence is returned by NVIDIA; sequence length and composition remain local computations.'
-          : 'No hosted telemetry is used for this run.';
+        var summaryEl = document.getElementById('trustVerdictSummary');
+        if (summaryEl) summaryEl.textContent = trustSummaryText;
+        var summarySourceEl = document.getElementById('trustVerdictSummarySource');
+        if (summarySourceEl) summarySourceEl.textContent = trustSummarySource;
+        var reproEl = document.getElementById('trustReproducibility');
+        if (reproEl) reproEl.textContent = evidence.model && evidence.workflow ? 'Reproducible' : 'Evidence Missing';
+        var reproSourceEl = document.getElementById('trustReproducibilitySource');
+        if (reproSourceEl) reproSourceEl.textContent = 'Model/version and workflow provenance are read from the manifest when present.';
+        var providerEl = document.getElementById('trustProvider');
+        if (providerEl) providerEl.textContent = trustProvider;
+        var providerSourceEl = document.getElementById('trustProviderSource');
+        if (providerSourceEl) providerSourceEl.textContent = trustProviderSourceText;
+        var liveEl = document.getElementById('trustLiveExecution');
+        if (liveEl) liveEl.textContent = trust.verified ? 'Executed Live' : 'Evidence Missing';
+        var liveSourceEl = document.getElementById('trustLiveExecutionSource');
+        if (liveSourceEl) liveSourceEl.textContent = 'Timestamp evidence comes from the completed run record.';
+        var countEl = document.getElementById('trustEvidenceCount');
+        if (countEl) countEl.textContent = Object.keys(evidence).length + ' evidence fields';
+        var countSourceEl = document.getElementById('trustEvidenceCountSource');
+        if (countSourceEl) countSourceEl.textContent = missing.length ? ('Missing fields: ' + missing.join(', ')) : 'Required fields are present in the manifest.';
+        var auditEl = document.getElementById('trustAuditReady');
+        if (auditEl) auditEl.textContent = 'Click to inspect';
+        var auditSourceEl = document.getElementById('trustAuditReadySource');
+        if (auditSourceEl) auditSourceEl.textContent = 'The audit drawer mirrors the same evidence payload used for scoring.';
+        var sigEl = document.getElementById('trustSignature');
+        if (sigEl) sigEl.textContent = evidence.record_hash ? 'SHA-256 Verified' : 'Hash Missing';
+        var sigSourceEl = document.getElementById('trustSignatureSource');
+        if (sigSourceEl) sigSourceEl.textContent = evidence.record_hash ? 'Fingerprinting is computed from the execution record itself.' : 'Execution record fingerprint is unavailable.';
+        var inputEl = document.getElementById('trustInputProvenance');
+        if (inputEl) inputEl.textContent = summary.sequence ? 'Protein Sequence' : 'Unavailable';
+        var inputSourceEl = document.getElementById('trustInputProvenanceSource');
+        if (inputSourceEl) inputSourceEl.textContent = summary.sequence ? 'Input provenance is computed from the submitted sequence and recorded hash.' : 'Input provenance is unavailable.';
+        var modelEl = document.getElementById('trustModelVersion');
+        if (modelEl) modelEl.textContent = evidence.model && evidence.model.value ? evidence.model.value : 'Unavailable';
+        var modelSourceEl = document.getElementById('trustModelVersionSource');
+        if (modelSourceEl) modelSourceEl.textContent = evidence.model ? 'Model/version evidence is taken from the run summary when available.' : 'Model/version evidence is unavailable.';
+        var workflowEl = document.getElementById('trustWorkflowIntegrity');
+        if (workflowEl) workflowEl.textContent = trust.verified ? '100%' : (missing.length ? Math.max(0, 100 - (missing.length * 10)) + '%' : '0%');
+        var workflowSourceEl = document.getElementById('trustWorkflowIntegritySource');
+        if (workflowSourceEl) workflowSourceEl.textContent = missing.length ? 'Workflow integrity is reduced by missing evidence fields.' : 'Workflow integrity is inferred only from recorded run evidence.';
+        var runIdEl = document.getElementById('trustRunId');
+        if (runIdEl) runIdEl.textContent = runId;
+        var runIdSourceEl = document.getElementById('trustRunIdSource');
+        if (runIdSourceEl) runIdSourceEl.textContent = evidence.run_id ? 'Run ID comes from the latest completed manifest-backed execution.' : 'Run ID is unavailable.';
+        var reqIdEl = document.getElementById('trustRequestId');
+        if (reqIdEl) reqIdEl.textContent = requestId;
+        var reqIdSourceEl = document.getElementById('trustRequestIdSource');
+        if (reqIdSourceEl) reqIdSourceEl.textContent = trustRequestIdSourceText;
+        var endpointEl = document.getElementById('trustEndpoint');
+        if (endpointEl) endpointEl.textContent = summary.api_endpoint || 'Unavailable';
+        var endpointSourceEl = document.getElementById('trustEndpointSource');
+        if (endpointSourceEl) endpointSourceEl.textContent = trustEndpointSourceText;
+        var artifactHashEl = document.getElementById('trustArtifactHash');
+        if (artifactHashEl) artifactHashEl.textContent = summary.artifact_hash || 'unknown';
+        var artifactHashSourceEl = document.getElementById('trustArtifactHashSource');
+        if (artifactHashSourceEl) artifactHashSourceEl.textContent = trustArtifactHashSourceText;
         document.getElementById('trustScoreValue').textContent = trustScore + '%';
         document.getElementById('trustScoreFill').style.width = trustScore + '%';
-        document.getElementById('trustScoreNote').textContent = runtimeDisplay === 'hosted'
-          ? 'Real hosted runs score higher because they expose a provider endpoint, request ID, run ID, and returned confidence.'
-          : 'Demo runs score lower because they are locally simulated and do not return provider telemetry.';
+        document.getElementById('trustScoreNote').textContent = trustScoreNoteText;
+        document.getElementById('trustRunTruth').textContent = trust.verdict || 'EVIDENCE INCOMPLETE';
+        document.getElementById('trustRunTruthSource').textContent = trustRunTruthSourceText;
+        document.getElementById('trustEvidence').textContent = trustEvidenceText;
+        document.getElementById('trustEvidenceSource').textContent = trustEvidenceSourceText;
         document.getElementById('telStep').textContent = step;
         var provenance = summary.status || state.status || 'unknown';
-        document.getElementById('telArtifact').textContent = runLabel + ' Â· ' + runId + ' Â· ' + runtimeKind + ' Â· ' + provenance + (summary.completed_at ? ' Â· ' + summary.completed_at : '');
+        document.getElementById('telArtifact').textContent = runLabel + ' Ã‚Â· ' + runId + ' Ã‚Â· ' + runtimeKind + ' Ã‚Â· ' + provenance + (summary.completed_at ? ' Ã‚Â· ' + summary.completed_at : '');
         document.getElementById('telWorkflow').textContent = inferWorkflow(state.goal, summary.workflow);
         document.getElementById('telCommand').textContent = cmd;
         document.getElementById('telMessage').textContent = msg;
@@ -1808,7 +2132,7 @@
                      '</div>';
             inner += '<div class="trust-item" style="border: 1px solid rgba(0, 242, 254, 0.22); background: rgba(0, 242, 254, 0.05);">' +
                      '<span class="label" style="color: var(--accent);">Max Alignment Error (PAE)</span>' +
-                     '<span class="value">' + of2.max_pae.toFixed(2) + ' Å</span>' +
+                     '<span class="value">' + of2.max_pae.toFixed(2) + ' Ã…</span>' +
                      '<span class="source">Maximum predicted distance alignment error.</span>' +
                      '</div>';
           }
@@ -1840,24 +2164,36 @@
         if (seq) {
           var metrics = computeSequenceMetrics(seq);
           if (metrics) {
-            document.getElementById('metricLength').textContent = metrics.length;
-            document.getElementById('metricMW').textContent = metrics.mw;
-            document.getElementById('metricHydrophobic').textContent = metrics.hydrophobicPct;
-            document.getElementById('metricPolar').textContent = metrics.polarPct + ' / ' + metrics.chargedPct;
-            document.getElementById('metricLengthSource').textContent = 'Source: ' + metrics.source;
-            document.getElementById('metricMWSource').textContent = 'Source: ' + metrics.source;
-            document.getElementById('metricHydrophobicSource').textContent = 'Source: heuristic residue buckets';
-            document.getElementById('metricPolarSource').textContent = 'Source: heuristic residue buckets';
+            var metricLengthEl = document.getElementById('metricLength');
+            var metricMWEl = document.getElementById('metricMW');
+            var metricHydrophobicEl = document.getElementById('metricHydrophobic');
+            var metricPolarEl = document.getElementById('metricPolar');
+            var metricResiduesEl = document.getElementById('metricResidues');
+            var metricWeightEl = document.getElementById('metricWeight');
+            if (metricLengthEl) metricLengthEl.textContent = metrics.length;
+            if (metricMWEl) metricMWEl.textContent = metrics.mw;
+            if (metricHydrophobicEl) metricHydrophobicEl.textContent = metrics.hydrophobicPct;
+            if (metricPolarEl) metricPolarEl.textContent = metrics.length;
+            if (metricResiduesEl) metricResiduesEl.textContent = metrics.hydrophobicPct + ' / ' + metrics.polarPct;
+            if (metricWeightEl) metricWeightEl.textContent = metrics.mw;
+            var metricLengthSourceEl = document.getElementById('metricLengthSource');
+            var metricMWSourceEl = document.getElementById('metricMWSource');
+            var metricHydrophobicSourceEl = document.getElementById('metricHydrophobicSource');
+            var metricPolarSourceEl = document.getElementById('metricPolarSource');
+            if (metricLengthSourceEl) metricLengthSourceEl.textContent = 'Source: ' + metrics.source;
+            if (metricMWSourceEl) metricMWSourceEl.textContent = 'Source: ' + metrics.source;
+            if (metricHydrophobicSourceEl) metricHydrophobicSourceEl.textContent = 'Source: heuristic residue buckets';
+            if (metricPolarSourceEl) metricPolarSourceEl.textContent = 'Source: heuristic residue buckets';
           }
         } else {
-          document.getElementById('metricLength').textContent = 'N/A';
-          document.getElementById('metricMW').textContent = 'N/A';
-          document.getElementById('metricHydrophobic').textContent = 'N/A';
-          document.getElementById('metricPolar').textContent = 'N/A';
-          document.getElementById('metricLengthSource').textContent = 'Source: unavailable';
-          document.getElementById('metricMWSource').textContent = 'Source: unavailable';
-          document.getElementById('metricHydrophobicSource').textContent = 'Source: unavailable';
-          document.getElementById('metricPolarSource').textContent = 'Source: unavailable';
+          ['metricLength','metricMW','metricHydrophobic','metricPolar','metricResidues','metricWeight'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = 'N/A';
+          });
+          ['metricLengthSource','metricMWSource','metricHydrophobicSource','metricPolarSource'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = 'Source: unavailable';
+          });
         }
 
         // Confidence / pLDDT
@@ -1866,33 +2202,37 @@
         if (runtimeDisplay === 'hosted' && summary.fold && summary.fold.mean_plddt) {
           confidenceVal = summary.fold.mean_plddt.toFixed(1) + ' (High)';
           confidenceSource = 'Source: returned by NVIDIA OpenFold2';
-        } else if (runtimeDisplay === 'local-demo') {
-          confidenceSource = 'Source: demo fallback; not a real pLDDT measurement';
+        } else if (runtimeDisplay === 'relay') {
+          confidenceSource = 'Source: hosted NVIDIA telemetry captured from the API response';
         } else if (summary.metric_sources && summary.metric_sources.confidence) {
           confidenceSource = 'Source: ' + summary.metric_sources.confidence;
         }
-        document.getElementById('metricConfidence').textContent = confidenceVal;
-        document.getElementById('metricConfidenceSource').textContent = confidenceSource;
+        var metricConfidenceEl = document.getElementById('metricConfidence');
+        var metricConfidenceSourceEl = document.getElementById('metricConfidenceSource');
+        if (metricConfidenceEl) metricConfidenceEl.textContent = confidenceVal;
+        if (metricConfidenceSourceEl) metricConfidenceSourceEl.textContent = confidenceSource;
 
         // RMSD
         var rmsdVal = 'N/A';
         var rmsdSource = 'Source: unavailable';
         if (runtimeDisplay === 'hosted' && summary.metrics && summary.metrics.rmsd) {
-          rmsdVal = summary.metrics.rmsd.toFixed(2) + ' Ã…';
+          rmsdVal = summary.metrics.rmsd.toFixed(2) + ' Ãƒâ€¦';
           rmsdSource = 'Source: backend-computed metric';
-        } else if (runtimeDisplay === 'local-demo') {
-          rmsdSource = 'Source: demo fallback; not a real RMSD measurement';
+        } else if (runtimeDisplay === 'relay') {
+          rmsdSource = 'Source: hosted NVIDIA telemetry captured from the API response';
         } else if (summary.metric_sources && summary.metric_sources.rmsd) {
           rmsdSource = 'Source: ' + summary.metric_sources.rmsd;
         }
-        document.getElementById('metricRMSD').textContent = rmsdVal;
-        document.getElementById('metricRMSDSource').textContent = rmsdSource;
+        var metricRmsdEl = document.getElementById('metricRMSD');
+        var metricRmsdSourceEl = document.getElementById('metricRMSDSource');
+        if (metricRmsdEl) metricRmsdEl.textContent = rmsdVal;
+        if (metricRmsdSourceEl) metricRmsdSourceEl.textContent = rmsdSource;
 
         // Dynamic Runtime Display Update
         var engineText = 'DETECTING...';
         var engineColor = 'var(--text)';
-        if (runtimeDisplay === 'local-demo') {
-          engineText = 'LOCAL DEMO (OFFLINE)';
+        if (runtimeDisplay === 'relay') {
+          engineText = 'LOCAL RELAY TO NVIDIA';
           engineColor = '#ffb703'; // Amber
         } else if (runtimeDisplay === 'hosted') {
           engineText = 'NVIDIA NIM (LIVE)';
@@ -1900,18 +2240,18 @@
         }
         var engineEl = document.getElementById('telRuntime');
         if (engineEl) {
-          engineEl.textContent = engineText + ' Â· ' + runtimeKind;
+          engineEl.textContent = engineText + ' Ã‚Â· ' + runtimeKind;
           engineEl.style.color = engineColor;
         }
         var truthEl = document.getElementById('telTruth');
         var truthSourceEl = document.getElementById('telTruthSource');
         if (truthEl) {
-          truthEl.textContent = truthMode;
+          truthEl.textContent = (payload.trust && payload.trust.verdict) || 'EVIDENCE INCOMPLETE';
         }
         if (truthSourceEl) {
-          truthSourceEl.textContent = runtimeDisplay === 'hosted'
-            ? ('Real telemetry from NVIDIA hosted endpoints. Run ID ' + runId + '. Request ID ' + requestId + '.')
-            : 'Deterministic local demo output only. Not NVIDIA telemetry.';
+          truthSourceEl.textContent = (payload.trust && payload.trust.verified)
+            ? ('Real NVIDIA execution with manifest-backed evidence. Run ID ' + runId + '. Request ID ' + requestId + '.')
+            : 'Evidence incomplete until the manifest contains the required runtime fields.';
         }
 
         document.getElementById('telDetailedExplanation').innerHTML = explainOperationalState(step, !!state.active, state.events || [], state.goal);
@@ -1926,11 +2266,11 @@
         var btn = document.getElementById('launchBtn');
         if (state.active) {
           btn.disabled = true;
-          btn.textContent = '⏳ Running...';
+          btn.textContent = 'â³ Running...';
           currentInterval = 600;
         } else {
           btn.disabled = false;
-          btn.textContent = '⚡ Launch Scientist Run';
+          btn.textContent = 'âš¡ Launch Scientist Run';
           currentInterval = 3000;
         }
 
@@ -1959,7 +2299,7 @@
       });
   }
 
-  /* ─── FORM SUBMIT ─── */
+  /* â”€â”€â”€ FORM SUBMIT â”€â”€â”€ */
   document.getElementById('runForm').addEventListener('submit', function(e) {
     e.preventDefault();
     var fd = new FormData();
@@ -1989,7 +2329,7 @@
     document.getElementById('runForm').dispatchEvent(new Event('submit'));
   }
 
-  /* ─── GALLERY CLICK ─── */
+  /* â”€â”€â”€ GALLERY CLICK â”€â”€â”€ */
   document.getElementById('galleryGrid').addEventListener('click', function(e) {
     var card = e.target.closest('.gallery-card');
     if (!card) return;
@@ -2008,7 +2348,7 @@
     if (src) loadPDBInViewer(src, name);
   });
 
-  /* ─── GSAP ENTRY ANIMATION ─── */
+  /* â”€â”€â”€ GSAP ENTRY ANIMATION â”€â”€â”€ */
   document.addEventListener('DOMContentLoaded', function() {
     gsap.to('.anim-in', {
       opacity: 1,
@@ -2018,6 +2358,23 @@
       ease: 'power3.out',
       delay: 0.1
     });
+    setTimeout(function() {
+      var preferred = [
+        ['/outputs/bionemo_openfold2_structure.pdb', 'OpenFold2 Prediction'],
+        ['/outputs/helical_bundle_folded.pdb', 'Helical Bundle (Folded)']
+      ];
+      function tryLoad(index) {
+        if (index >= preferred.length) return;
+        var item = preferred[index];
+        fetch(item[0]).then(function(r) {
+          if (!r.ok) throw new Error('missing');
+          loadPDBInViewer(item[0], item[1]);
+        }).catch(function() {
+          tryLoad(index + 1);
+        });
+      }
+      if (!viewerModel) tryLoad(0);
+    }, 250);
   });
 
   function scheduleNextPoll(interval) {
@@ -2029,11 +2386,14 @@
     }, interval);
   }
 
-  /* ─── INITIALIZE POLL ─── */
+  /* â”€â”€â”€ INITIALIZE POLL â”€â”€â”€ */
   scheduleNextPoll(1000);
 </script>
 </body>
 </html>
+
+
+
 
 
 

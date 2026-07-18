@@ -1516,7 +1516,9 @@
 
         function getResidueCAAtom(model, resNum) {
             if (!model) return null;
-            const atoms = model.getAtoms();
+            const atoms = typeof model.getAtoms === 'function'
+                ? model.getAtoms()
+                : (typeof model.selectedAtoms === 'function' ? model.selectedAtoms({}) : (model.atoms || []));
             for (let a of atoms) {
                 if (a.resi === resNum && a.name === 'CA') {
                     return a;

@@ -17,11 +17,14 @@ import uuid
 from urllib.parse import parse_qs, unquote, urlparse
 import webbrowser
 
+from trust_engine import build_trust_record, write_manifest
+
 
 ROOT = Path(__file__).resolve().parent
 OUTPUTS = ROOT / "outputs"
 SUMMARY_PATH = OUTPUTS / "bionemo_scientist_run_summary.json"
 REPORT_PATH = OUTPUTS / "bionemo_scientist_run_report.md"
+MANIFEST_PATH = OUTPUTS / "bionemo_execution_manifest.json"
 
 VIEWER_FILES = [
     "mixed_fold_viewer.png",
@@ -46,6 +49,24 @@ RUN_STATE = {
     "events": [],
     "result": None,
 }
+
+
+def load_repo_env() -> None:
+    env_path = ROOT / ".env"
+    if not env_path.exists():
+        return
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+load_repo_env()
 
 
 def read_text(path: Path, default: str = "") -> str:
@@ -179,47 +200,22 @@ def make_real_nvidia_stats_html(stats: dict) -> str:
     """
 
 
-def calculate_provenance_confidence(summary: dict, run_state: dict, artifacts: list) -> int:
-    runtime = summary.get("runtime", run_state.get("runtime", "auto"))
-    if runtime != "hosted":
-        # Demo mode: 0-20%
-        score = 10
-        if summary.get("run_id") or run_state.get("run_id"):
-            score += 5
-        if artifacts:
-            score += 5
-        return score
-        
-    # Hosted mode: 60-100%
-    score = 60
-    
-    run_id = summary.get("run_id") or run_state.get("run_id")
-    if run_id and run_id != "unknown" and run_id != "None":
-        score += 10
-        
-    request_id = summary.get("request_id") or run_state.get("request_id")
-    if request_id and request_id != "unknown" and request_id != "None":
-        score += 10
-        
-    endpoint = summary.get("api_endpoint")
-    if endpoint and "nvidia.com" in endpoint:
-        score += 10
-        
-    art_hash = summary.get("artifact_hash")
-    if art_hash and art_hash != "unknown":
-        score += 10
-        
-    # Check if all artifacts have hashes and correct provenance
-    if artifacts:
-        all_ok = True
-        for a in artifacts:
-            if not a.get("sha256") or a.get("provenance") != "JUST_RAN":
-                all_ok = False
-                break
-        if all_ok:
-            score += 10
-            
-    return score
+def load_trust_manifest() -> dict:
+    return read_json(MANIFEST_PATH)
+
+
+def trust_record_for(summary: dict, run_state: dict, artifacts: list) -> dict:
+    manifest = load_trust_manifest()
+    manifest_summary = manifest.get("summary", {})
+    manifest_run_state = manifest.get("run_state", {})
+    same_run = (
+        manifest_summary.get("run_id")
+        and manifest_summary.get("run_id") == summary.get("run_id")
+        and manifest_run_state.get("run_id") == run_state.get("run_id")
+    )
+    if manifest.get("trust") and same_run:
+        return manifest["trust"]
+    return build_trust_record(summary, run_state, artifacts)
 
 
 def latest_artifacts() -> list[dict[str, str]]:
@@ -397,7 +393,7 @@ def snapshot_state() -> dict:
 
 
 def detect_default_runtime() -> str:
-    return "hosted" if any(os.getenv(name) for name in ("NGC_API_KEY", "NVIDIA_API_KEY")) else "local-demo"
+    return "hosted" if any(os.getenv(name) for name in ("NGC_API_KEY", "NVIDIA_API_KEY")) else "relay"
 
 
 def run_scientist_job(goal: str, runtime: str, sequence: str, display_name: str) -> None:
@@ -490,6 +486,36 @@ def run_scientist_job(goal: str, runtime: str, sequence: str, display_name: str)
         time.sleep(0.7)
         artifacts = latest_artifacts()
         summary = read_json(SUMMARY_PATH)
+        push_event(
+            "done",
+            "Run complete. Latest artifacts are ready.",
+            {"artifact_count": len(artifacts), "status": "ready" if returncode == 0 else "error"},
+        )
+        with RUN_LOCK:
+            if summary.get("run_id"):
+                RUN_STATE["run_id"] = summary.get("run_id")
+            if summary.get("runtime"):
+                RUN_STATE["runtime"] = summary.get("runtime")
+            if summary.get("workflow"):
+                RUN_STATE["workflow"] = summary.get("workflow")
+        combined_trace = []
+        run_state_snapshot = snapshot_state()
+        combined_trace.extend(json.loads(json.dumps(run_state_snapshot.get("events", []))))
+        combined_trace.extend(summary.get("execution_trace", []))
+        write_manifest(
+            MANIFEST_PATH,
+            summary,
+            run_state_snapshot,
+            artifacts,
+            {
+                "verified": summary.get("runtime") == "hosted",
+                "source": "local relay -> NVIDIA" if summary.get("runtime") in {"hosted", "local-relay"} else "unavailable",
+                "runtime": summary.get("runtime", runtime),
+                "request_id": summary.get("request_id", ""),
+                "run_id": summary.get("run_id", ""),
+                "execution_trace": combined_trace,
+            },
+        )
         with RUN_LOCK:
             RUN_STATE["step"] = "finish"
             RUN_STATE["status"] = "ready" if returncode == 0 else "error"
@@ -503,11 +529,6 @@ def run_scientist_job(goal: str, runtime: str, sequence: str, display_name: str)
                 "artifacts": artifacts,
                 "summary": summary,
             }
-        push_event(
-            "done",
-            "Run complete. Latest artifacts are ready.",
-            {"artifact_count": len(artifacts), "status": RUN_STATE["status"]},
-        )
     except Exception as exc:
         with RUN_LOCK:
             RUN_STATE["status"] = "error"
@@ -579,6 +600,7 @@ def page_html() -> str:
 
     real_stats = load_real_nvidia_stats()
     real_stats_html = make_real_nvidia_stats_html(real_stats)
+    trust = trust_record_for(summary, run_state, artifacts)
 
     # Load the cinematic HTML template and substitute
     template_path = ROOT / "lab_template.html"
@@ -602,14 +624,22 @@ def page_html() -> str:
         newest_run=newest_run,
         active_command=active_command,
         real_nvidia_stats_html=real_stats_html,
-        trust_score=str(calculate_provenance_confidence(summary, run_state, artifacts)),
+        trust_score=str(trust.get("score", 0)),
+        trust_verdict=trust.get("verdict", "EVIDENCE INCOMPLETE"),
+        trust_verified="true" if trust.get("verified") else "false",
+        trust_explanation=trust.get("explanation", ""),
+        trust_missing=json.dumps(trust.get("missing", []), indent=2),
+        trust_reasons=json.dumps(trust.get("reasons", []), indent=2),
+        trust_evidence=json.dumps(trust.get("evidence", {}), indent=2, sort_keys=True),
+        trust_json=json.dumps(trust, indent=2, sort_keys=True),
         event_log_json=json.dumps(run_state.get("events", []), indent=2, sort_keys=True),
+        execution_trace_json=json.dumps(summary.get("execution_trace", []), indent=2, sort_keys=True),
         goal_value=summary.get("goal", "Design a protein fold and explain the confidence metrics."),
         sequence_value=summary.get("sequence", ""),
         display_name_value=summary.get("display_name", ""),
         runtime_auto_sel="selected" if run_state.get("runtime", "auto") == "auto" else "",
         runtime_hosted_sel="selected" if run_state.get("runtime") == "hosted" else "",
-        runtime_demo_sel="selected" if run_state.get("runtime") == "local-demo" else "",
+        runtime_demo_sel="selected" if run_state.get("runtime") == "relay" else "",
     )
 
 
@@ -629,6 +659,7 @@ def state_payload() -> dict:
         or infer_workflow_from_goal(run_state.get("goal", "") or summary.get("goal", ""))
     )
     stages = compute_stage_state(summary, run_state, artifacts)
+    trust = trust_record_for(summary, run_state, artifacts)
     return {
         "run_state": run_state,
         "summary": summary,
@@ -636,12 +667,14 @@ def state_payload() -> dict:
         "report": read_text(REPORT_PATH, "# No report generated yet."),
         "workflow": workflow,
         "stages": stages,
+        "trust": trust,
+        "execution_trace": summary.get("execution_trace", []),
         "real_nvidia_stats": load_real_nvidia_stats(),
         "telemetry": {
-            "verified": summary.get("runtime") == "hosted" and bool(summary.get("metric_sources", {}).get("confidence") == "returned by NVIDIA OpenFold2"),
+            "verified": trust.get("verified", False),
             "runtime": summary.get("runtime", run_state.get("runtime", "auto")),
             "runtime_kind": summary.get("runtime_kind", "LOCAL"),
-            "source": "hosted NVIDIA API" if summary.get("runtime") == "hosted" else "local demo fallback",
+            "source": "local relay -> NVIDIA" if summary.get("runtime") in {"hosted", "local-relay"} else "unavailable",
             "request_id": summary.get("request_id", ""),
             "run_id": summary.get("run_id", ""),
         },
@@ -719,6 +752,12 @@ class BioNeMoViewerHandler(BaseHTTPRequestHandler):
         if route == "/report":
             self.respond_text(read_text(REPORT_PATH, "# No report generated yet."), "text/markdown; charset=utf-8")
             return
+        if route == "/results.html":
+            self.serve_file(ROOT / "results.html")
+            return
+        if route == "/handoff.html":
+            self.serve_file(ROOT / "handoff.html")
+            return
         if route == "/learning_pack.html":
             self.serve_file(OUTPUTS / "learning_pack.html")
             return
@@ -784,6 +823,17 @@ class BioNeMoViewerHandler(BaseHTTPRequestHandler):
         if active:
             self.respond_json({"ok": False, "error": "Run already active", "run_state": snapshot_state()}, status=409)
             return
+
+        with RUN_LOCK:
+            RUN_STATE.setdefault("events", []).append(
+                {
+                    "time": now_ts(),
+                    "kind": "browser",
+                    "message": "Browser requested a new scientist run.",
+                    "detail": {"goal": goal, "runtime": runtime, "display_name": display_name, "sequence_provided": bool(sequence)},
+                }
+            )
+            RUN_STATE["events"] = RUN_STATE["events"][-30:]
 
         worker = threading.Thread(target=run_scientist_job, args=(goal, runtime, sequence, display_name), daemon=True)
         worker.start()

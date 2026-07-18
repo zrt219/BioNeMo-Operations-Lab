@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BioNeMo Results</title>
+  <style>
+    :root { color-scheme: dark; --bg: #070b15; --panel: #111827; --text: #f3f7fb; --muted: #a9b7c7; --line: rgba(164,188,212,.22); --accent: #b8ff2a; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+    main { width: min(980px, calc(100% - 32px)); margin: 0 auto; padding: 40px 0; }
+    a { color: var(--text); }
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+    .brand { display: flex; gap: 12px; align-items: center; }
+    .mark { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: #b8ff2a; color: #06110b; font-weight: 900; }
+    h1 { margin: 0; font-size: clamp(30px, 5vw, 56px); line-height: 1; letter-spacing: -.04em; }
+    p { color: var(--muted); line-height: 1.6; }
+    .panel { border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(180deg, rgba(17,24,39,.96), rgba(10,15,28,.98)); padding: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 20px 0; }
+    .metric { padding: 14px; border-radius: 12px; background: rgba(255,255,255,.04); }
+    .metric span { display: block; color: var(--muted); font-size: 12px; }
+    .metric strong { display: block; margin-top: 4px; font-size: 18px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); text-decoration: none; font-weight: 800; }
+    .button.primary { border-color: rgba(184,255,42,.5); background: rgba(184,255,42,.15); color: #f5ffd1; }
+    @media (max-width: 720px) { .top, .grid { grid-template-columns: 1fr; display: grid; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="top">
+      <div class="brand"><div class="mark">Z</div><strong>BioNeMo Operations Lab</strong></div>
+      <a class="button" href="/">Back to dashboard</a>
+    </div>
+    <section class="panel">
+      <p>Verified NVIDIA execution</p>
+      <h1>OpenFold2 results are ready.</h1>
+      <p>The latest run completed successfully and generated structure, MSA, score, summary, and manifest artifacts.</p>
+      <div class="grid">
+        <div class="metric"><span>Status</span><strong>Completed</strong></div>
+        <div class="metric"><span>Runtime</span><strong>NVIDIA hosted</strong></div>
+        <div class="metric"><span>Evidence</span><strong>22 / 22</strong></div>
+      </div>
+      <div class="actions">
+        <a class="button primary" href="/outputs/bionemo_scientist_run_report.md">Run report</a>
+        <a class="button" href="/outputs/bionemo_scientist_run_summary.json">Summary JSON</a>
+        <a class="button" href="/outputs/bionemo_openfold2_structure.pdb">PDB structure</a>
+        <a class="button" href="/outputs/bionemo_execution_manifest.json">Manifest</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
