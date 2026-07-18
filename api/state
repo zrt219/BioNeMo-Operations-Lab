@@ -1,0 +1,34 @@
+{
+  "run_state": {
+    "active": false,
+    "run_id": "0bb858ae88987c12e1a5a5e7",
+    "goal": "Fold a protein sequence and explain the confidence metrics.",
+    "runtime": "hosted",
+    "status": "ready",
+    "step": "finish",
+    "events": [],
+    "result": {
+      "returncode": 0,
+      "runtime": "hosted",
+      "artifacts": []
+    }
+  },
+  "summary": {
+    "status": "PASS",
+    "runtime": "hosted",
+    "runtime_kind": "REAL",
+    "workflow": "protein-fold",
+    "model": "OpenFold2",
+    "provider": "NVIDIA BioNeMo",
+    "run_id": "0bb858ae88987c12e1a5a5e7",
+    "request_id": "f57cd9c1174020754007a96f",
+    "api_endpoint": "https://health.api.nvidia.com/v1/biology/openfold/openfold2/predict-structure-from-msa-and-template"
+  },
+  "trust": {
+    "verified": true,
+    "verdict": "VERIFIED NVIDIA EXECUTION",
+    "score": 100,
+    "missing": []
+  },
+  "report": "Static production fallback. Use the local BioNeMo Python app server for live run execution."
+}
