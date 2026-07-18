@@ -1,0 +1,174 @@
+{
+  "action": {
+    "fingerprint": "sha256:5f2c1c34c9472026264a8e96f39c7777119f43666145aab790a647df1ad85c0f",
+    "properties": [
+      "action",
+      "metadata",
+      "policy_label",
+      "replacement",
+      "reversible_id",
+      "schema_version"
+    ],
+    "required": [
+      "action",
+      "metadata",
+      "policy_label",
+      "replacement",
+      "reversible_id",
+      "schema_version"
+    ],
+    "schema_version": 1
+  },
+  "audit": {
+    "fingerprint": "sha256:cc3ef86ebf54062843880c889524e49c7b0a506f714c1666a193596ab04aba6b",
+    "properties": [
+      "actor",
+      "doc_id",
+      "event_id",
+      "metadata",
+      "provenance_id",
+      "schema_version",
+      "span_id",
+      "timestamp"
+    ],
+    "required": [
+      "actor",
+      "doc_id",
+      "event_id",
+      "metadata",
+      "provenance_id",
+      "schema_version",
+      "span_id",
+      "timestamp"
+    ],
+    "schema_version": 1
+  },
+  "code": {
+    "fingerprint": "sha256:ad4e56848f6cbf9cf3d3935af4ab264c318479ad81a16fb5f3de4db6ee1af48f",
+    "properties": [
+      "code",
+      "confidence",
+      "display",
+      "metadata",
+      "provenance_id",
+      "schema_version",
+      "system"
+    ],
+    "required": [
+      "code",
+      "confidence",
+      "display",
+      "metadata",
+      "provenance_id",
+      "schema_version",
+      "system"
+    ],
+    "schema_version": 1
+  },
+  "entity": {
+    "fingerprint": "sha256:95d4b7026fd2dac95cf0a6d279eb31b46e51ee5d8d6edbf5733287313f0e441d",
+    "properties": [
+      "canonical_label",
+      "entity_type",
+      "policy_label",
+      "regulatory_tags",
+      "schema_version"
+    ],
+    "required": [
+      "canonical_label",
+      "entity_type",
+      "policy_label",
+      "regulatory_tags",
+      "schema_version"
+    ],
+    "schema_version": 1
+  },
+  "provenance": {
+    "fingerprint": "sha256:56bd3334a6f3d8263e1c7f4e20d81746c931bef11aba9d10a4c2add92062b4fe",
+    "properties": [
+      "artifact_hash",
+      "detector",
+      "metadata",
+      "model",
+      "parameters",
+      "provenance_id",
+      "schema_version",
+      "version"
+    ],
+    "required": [
+      "artifact_hash",
+      "detector",
+      "metadata",
+      "model",
+      "parameters",
+      "provenance_id",
+      "schema_version",
+      "version"
+    ],
+    "schema_version": 1
+  },
+  "relation": {
+    "fingerprint": "sha256:e60356134bd24aba6382b7d4267147e5bd0d6fc9873ca26f8b629d1cef91c3bb",
+    "properties": [
+      "evidence",
+      "metadata",
+      "relation_type",
+      "schema_version",
+      "score",
+      "source_span_id",
+      "target_span_id"
+    ],
+    "required": [
+      "evidence",
+      "metadata",
+      "relation_type",
+      "schema_version",
+      "score",
+      "source_span_id",
+      "target_span_id"
+    ],
+    "schema_version": 1
+  },
+  "span": {
+    "fingerprint": "sha256:273fb72f3c82b119ba35600d20e17ece75db1ff806fd1bbd26e766cafcca48b2",
+    "properties": [
+      "action",
+      "canonical_label",
+      "detector",
+      "doc_id",
+      "end",
+      "entity_type",
+      "evidence",
+      "metadata",
+      "policy_label",
+      "regulatory_tags",
+      "replacement",
+      "reversible_id",
+      "schema_version",
+      "score",
+      "section",
+      "start",
+      "text_hash"
+    ],
+    "required": [
+      "action",
+      "canonical_label",
+      "detector",
+      "doc_id",
+      "end",
+      "entity_type",
+      "evidence",
+      "metadata",
+      "policy_label",
+      "regulatory_tags",
+      "replacement",
+      "reversible_id",
+      "schema_version",
+      "score",
+      "section",
+      "start",
+      "text_hash"
+    ],
+    "schema_version": 1
+  }
+}

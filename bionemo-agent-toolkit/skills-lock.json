@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "skills": {
+    "boltz2-nim": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/boltz2-nim/SKILL.md",
+      "computedHash": "cd8f9435edcdb88247841a85c1a49f2f342fa38dd7c3b0b064b5b5fd828317ae"
+    },
+    "complexa-design": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/complexa-design/SKILL.md",
+      "computedHash": "8bb6f03427230a6a31c966e570b492a3d3892faa2cc39c4601584552a4b73012"
+    },
+    "complexa-evaluate-pdbs": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/complexa-evaluate-pdbs/SKILL.md",
+      "computedHash": "1c81c4e5e51bfeab3bfa6672269dc485007dd5fd005e3704419bd076e69edf94"
+    },
+    "complexa-setup": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/complexa-setup/SKILL.md",
+      "computedHash": "929896ac29eaaf6aa57ff7299f03a72da149b705b49f09b4a4b4b126dd63f935"
+    },
+    "complexa-slurm": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/complexa-slurm/SKILL.md",
+      "computedHash": "20d493aceb9b4a9595ea440915b9583f6f86223bac2267dd52e0afd60880dcde"
+    },
+    "complexa-sweep": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/complexa-sweep/SKILL.md",
+      "computedHash": "85c29350526682f66911cd5742620f9ccb1f4518f3b1e2867199168088656858"
+    },
+    "complexa-target": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/complexa-target/SKILL.md",
+      "computedHash": "dce2cb1a5f75a717a5939ac6bec4b27a55a41b3d30ca5980191878da18a0c43e"
+    },
+    "cuequivariance": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/cuEquivariance/SKILL.md",
+      "computedHash": "9dc87f4782eed2131c946683bdb7c73e08f61157fb8dfb45ad095a1acebd6aa9"
+    },
+    "diffdock-nim": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/diffdock-nim/SKILL.md",
+      "computedHash": "5bce35722e00715283b2c2369f8f5782a21d7e645a2f001f264049c093771ce1"
+    },
+    "drug-discovery-pipeline": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/drug-discovery-pipeline/SKILL.md",
+      "computedHash": "7c95f0a6a353aa8724aa68194d3ace69d4268c7c3b56ee293ae3c21948ec10a8"
+    },
+    "evo2-nim": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/evo2-nim/SKILL.md",
+      "computedHash": "7a38c1e0c4657ef0b2d5abcee2323c121cc926c3dd6e40cd78c0d8cd1e9186fb"
+    },
+    "genmol-nim": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/genmol-nim/SKILL.md",
+      "computedHash": "a9e3baecd8c04a13ae7859c76064ed77b0e99a36bb6087061aa7bb4e22bac080"
+    },
+    "genomics-workflow-acceleration": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/genomics-workflow-acceleration/SKILL.md",
+      "computedHash": "9c266054dd68cd0aa88b41636d9a39530e2890a9c37cf84ff33d0cb0a5e5c86e"
+    },
+    "kermt-add-cmim-pretrain": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/kermt-add-cmim-pretrain/SKILL.md",
+      "computedHash": "5be7f290c414bf7789f19a1adc92c06dbc920f9351785c0fef124a16351fa11a"
+    },
+    "kermt-continue-pretrain": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/kermt-continue-pretrain/SKILL.md",
+      "computedHash": "0a97161666a85a92d8ee6519d81d60551b32b212a87b6e2ba8120300e65b7752"
+    },
+    "kermt-embed": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/kermt-embed/SKILL.md",
+      "computedHash": "aa90f331fdbe9150c4b39e1dfee0b2b77034039c754caa7d6cebb3c783bf7238"
+    },
+    "kermt-finetune": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/kermt-finetune/SKILL.md",
+      "computedHash": "49530fb65d98397c9b4c94ff5a1c9c1539f923941b01fc4a3472928ff4a5466b"
+    },
+    "kermt-infer": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/kermt-infer/SKILL.md",
+      "computedHash": "3dd3f76d56ed8a32c0780f6e02f8216ccb1177121f6bd6e951a4f9b397763cf4"
+    },
+    "kermt-monitor": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/kermt-monitor/SKILL.md",
+      "computedHash": "372fd7b85675ebc47a564c00334f4162c6d3a5888b5ec58fff8f6423eae6b0d6"
+    },
+    "kermt-pretrain-scratch": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/kermt-pretrain-scratch/SKILL.md",
+      "computedHash": "47863d4407165d785003ced6376f8927d2c8be70bf3948e99d1fe352b335f916"
+    },
+    "kermt-setup": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/kermt-setup/SKILL.md",
+      "computedHash": "94b0a9b971e4f672dc9336ab53e2c28a424014ef05d5d85bb1cb3bd30776a3c0"
+    },
+    "molmim-nim": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/molmim-nim/SKILL.md",
+      "computedHash": "fdb854a0fb74ecc0642bccd407cfb7db69d3ad1c2dbfca61d4a7f9dad7d0faa8"
+    },
+    "msa-search-nim": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/msa-search-nim/SKILL.md",
+      "computedHash": "758a5f90476137a1d561e57527bdfd7cc937cb7b1e9bbc3ddda4b6d5f6583ef0"
+    },
+    "msa-structure-prediction-pipeline": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/msa-structure-prediction-pipeline/SKILL.md",
+      "computedHash": "e2a3cd1008a8eff839f12c597bccd5b78c6289f03c6e84f1c397f80c2ca14506"
+    },
+    "nvmolkit-usage": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/nvMolKit/SKILL.md",
+      "computedHash": "8335f485a52ae870fb39d97ed767ce42fc281ae840a1c82d67d703669854b856"
+    },
+    "openfold2-nim": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/openfold2-nim/SKILL.md",
+      "computedHash": "9136cced2ca15fec81c1ae8df764dff7967a631676e7a8a60ca4fcde3f7c2b29"
+    },
+    "openfold3-nim": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/openfold3-nim/SKILL.md",
+      "computedHash": "33b04f35570c6d3c225202b00ac8be8b1aaf50b1d07e393b8329ec3a722cdcbe"
+    },
+    "parabricks": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/parabricks/SKILL.md",
+      "computedHash": "30932079d2eebfdaa3c0b49bc6603296e898b40fa58cbab9a1fb0b42d7eb6c57"
+    },
+    "proteinmpnn-nim": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/proteinmpnn-nim/SKILL.md",
+      "computedHash": "07f1a7ce3afbde0a2da0c4584619ec5c1c1e6ec745711f23393108a4725659f9"
+    },
+    "rfdiffusion-nim": {
+      "source": "NVIDIA-BioNeMo/bionemo-agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "plugins/bionemo-agent-toolkit/skills/rfdiffusion-nim/SKILL.md",
+      "computedHash": "35bb0a2a01b6b80e7da77de35de17566f140a16f9a3061257fe1be0fc84c6d8f"
+    }
+  }
+}

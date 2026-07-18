@@ -1,0 +1,91 @@
+# Tags matching v* build and publish the openmed package to PyPI.
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  provenance:
+    name: Build, attest, and verify distributions
+    uses: ./.github/workflows/provenance.yml
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+
+  publish:
+    name: Publish distributions
+    needs: provenance
+    if: github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/openmed
+    permissions:
+      contents: read
+
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@v8
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.14.0
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          attestations: false
+
+  sbom:
+    name: Generate release SBOM
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # attach the SBOM asset to the tagged GitHub release
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      # SBOM generation runs after publish and is fail-open: a hiccup in any of
+      # these steps must never block an otherwise-successful release.
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.2.0
+        continue-on-error: true
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            pyproject.toml
+            uv.lock
+
+      - name: Generate CycloneDX SBOM
+        continue-on-error: true
+        run: |
+          uv sync --frozen --python 3.11
+          uv run --no-project --with 'cyclonedx-bom>=4.6,<7' python scripts/security/generate_sbom.py
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: sbom
+          path: sbom.cdx.json
+          if-no-files-found: warn
+
+      - name: Attach SBOM to the tagged GitHub release
+        if: github.ref_type == 'tag' && hashFiles('sbom.cdx.json') != ''
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "$GITHUB_REF_NAME" sbom.cdx.json --clobber \
+            || gh release create "$GITHUB_REF_NAME" sbom.cdx.json \
+                 --title "$GITHUB_REF_NAME" --generate-notes

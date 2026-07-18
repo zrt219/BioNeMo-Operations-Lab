@@ -4,3 +4,7 @@ __pycache__/
 *.pyo
 *.pyd
 .agents/
+**/.git_backup/
+**/node_modules/
+
+.vercel

@@ -1,0 +1,1113 @@
+# Changelog
+
+All notable changes to OpenMed will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+
+- Added a PEP 561 `py.typed` marker plus a pinned, scoped mypy gate for the
+  annotated public-module surface, with built-wheel and sdist verification
+  that the marker ships in release artifacts (#548).
+- Added a full Korean (`ko`) PII language pack with native date, phone, RRN,
+  postcode, and address patterns, checksum-valid local surrogates, synthetic
+  golden coverage, service and training wiring, and the manifest-backed Korean
+  default model (#262).
+- Added an offline immunization zero-shot domain with FHIR-aligned display
+  labels, canonical policy metadata, synthetic per-label fixture coverage, and
+  generated OM-138 exporter-alignment documentation (#897).
+
+## [1.8.1] - 2026-07-10
+
+### Fixed
+
+- Fixed automatic PyTorch attention selection so `auto` no longer forces SDPA onto Transformers architectures that do not support it, including `DebertaV2ForTokenClassification`; explicit `eager`, `sdpa`, and `flash_attention_2` selections remain available.
+- Changed unavailable accelerated-attention fallbacks to use the architecture-independent eager implementation instead of selecting another accelerated backend from runtime capability alone.
+
+## [1.8.0] - 2026-07-09
+
+This release summarizes the cross-platform runtime, service hardening, multimodal privacy, clinical extraction, and release-evidence work merged after `v1.7.0`. The reviewed range is broad: 434 commits from `v1.7.0` through the final `release/openmed-180` branch tip prepared for the `v1.8.0` tag, covering Android, browser, and React Native runtimes, production service controls, structured health-data pipelines, and the privacy/evaluation gates that keep those surfaces aligned.
+
+### Added
+
+- Added the Android OpenMedKit surface: a Gradle project, Kotlin public API, token-classification decoder, ONNX and ORT Mobile paths, ML Kit OCR adapter, model catalog/download cache, document/image intake, Compose demo, scan demo, Python-to-Android span parity fixtures, Android CI, and guarded Maven Central publishing (#1114, #1115, #1116, #1117, #1118, #1119, #1120, #1121, #1122, #1123, #1124, #1146, #1148, #1149, #1150, #1155, #1156, #1161, #1162).
+- Added browser, mobile JavaScript, and cross-platform client runtimes, including a typed OpenMedKit web package for Transformers.js/ONNX Runtime Web, a React Native bridge, Swift-Kotlin parity checks, public API parity coverage, and a typed TypeScript service client surface (#1132, #1177, #1178, #1123).
+- Added production service and deployment capabilities: API-key/JWT auth, request correlation IDs, no-PHI JSON logging, OpenTelemetry tracing, gRPC, async jobs and webhooks, Helm deployment, multi-arch containers, circuit breakers, model-load retry/backoff, privacy-gateway redaction before external calls, SMART-on-FHIR bulk ingestion, object-storage batch runs, Spark/Dask/lakehouse/columnar redaction, DuckDB and pandas/polars accessors, agent/MCP tool orchestration, hardened distroless images, image signing, SLSA provenance, container SBOMs, and vulnerability scanning (#1080, #1081, #1082, #1084, #1109, #1110, #1126, #1127, #1129, #1130, #1131, #1133, #1136, #1138, #1139, #1140, #1141, #1143, #1144, #1152, #1153, #1154, #1175, #1176, #1179, #1180, #1185, #1189).
+- Added deeper clinical extraction and interoperability: normalized clinical timelines, document assertion graphs, clinical event frames, medication relation decoding, concept normalization, UCUM units, free vocabulary grounding, RxNorm/ICD-10-CM/HPO linkers, CodeableConcept export, deterministic CDM extraction, OMOP CDM loader foundation, GDPR DSAR export, and severity/laterality, clinical-genomics, gastroenterology, endocrinology, nutrition/diet, and anesthesia domain coverage (#1019, #1022, #1025, #1026, #1027, #1079, #1086, #1105, #1134, #1135, #1137, #1160, #1164, #1165, #1166, #1167, #1170, #1182, #1183, #1184, #1187, #1219, #1292, #1299).
+- Added multimodal and structured privacy coverage for DOCX offset extraction, plain-image redaction, DICOM header de-identification, burned-in DICOM pixel OCR redaction, redacted-PDF text-layer fidelity checks, EPUB extraction, vCard/iCalendar PHI redaction, UK health identifiers, IBAN/SWIFT/BIC identifiers, passport/MRZ validation, and additional validator-backed ID packs for Slovak, Latvian, Malay, Filipino, and Danish locales (#1093, #1098, #1106, #1107, #1108, #1112, #1128, #1142, #1163, #1171, #1173, #1186, #1188, #1406).
+- Added evaluation, model, and release evidence infrastructure: streaming token classification, speculative MLX PII decoding, QLoRA smoke recipes, leakage-weighted distillation, Core ML and ONNX optimization/parity gates, OpenVINO export, paged KV-cache attention, memory-budgeted model scheduling, benchmark ledgers, active-learning gate queues, hard-negative mining, cross-lingual transfer evaluation, model-card/datasheet generation, flakiness quarantine, conformal calibration and abstention, mobile performance benchmarking, comparator matrices, load-test harnesses, and training provenance reproducibility gates (#1002, #1003, #1009, #1014, #1015, #1016, #1017, #1018, #1036, #1054, #1055, #1056, #1062, #1063, #1064, #1065, #1066, #1097, #1113, #1147, #1151, #1172, #1220).
+- Added an endocrinology zero-shot domain for glycemic and thyroid-function
+  measures, hormone levels, insulin regimens, metabolic findings, and endocrine
+  glands, with canonical label normalization, keyword routing metadata, and
+  synthetic fixture coverage (#895).
+- Added `examples/gradio_deid_app.py`, an interactive Gradio demo that runs
+  `deidentify` over synthetic text with a `mask`/`replace`/`hash` method
+  selector and shows the redacted output alongside the detected PII entities.
+  `gradio` stays an optional, example-local dependency with a graceful install
+  hint, and the example is covered by import-safe smoke tests (#484).
+- Added an `OPENMED_MLX_MMAP` toggle to `openmed.mlx.models.load_model`:
+  safetensors weights load through MLX's memory-mapped, lazy path by default
+  (keeping cold-start peak RSS low on the phone/laptop tiers), with
+  `OPENMED_MLX_MMAP=0` forcing eager materialization as a documented fallback
+  for debugging (#296).
+
+### Changed
+
+- Extended OpenMed from a Python/Swift-centered toolkit into a coordinated Python, Swift, Kotlin/Android, TypeScript, React Native, browser, REST, gRPC, and deployment release, with parity tests and shared fixtures keeping the platform surfaces aligned.
+- Updated release engineering around guarded PyPI publishing, SLSA attestations, SBOMs, signed images, static OpenAPI regeneration, reproducible release metadata, baseline-aware secret scanning, and guarded mobile/container publishing so library, container, and mobile artifacts can be validated from the same source tree (#1104, #1144, #1153, #1154, #1405).
+
+### Fixed
+
+- Fixed optimizer-stripped assertions, explicit UTF-8 handling, JSON decoding failures, exception chaining, iOS MLX pinning, multilingual test span offsets, Pages deployment concurrency, HPO linker test adaptation, DSAR vault-key matching, and lint cleanup after the large v1.8 merge train (#1091, #1094, #1095, #1096, #1100, #1158, #1181, #1194, #1404).
+
+### Security
+
+- Added and strengthened no-raw-PHI logging, offline mode socket blocking, privacy-gateway redaction before external LLM calls, policy compiler coverage proofs, DP surrogate budgeting, k-anonymity/l-diversity/t-closeness enforcement, membership-inference defenses, adversarial de-identification robustness, federated leakage evaluation, secret scanning, pre-commit hook scanning, and vulnerability gates (#189, #190, #1034, #1035, #1037, #1043, #1047, #1082, #1127, #1141, #1405).
+
+## [1.7.0] - 2026-07-01
+
+This release summarizes 148 pull requests merged into
+`release/openmed-170` after `v1.6.0`. The diff is additive overall: 483 files
+changed, with no deleted or renamed files detected in the release range.
+
+### Added
+
+- Added lightweight multimodal document primitives, source spans, lazy handler
+  registration, `redact_document`, image redaction, PDF span coordinate
+  projection, Markdown/AsciiDoc offset-preserving extraction, audit-safe image,
+  PDF, and DOCX metadata scrubbing, and JSONL chat-log de-identification with
+  speaker pseudonymization (#555, #567, #726, #745, #755, #758).
+- Added OCR engine coverage for Tesseract, PaddleOCR, EasyOCR, docTR, and test
+  engines, including OCR language selection and available-engine discovery
+  (#567, #717, #749, #558).
+- Added CDA/C-CDA XML, HL7 v2, CSV/TSV, FHIR `$de-identify`, FHIR Bulk NDJSON,
+  deterministic FHIR Bundle, FHIR `OperationOutcome`, FHIR `Provenance` /
+  `AuditEvent`, deterministic `urn:uuid`, code-system provenance,
+  CodeableConcept checks, and flat-table clinical entity export helpers (#566,
+  #642, #631, #629, #626, #625, #553, #705, #737, #777, #784, #689, #690).
+- Added clinical extraction and normalization helpers for labs, vital signs,
+  medication sigs, problem lists, summary cards, microbiology labels,
+  dermatology and ophthalmology domains, clinical concept labels, and clinical
+  term protection, plus deterministic substance, employment, and living-status
+  normalization (#552, #410, #560, #718, #683, #773, #684, #691, #698, #767).
+- Added a nutrition and diet-order zero-shot domain, four canonical nutrition
+  policy labels, policy-profile coverage, routing metadata, and synthetic
+  fixture coverage for diet orders and feeding routes (#951).
+- Added language and locale capabilities for Indonesian, Thai, Hebrew RTL,
+  PESEL, Korean RRN, Unicode script detection, locale checksum registries,
+  deterministic locale PHI generation, and locale-aware date/number
+  normalization (#747, #746, #748, #709, #609, #610, #614, #766).
+- Added de-identification runtime features: `DeidentificationResult.to_dataframe`,
+  redaction preview diffs, cross-document surrogate vaults, patient-keyed date
+  shifting, format-preserving identifier redaction, minimum-necessary strength
+  selection, streaming incremental de-identification, typed analyze results,
+  pipeline explain traces, section stamping, and per-document risk budgets
+  (#706, #695, #729, #704, #778, #779, #731, #611, #727, #785, #733).
+- Added CLI surfaces for policy-aware `openmed deid`, `openmed fhir bundle`,
+  `openmed models recommend`, `openmed models diff`, `openmed policy diff`,
+  `openmed doctor`, `openmed gates preview`, `openmed gates bundle`,
+  `openmed audit`, `openmed risk`, and active-learning queue management (#741,
+  #777, #721, #780, #771, #772, #775, #735, #787, #613).
+- Added service features for model warm pools, dynamic batching, request
+  coalescing, rate and concurrency limits, readiness/liveness endpoints,
+  opt-in Prometheus metrics, and typed Python and TypeScript REST clients
+  (#632, #630, #750, #742, #722, #788, #789, #756).
+- Added an in-process ASGI load-test harness with configurable concurrency
+  that reports requests per second, p50/p95/p99 latency, and error rate (#461).
+- Added evaluation, release-gate, and risk tooling: DrugProt and public
+  biomedical NER suites, i2b2 loader, multilingual golden fixtures, dataset
+  cards, fixture coverage, per-section recall, result cache, leakage heatmaps,
+  membership-inference
+  probe, k-anonymity/l-diversity/t-closeness metrics, audit diffs, evidence
+  bundles, scorecards, threshold sweeps, flaky-run detection, paired
+  significance testing, calibration reliability data, utility-loss reports,
+  policy-compliance suite, cross-release benchmark history diffs, nano-tier
+  certification, and risk dashboard rendering (#617, #615, #743, #701, #688,
+  #703, #702, #708, #725, #680, #724, #723, #740, #735, #681, #682, #752,
+  #753, #754, #762, #765, #734, #764, #744, #786).
+- Added model, backend, and training support for Laneformer MLX-LM, MLX INT4
+  recall certification, Core ML INT8 palettized export, AWQ and GPTQ 4-bit
+  quantization recipes, bitsandbytes 4-bit loading, FlashAttention/SDPA/eager
+  attention selection, PyTorch MPS tuning, ONNX/WebGPU and Transformers.js
+  exports, tokenizer caching, Mode-A distillation, DAPT corpus assembly, and
+  ONNX/quantized artifact publishing metadata (#644, #620, #619, #627, #759,
+  #760, #761, #719, #736, #790, #751, #622, #612).
+- Added interop adapters for PHILTER, pyDeid, GLiNER-BioMed, LangChain, and the
+  optional spaCy `openmed_deid` pipeline component (#372, #624).
+- Added policy profiles and policy tooling for Australia Privacy Act, GDPR
+  Article 9 health, UK ICO anonymisation, policy config diffing, and Swift
+  OpenMedKit policy-driven de-identification (#769, #770, #768, #771, #685).
+- Added Swift/OpenMedKit de-identification result JSON export and bundled
+  policy resources for client-side policy workflows (#692, #685).
+- Added examples and documentation for a first-five-minutes redaction/extraction
+  to FHIR walkthrough, OpenAPI export, model manifest docs, REST clients, OCR,
+  multimodal redaction, quantization exports, policy workflows, security, SBOM,
+  reproducible dependencies, breach response, onboarding, community health, and
+  release status contracts (#628, #694, #647, #716, #720, #1021, #409, #697).
+
+### Changed
+
+- `analyze_text(..., output_format="dict")` now returns a frozen
+  `AnalyzeResult`; `to_dict()` and mapping access preserve the legacy dict shape
+  (#611).
+- PII extraction and the staged pipeline now apply clinical term protection by
+  default, suppressing ambiguous PERSON/LOCATION/ORG matches that exactly match
+  protected clinical vocabulary (#698).
+- ConText temporality, uncertainty, and negation now use sentence/clause-bounded
+  cue scope with section-aware priors and context offsets (#738, #739, #782).
+- Pipeline span output can include populated `section` metadata after section
+  stamping (#785).
+- Lab reference-range parsing now accepts broader separators/operators and treats
+  unknown explicit flags as `unknown` rather than deriving a normal/high/low
+  result (#560).
+- REST `/health` remains as a compatibility alias, while `/livez` and `/readyz`
+  expose split liveness/readiness state and shutdown drains in-flight
+  model-backed requests (#722).
+- REST CORS and trusted-host handling is now deny-by-default except for exact
+  configured origins and trusted hosts (#686).
+- OCR auto-selection can now pick installed EasyOCR or docTR adapters in
+  addition to Tesseract/PaddleOCR (#749, #558).
+- Evaluation defaults now include DrugProt and biomedical NER suites, and
+  leakage heatmaps now emit label-by-language matrices with totals and worst
+  cells (#617, #743, #680).
+- Model manifest rows now merge format lists for existing repositories and
+  recognize ONNX/WebGPU and Transformers.js export formats (#736, #790).
+- CI lint/test/security/build setup moved to `uv sync` / `uv run`, with GitHub
+  Actions refs validated and Dependabot Actions updates limited to minor/patch
+  bumps (#185, #700).
+- PyTorch/HF backends can auto-select MPS on Apple Silicon when no device is set
+  (#719).
+- AWQ and GPTQ export paths now share synthetic quantization calibration
+  metadata (#759).
+- `shift_dates` documentation now describes patient-keyed stable date shifting;
+  the legacy boolean remains accepted but deprecated in favor of
+  `method="shift_dates"` (#704).
+
+### Fixed
+
+- Fixed nondeterministic audit span ordering so report serialization, hashes, and
+  signatures are stable while preserving legacy verification (#645).
+- Fixed date-shift parity between `python-dateutil` and fallback paths,
+  including month-first English month-name dates, and aligned `uv.lock` with the
+  dev extra dependency set (#616, #649).
+- Fixed deterministic FHIR URN preservation during Bundle assembly (#553).
+- Fixed JSON loading paths in core, eval, NER, and risk modules so corrupt JSON
+  raises clearer errors or fails closed (#958).
+- Fixed optional-extra diagnostics for missing `ftfy`, section detection, and
+  date-shift capabilities (#781).
+- Reduced numeric false positives in safety-sweep postcode-style matches by
+  requiring stronger context (#783).
+- Added explicit UTF-8 encodings for subprocess/file I/O paths and preserved
+  exception chaining in model load failures (#1088).
+- Added timeouts to `subprocess.run` calls in reproducibility hash and
+  release-gate issue helpers (#1090).
+- Replaced eager f-string logging with lazy logging interpolation across model,
+  processing, batch, text, and utility modules (#1092).
+- Fixed PII method quickstart docs for `mask`, `remove`, `replace`, `hash`,
+  `shift_dates`, and `reidentify()` examples (#409).
+
+### Security
+
+- Added root `SECURITY.md`, private vulnerability disclosure guidance, security
+  issue-template routing, security docs, and README links (#648).
+- Added breach-notification runbook and breach report template with explicit
+  no-raw-PHI/PII handling guidance (#1021).
+- Added CycloneDX SBOM generation via `make sbom`, CI artifact upload, tagged
+  release SBOM attachment, and supply-chain docs (#720).
+- Added reproducible-lock GitHub Actions gate and contributing docs for pinned,
+  hash-verified installs (#1083).
+- Added lockfile drift, GitHub Actions ref, license-policy, and doctest-backed
+  public-example gates (#693, #700, #763).
+- Added PHI-safe defaults for progress callbacks, NDJSON error summaries,
+  active-learning records, hashed examples, explain traces, dataset cards, and
+  metadata scrubbing (#621, #737, #613, #765, #727, #701, #755).
+
+### Dependencies
+
+- Added optional extras and dependency policy entries for multimodal/OCR, spaCy,
+  AWQ, GPTQ, MLX-LM, Kafka, PHILTER/pyDeid, TypeScript client support, and
+  service clients (#555, #567, #624, #627, #644, #757, #759, #372, #756, #789).
+- Updated GitHub Actions refs and maintenance dependencies, including checkout
+  v7, setup-python v6, cache v6, upload-artifact v7, Ruff/pre-commit updates,
+  and LangChain Core 1.x compatibility for the optional LangChain extra (#607,
+  #710, #711, #712, #713, #714, #715).
+
+### Removed
+
+- No public files, modules, or APIs were removed in the reviewed release range.
+
+### Upgrade Notes
+
+- FHIR `OperationOutcome` output emits R4 `issue.expression`; legacy
+  `issue.location` is accepted on input but is not emitted, and non-R4
+  severities such as `info` are rejected (#566).
+- `ServiceRuntime.get_loader()` returns the warm-pool proxy; use
+  `get_model_loader()` when raw loader access is required (#632).
+- Unsupported Core ML architectures now fail before model loading/tracing, and
+  `--quantized-output` requires `--quantize int8` (#619).
+- Custom OCR engines should tolerate the keyword-only `languages` parameter
+  (#717).
+- The canonical label set expanded with clinical concepts, which can affect
+  callers enumerating exact label counts (#718).
+- `format_preserve` expands the action enum/schema surface and updates schema
+  fingerprints (#778).
+- REST deployments using custom Host headers must configure
+  `OPENMED_SERVICE_TRUSTED_HOSTS`; wildcard CORS/trusted-host settings are
+  rejected (#686).
+- OCR auto-selection order changed when optional EasyOCR or docTR engines are
+  installed (#749, #558).
+
+## [1.6.0] - 2026-06-22
+
+### Added
+
+- Added a policy-aware de-identification runtime with canonical `OpenMedSpan` schema contracts, a ten-stage `Pipeline`, detector arbitration/cascade routing, calibrated per-label/language/policy thresholds, deterministic safety sweep backstops, and six bundled policy profiles (`hipaa_safe_harbor`, `hipaa_expert_review_assist`, `gdpr_pseudonymization`, `research_limited_dataset`, `strict_no_leak`, `clinical_minimal_redaction`).
+- Added signed, reproducible de-identification audit reports with span provenance, residual-risk metadata, reproducibility hashes, and optional HMAC signatures.
+- Added re-identification risk reporting and adversarial re-identification benchmark support, including `openmed benchmark pii --attack reid`.
+- Added a leakage-first evaluation harness with `BenchmarkReport`, synthetic golden de-identification fixtures, public/reference dataset adapters, DUA-gated corpus stubs, SHIELD comparison-suite support, weak labeling utilities, cold-start latency, and deterministic bootstrap confidence intervals.
+- Added release-gate infrastructure for v1.6.0 model readiness: last-green baselines, calibration artifacts, G1a-G8 signed gate reports, quantization recall-delta checks, generated status/leaderboard pages, and a fail-closed release-gates workflow.
+- Added clinical and interoperability utilities: ConText temporality and uncertainty axes, OHDSI Athena/Usagi ingestion, a Presidio adapter, and a deterministic FHIR R4 transaction/batch Bundle assembler.
+- Added a cardiology zero-shot label-map domain (`CardiacFinding`, `ECGFinding`, `EjectionFraction`, `CardiacProcedure`, `CardiacDevice`, `Anatomy`) plus cardiology keyword routing metadata for future model registration. Public model suggestions continue to fall back to existing general medical models until a cardiology model is registered.
+- Added a canonical `models.jsonl` manifest, manifest refresh workflow, manifest-driven Hugging Face model card generation, and HF publishing support for converted MLX/CoreML artifacts.
+- Added a packaged `openmed` CLI surface with benchmark and calibration commands, plus a de-identification cookbook notebook and an offline clinical NER families example.
+- Added governance, compliance, security, device-tier, FAQ, API reference, release-channel, status, leaderboard, and notebook documentation.
+
+### Changed
+
+- `deidentify()` now routes through the staged policy pipeline and accepts policy, calibration, threshold, and audit controls. When `audit=True`, it returns an audit report rather than the regular `DeidentificationResult`.
+- `deidentify(..., keep_mapping=True)` now emits unique placeholders for repeated entities of the same type, such as `[NAME]` and `[NAME_2]`, so re-identification round trips can distinguish them.
+- Label metadata now carries policy labels, HIPAA Safe Harbor mappings, risk levels, and ID-number subtype hints while keeping canonical labels stable.
+- Benchmark steady-state latency now excludes cold start while preserving `latency.cold_start_ms` in reports.
+- PyPI publishing now uses a single guarded tag/manual `publish.yml` workflow; the duplicate release workflow was removed.
+- Release metadata now derives changelog sections and expected SemVer bumps from Conventional Commits.
+- Python linting/formatting moved to Ruff and pre-commit, Swift formatting moved to checked-in `swift-format` scripts, and CI now enforces the updated repo policy, lint, tests, security, secret-scan, Swift-format, and release-gate jobs.
+- Packaging now includes the model manifest, release-gate baseline, policy/schema JSON, `LICENSE`, and `NOTICE`.
+
+### Fixed
+
+- Fixed `method="shift_dates"` to recognize canonical date labels before redaction, so lowercase `date` output from the default English PII model and `date_of_birth` labels are shifted instead of masked; `keep_mapping` no longer treats shifted dates as mask placeholders.
+- FHIR Bundle assembly now rejects duplicate `ResourceType/id` values instead of silently overwriting the earlier resource in the internal reference map. Duplicate resources raise a `ValueError` that names the colliding key, preventing downstream references from being rewritten to the wrong Bundle entry.
+- REST/MCP request schemas now accept `ar`, `ja`, and `tr` for the `lang` field. These languages have published PII models and are listed in `SUPPORTED_LANGUAGES`, but the `lang` `Literal` in `openmed/service/schemas.py` was never updated, so the service rejected them with a 422 even though the Python API and the models worked. The four `lang` annotations now share a single `PIILanguage` alias kept in sync with `SUPPORTED_LANGUAGES` (guarded by a regression test).
+- Fixed case-insensitive `trust_remote_code` allowlist matching for first-party and environment-configured privacy-filter repositories.
+- Fixed Feb 29 date shifting when `keep_year=True` targets a non-leap year.
+- Fixed REST oversized-text handling with `OPENMED_SERVICE_MAX_TEXT_LENGTH` (default `1_000_000` characters).
+- Fixed `BatchProcessor.iter_process` so `batch_size` is honored while preserving output order.
+- Fixed duplicate benchmark fixture IDs, duplicate benchmark CLI registration, release-gate behavior when no candidate report is present, and repo-policy ignored-file handling.
+- Fixed user-controlled HTML formatter escaping and validation false positives for legitimate long non-ASCII/CJK clinical text.
+- Fixed reversible `remove` mappings and repeated entity-type re-identification round trips when `keep_mapping=True`.
+
+### Security
+
+- Added a protected `hf-publish` environment and `HF_WRITE_TOKEN` policy for model publishing.
+- Added dependency license policy, `pip-audit` security gate with time-boxed ignores, and gitleaks CI/pre-commit secret scanning with a canary fixture.
+- Hardened de-identification audit report signing so `AuditReport.sign()` and `AuditReport.verify()` require a non-empty HMAC key. `None`, empty strings, and empty byte strings now raise `ValueError` instead of producing or accepting weak signatures.
+
+### Tests
+
+- Added FHIR Bundle regression coverage for empty resource lists across transaction, collection, and batch Bundles, and for dangling references that should remain unchanged when the referenced resource is absent from the Bundle.
+
+### Notes
+
+- `shift_dates` remains available as a compatibility alias; prefer `method="shift_dates"` in new code.
+- REST clients sending more than `OPENMED_SERVICE_MAX_TEXT_LENGTH` characters now receive a 422 response unless the limit is raised.
+- Full SHIELD/DUA datasets require approved or user-supplied access paths; restricted corpus rows are not vendored.
+- Release-gate candidates for v1.6.0 need release metadata, calibration evidence for masking/replacement profiles, span fixtures for G8, and quantization evidence for quantized formats.
+
+## [1.5.5] - 2026-06-08
+
+### Added
+
+- Added batch PII extraction and de-identification support through `BatchProcessor(operation="extract_pii")` and `BatchProcessor(operation="deidentify")`, including document-level `batch_size` chunking, shared loader/pipeline reuse, tests, docs, and a runnable example.
+- Added REST service model lifecycle controls with `GET /models/loaded`, `POST /models/unload`, request-level `keep_alive`, `OPENMED_SERVICE_KEEP_ALIVE`, and model-loader cache release helpers.
+- Added chunked Swift/OpenMedKit PII extraction for long OCR text and refreshed the OpenMed Scan Demo clinical document flow with updated sample text, a printable sample PDF, and a generator script.
+- Added a project mascot, brand assets in `docs/brand/`, and an animated on-device PII de-identification demo (`docs/brand/openmed-pii-demo.gif`).
+- Added README translations in 13 languages with a language switcher: zh-CN, es, fr, de, it, pt, nl, ar, hi, te, ja, tr, fa.
+
+### Changed
+
+- Batched privacy-filter inference now accepts list inputs across Torch and MLX paths and forwards batching controls to the underlying pipelines.
+- The OpenMed Scan Demo now unloads inactive MLX runtime families when switching engines, sequences selected and secondary PII engine runs explicitly, improves OCR line ordering, and expands entity category mapping.
+- README and service/model-loader documentation now cover batch PII operations and model unloading behavior.
+- Overhauled the README with a visual hero, brand badges, Apple Silicon/Swift/iOS entry points, an OpenMed-vs-cloud comparison table, and a Mermaid flow diagram.
+
+### Fixed
+
+- Improved Swift structured PII recovery for clinical discharge summaries, including surname-first names, member and insurance IDs, account/encounter/document IDs, NPI values, PCP/signed-provider sections, and overlap deduplication.
+
+## [1.5.2] - 2026-05-27
+
+### Security
+
+- Hardened the privacy-filter dispatcher to refuse `trust_remote_code=True` for model identifiers outside an explicit allowlist of first-party OpenAI/OpenMed privacy-filter family models (`openai/privacy-filter`, `OpenMed/privacy-filter-multilingual`, `OpenMed/privacy-filter-nemotron`). Previously, any HuggingFace repository whose name contained the substring `privacy-filter` would be loaded with custom-code execution enabled, allowing remote code execution by anyone able to control the `model_name` parameter on `/pii/extract` or `/pii/deidentify`. Operators with custom fine-tunes of the privacy-filter family can extend the allowlist via the `OPENMED_TRUSTED_REMOTE_CODE_MODELS` environment variable (comma-separated repo IDs).
+- Changed `PrivacyFilterTorchPipeline`'s `trust_remote_code` default from `True` to `False`. The first-party dispatcher (`openmed.core.backends.create_privacy_filter_pipeline`) opts in explicitly only for allowlisted models.
+
+### Changed
+
+- README, docs, and website version surfaces now point at `1.5.2`.
+
+### Fixed
+
+- Fixed raw HuggingFace-to-MLX conversion for the OpenAI Privacy Filter family (`openai/privacy-filter`, `OpenMed/privacy-filter-nemotron`, and `OpenMed/privacy-filter-multilingual`) by casting BF16 tensors to float32 before NumPy conversion, remapping OPF/Nemotron checkpoints into the OpenMed MLX runtime layout, fusing Q/K/V projections, preserving classifier bias, and validating converted weight keys/shapes before artifact save.
+
+### Tests
+
+- Added `tests/unit/test_privacy_filter_security.py` covering the identifier matcher, allowlist gate, env-var override, local-artifact trust, and dispatcher opt-in.
+- Added HTTP-level regression tests in `tests/unit/service/test_api.py` that POST the attacker-controlled `model_name` payload to `/pii/extract` and `/pii/deidentify` and verify the privacy-filter dispatcher is never reached.
+- Added MLX converter regressions for BF16 NumPy conversion, OPF weight remapping, QKV fusion order, and partial-QKV rejection.
+
+## [1.5.1] - 2026-05-21
+
+### Changed
+
+- README, docs, website, and Apple demo version surfaces now point at `1.5.1`.
+- Prepared the patch release metadata for the tag-driven build and publish workflow.
+
+## [1.5.0] - 2026-05-18
+
+### Added
+
+- Arabic (`ar`), Japanese (`ja`), and Turkish (`tr`) PII extraction support in the Python SDK, including language defaults, localized regex patterns, fake replacement data, and anonymizer locale routing.
+- Registry entries for all API-visible Arabic, Japanese, and Turkish PII source checkpoints: 2 Arabic, 3 Japanese, and 32 Turkish models.
+- Preconverted MLX routing for the 28 supported Arabic, Japanese, and Turkish PII `-mlx` repositories so `OpenMedConfig(backend="mlx")` can resolve uploaded artifacts directly.
+- Turkish TCKN checksum validation plus context-aware Arabic and Japanese national ID patterns.
+
+### Changed
+
+- README, docs, website, and Apple demo version surfaces now point at `1.5.0`.
+- Faker anonymization now falls back to `en_US` with a warning if a requested locale is unavailable at runtime.
+
+### Fixed
+
+- Turkish street-address matching now accepts both descriptor-first forms such as `Cadde İnönü 12` and common Turkish name-first forms such as `Atatürk Caddesi 12`.
+
+### Tests
+
+- Added language constant/default routing, model registry count, MLX mapping, anonymizer locale, and multilingual PII regression coverage for Arabic, Japanese, and Turkish.
+
+## [1.4.1] - 2026-05-17
+
+### Changed
+
+- README, docs, website, and Apple demo version surfaces now point at `1.4.1`.
+
+### Fixed
+
+- `ModelLoader` now resolves existing filesystem paths before prepending the default Hugging Face org, so local model directories load correctly.
+- Local model paths now set `local_files_only=True` across config, tokenizer, model, pipeline, and max-length probing to keep offline and air-gapped inference fully local.
+- `analyze_text()` now accepts `model_id` as an alias for `model_name`, including local directory paths.
+
+### Tests
+
+- Added unit coverage for local path resolution, local-only loading, and `model_id` alias handling.
+
+## [1.4.0] - 2026-05-04
+
+### Added
+
+- **OpenMed Multilingual Privacy Filter family**, registered across PyTorch and MLX:
+  - `OpenMed/privacy-filter-multilingual` — PyTorch / Transformers (CPU + CUDA).
+  - `OpenMed/privacy-filter-multilingual-mlx` — MLX full-precision (Apple Silicon).
+  - `OpenMed/privacy-filter-multilingual-mlx-8bit` — MLX 8-bit quantized (Apple Silicon and OpenMedKit demos).
+  These artifacts use the OpenAI Privacy Filter architecture and officially support 16 languages through the OpenMed multilingual PII corpus.
+- **Python MLX routing for multilingual Privacy Filter artifacts**:
+  - `_MLX_MODEL_MAP` entries for the full and 8-bit multilingual MLX repo IDs.
+  - `privacy-filter-multilingual` and `multilingual-privacy-filter` MLX family aliases, both resolving to the existing OpenAI Privacy Filter model class and BIOES decoder.
+  - Family-aware Torch fallback so multilingual MLX model names substitute `OpenMed/privacy-filter-multilingual` on non-MLX hosts instead of the OpenAI baseline.
+- **Multilingual Privacy Filter Studio** in `examples/privacy_filter_multilingual_studio/`, a web demo comparing the OpenAI baseline, OpenAI Nemotron Privacy Filter, and OpenMed Multilingual Privacy Filter with English, French, and Arabic examples.
+- **OpenMed Scan Demo multilingual mode** with `OpenMed/privacy-filter-multilingual-mlx-8bit`, a three-engine picker, EN/FR/AR sample buttons, and new French/Arabic scanned demo documents for screenshot-ready flows.
+### Changed
+
+- Privacy Filter docs and README now describe three Privacy Filter families and label the multilingual model as **OpenMed Multilingual Privacy Filter**.
+- OpenMedKit and demo version surfaces now point at `1.4.0`.
+- The scan demo clears previous annotation windows whenever the language/sample changes, avoiding stale entities from earlier model runs.
+- The multilingual web studio scan animation now performs a single top-to-bottom pass while redacting line by line, matching the stronger visual rhythm of the original Privacy Filter Studio.
+
+### Fixed
+
+- Improved Swift model-download handling so stale cached 401/404 responses cannot masquerade as `openmed-mlx.json` manifests after a public model becomes available.
+- Tightened stale-result invalidation in iOS and web demo flows so slower previous model runs cannot overwrite a newly selected language/sample.
+
+### Tests
+
+- Added Python unit coverage for multilingual MLX backend selection, family-aware Torch fallback, and MLX Privacy Filter family dispatch aliases.
+- Rebuilt the OpenMed Scan Demo after the multilingual 8-bit integration.
+
+## [1.3.0] - 2026-04-27
+
+### Added
+
+- **Faker-backed PII anonymization engine** (`openmed.core.anonymizer`):
+  - `Anonymizer` class with cached per-locale Faker instances, deterministic seeding (`hashlib.blake2b`), and label-keyed generator dispatch.
+  - `AnonymizerConfig` dataclass for advanced configuration.
+  - Locale resolution map (`LANG_TO_LOCALE`) covering all nine OpenMed languages; Telugu falls back to `en_IN` with a one-time `UserWarning`.
+  - Format-preserving helpers for phone numbers (digit-group lengths preserved), dates (separator/ordering preserved), emails (domain preserved), and generic IDs.
+  - Custom Faker providers for clinical/national IDs where Faker's built-ins are missing or incorrect: `AadhaarProvider` (Verhoeff checksum), `GermanSteuerIdProvider`, `MedicalRecordNumberProvider`, `NPIProvider`. Faker's built-ins are reused for `pt_BR.cpf`/`cnpj`, `nl_NL.ssn` (BSN), `fr_FR.ssn` (NIR), `it_IT.ssn` (Codice Fiscale), and `es_ES.nie` after empirical verification against OpenMed's existing checksum validators.
+  - `register_clinical_provider()` and `register_label_generator()` for extending coverage.
+- **Canonical PII label taxonomy** (`openmed.core.labels`):
+  - `CANONICAL_LABELS` set with 47 canonical labels in `UPPER_SNAKE_CASE`.
+  - `normalize_label()` maps English lowercase, the 52 Portuguese UPPERCASE labels, BIOES-tagged variants (`B-NAME`, `I-DATE`), and arbitrary mixed-case forms to a single canonical form.
+- **Unified privacy-filter dispatch** (`openmed.core.backends`):
+  - `select_privacy_filter_backend()`, `resolve_privacy_filter_model()`, and `create_privacy_filter_pipeline()` route privacy-filter requests to MLX on Apple Silicon and PyTorch elsewhere with a one-time `UserWarning` when an MLX-only artifact name (`OpenMed/privacy-filter-mlx*`) is substituted with `openai/privacy-filter` on non-Mac hosts.
+  - `extract_pii()` and `deidentify()` now route privacy-filter models through this dispatcher, skipping regex smart-merging since the model already does Viterbi-constrained BIOES decoding.
+- **PyTorch privacy-filter wrapper** (`openmed.torch.PrivacyFilterTorchPipeline`):
+  - Loads `openai/privacy-filter` (or any compatible HuggingFace fine-tune) via `transformers.AutoModelForTokenClassification` with auto device selection (CUDA → CPU).
+  - Output entity-dict shape matches the MLX pipeline so the rest of OpenMed is backend-agnostic.
+- **Shared decoding utilities** (`openmed.core.decoding`):
+  - `TokenLabelInfo`, `build_label_info`, `viterbi_decode`, `labels_to_token_spans`, `zero_viterbi_biases`, `VITERBI_BIAS_KEYS` extracted from the MLX pipeline so the Torch wrapper reuses the same BIOES Viterbi decoder.
+  - `trim_span_whitespace`, `refine_privacy_filter_span` for span post-processing across both backends.
+- **`deidentify()` keyword arguments**: `consistent: bool`, `seed: Optional[int]`, `locale: Optional[str]` for deterministic, locale-overridable obfuscation. Passing `seed=` alone implies `consistent=True`.
+- **Portuguese (`pt`) accepted by REST API schemas** in `openmed/service/schemas.py` (was previously library-only despite full core support).
+- **Documentation**: new [Anonymization Guide](docs/anonymization.md) covering the Faker engine, locale table, determinism modes, format preservation, clinical-ID checksum sources, and the privacy-filter family.
+- **Examples**:
+  - `examples/obfuscation_demo.py` — random vs deterministic surrogates, locale walkthrough, format-preserving phone numbers, pt_BR CPF generation with checksum verification.
+  - `examples/privacy_filter_unified.py` — same `extract_pii()` / `deidentify()` call works on Apple Silicon (MLX) and Linux (PyTorch); compares the OpenAI baseline against the Nemotron-PII fine-tune side-by-side.
+  - `examples/privacy_filter_studio/` — interactive FastAPI + static web studio for two-pane PII masking/randomization with sample clinical notes, highlighted entities, backend/model status, and an explicit first-run download toggle.
+- **Nemotron-PII fine-tune of the OpenAI Privacy Filter**, registered as three new model IDs that route through the existing privacy-filter pipeline (same architecture, different training data):
+  - `OpenMed/privacy-filter-nemotron` — PyTorch / Transformers (CPU + CUDA).
+  - `OpenMed/privacy-filter-nemotron-mlx` — MLX full-precision (Apple Silicon).
+  - `OpenMed/privacy-filter-nemotron-mlx-8bit` — MLX 8-bit quantized (Apple Silicon).
+  These checkpoints **are** the OpenAI Privacy Filter architecture (gpt-oss-style sparse-MoE transformer with local attention, sink tokens, RoPE+YaRN, tiktoken `o200k_base`) fine-tuned on the [Nemotron PII dataset](https://huggingface.co/datasets/nvidia/Nemotron-PII-v1). They reuse `OpenAIPrivacyFilterForTokenClassification` and `PrivacyFilterMLXPipeline` unchanged — no new architecture code needed.
+- **`_MLX_MODEL_MAP` entries** for the two new Nemotron MLX repo IDs in `openmed.mlx.inference`.
+- **Aliases for the new family in `_SUPPORTED_TOKEN_CLASSIFICATION_MODEL_TYPES`** (`privacy-filter-nemotron`, `nemotron-privacy-filter`) — both resolve to the existing `openai-privacy-filter` family so a Nemotron-fine-tune MLX artifact can ship with either family identifier in its manifest and still dispatch correctly.
+- **Family-aware Torch fallback** in `openmed.core.backends`:
+  - New `_TORCH_FALLBACK_BY_FAMILY` table and `_torch_fallback_for()` helper.
+  - An MLX-only Nemotron request on a non-Apple-Silicon host now substitutes `OpenMed/privacy-filter-nemotron` instead of the unrelated default `openai/privacy-filter`, so the user gets the training distribution they asked for. A one-time `UserWarning` names the substitute.
+  - Adding a future fine-tune that should fall back to its own PyTorch repo is a one-line addition to `_TORCH_FALLBACK_BY_FAMILY`.
+- **Nemotron MLX classifier-head bias support**: `OpenAIPrivacyFilterForTokenClassification` now honors `classifier_bias` / `unembedding_bias` in artifact configs, while keeping the original OpenAI checkpoint bias-less by default.
+- **Swift OpenMedKit privacy-filter classifier-head bias support**: the native MLX artifact loader now decodes `classifier_bias` / `unembedding_bias` and builds the Privacy Filter head with a learned bias when Nemotron-PII artifacts require it.
+
+### Changed
+
+- **`method="replace"` upgraded in place** to use the new Faker-backed `Anonymizer`. Surrogates are now locale-aware (e.g. German names for `lang="de"`, Portuguese phones for `lang="pt"`), format-preserving, and optionally deterministic. The previous tiny static `LANGUAGE_FAKE_DATA` lists are kept as a deprecated fallback used only when a Faker locale is unavailable.
+- **Privacy filter book demo** (`examples/privacy_filter_book/app.py`) migrated to `PrivacyFilterTorchPipeline` for the CPU side, replacing the inline `AutoTokenizer`/`AutoModelForTokenClassification`/`pipeline` triple.
+- **MLX inference module** trimmed: BIOES Viterbi (≈280 lines) and span-refinement helpers moved to `openmed.core.decoding`. Behavior unchanged.
+- **Privacy Filter Studio** keeps model loading cache-only unless downloads are explicitly allowed, then restores the caller's Hugging Face offline environment after loading.
+- **OpenMed Scan Demo privacy-filter option** now points at `OpenMed/privacy-filter-nemotron-mlx-8bit` and labels the engine as OpenAI Nemotron Privacy Filter throughout the picker, download events, and README.
+
+### Breaking Changes
+
+- **`faker>=22.0` is now a required core dependency**. Slim installs that skip the ML extras will still pull Faker (~3 MB).
+- **`method="replace"` outputs no longer come from the prior hardcoded list** (`["Jane Smith", "John Doe", "Alex Johnson", "Sam Taylor"]`, etc.). Any test or downstream code asserting on those exact strings must either pass `consistent=True, seed=<value>` and update expected output, or assert non-equality with the original. All other methods (`mask`, `remove`, `hash`, `shift_dates`) are unchanged.
+- **Privacy-filter routing through `extract_pii()`** skips regex smart-merging by design. Users who previously chained the low-level MLX pipeline with `merge_entities_with_semantic_units()` manually may see different entity counts; the new path produces cleaner spans because the model's Viterbi decoder already enforces BIOES validity.
+
+### Tests
+
+- New tests across `tests/unit/core/test_labels.py` (102), `tests/unit/core/test_anonymizer.py` (171, includes per-locale checksum validation across 100s of generated IDs), `tests/unit/test_privacy_filter_routing.py` (22 — backend selection, family-aware Torch fallback, dispatch, integration), Nemotron parametrisation of the existing privacy-filter MLX dispatch test (`tests/unit/mlx/test_privacy_filter_mlx.py::test_dispatches_privacy_filter_pipeline`), and Portuguese obfuscation regressions in `tests/unit/test_pii_multilingual_regression.py` (3).
+- Swift OpenMedKit coverage for `classifier_bias` / `unembedding_bias` config decoding, Nemotron-biased Privacy Filter forward shape, and the baseline bias-less head.
+- Focused privacy/anonymization suite: 458 passed, 6 skipped, 11 pre-existing span-validation warnings.
+
+## [1.2.0] - 2026-04-24
+
+### Added
+
+- **Expanded Python MLX runtime support** for OpenMed MLX artifacts beyond classic token classification, including GLiNER span NER, GLiClass zero-shot classification, GLiNER-Relex relation extraction, and OpenAI Privacy Filter artifacts.
+- **Native OpenAI Privacy Filter MLX pipeline** with tiktoken-compatible tokenization, byte-offset reconstruction, BIOES/Viterbi decoding, model-led span repair, and support for the public `OpenMed/privacy-filter-mlx` and `OpenMed/privacy-filter-mlx-8bit` artifacts.
+- **Native Swift OpenMedKit GLiNER-family APIs**:
+  - `OpenMedZeroShotNER`
+  - `OpenMedZeroShotClassifier`
+  - `OpenMedRelationExtractor`
+- **Native Swift MLX DeBERTa-v2/v3 and Privacy Filter runtimes** for local inference on Apple Silicon macOS and physical iPhone/iPad devices.
+- **Self-contained OpenMed MLX artifact handling** for `task`/`family` manifests, tokenizer assets, `weights.safetensors`, and `weights.npz` fallback paths.
+- **OpenMed Scan Demo**: a guided iPhone workflow for document capture/sample loading, OCR review, PII de-identification, clinical extraction, summary review, model preparation, and PII engine comparison.
+- **OpenMedDemo Privacy Filter option** so macOS/iOS users can test the public OpenAI Privacy Filter MLX artifact alongside OpenMed PII models.
+- **App privacy readiness assets** for the scan demo, including a privacy manifest and camera usage copy for local document scanning.
+
+### Changed
+
+- Improved Apple model download/caching behavior so MLX artifacts are prepared once and reused offline from cache.
+- Removed Hugging Face token UI and token persistence from demo flows now that release artifacts are public.
+- Updated PII post-processing so Privacy Filter regex logic repairs model-predicted spans without inventing unsupported semantic labels.
+- Refreshed OpenMedKit documentation and examples for native MLX artifacts, Swift package usage, and on-device Apple workflows.
+
+### Fixed
+
+- Reduced iOS memory pressure in the Privacy Filter MLX loader by tightening the Swift model loading path.
+- Fixed local MLX artifact loading and model-store readiness checks for public Hub artifacts.
+- Tightened PII entity merging and privacy-filtering tests around model/pattern span interactions.
+
+### Tests
+
+- Added Python unit coverage for MLX custom-task dispatch, Privacy Filter inference/decoding, artifact loading, and PII privacy-filter post-processing.
+- Added Swift unit coverage for MLX artifact validation, DeBERTa/GLiNER-family runtime setup, Privacy Filter decoding, sample OCR assets, and post-processing behavior.
+
+## [1.1.0] - 2026-04-20
+
+### Added
+
+- **Portuguese PII and de-identification support** via `lang="pt"`
+  - Registered 31 API-visible Portuguese PII checkpoints from the OpenMed Hugging Face collection
+  - Default Portuguese model: `OpenMed/OpenMed-PII-Portuguese-SnowflakeMed-Large-568M-v1`
+  - Added Portuguese regex/semantic patterns for dates, phones, CPF, CNPJ, street addresses, and postcodes
+  - Added CPF and CNPJ checksum validators, Portuguese fake replacement data, and localized date shifting
+- **Portuguese docs and examples**
+  - Updated multilingual PII documentation from 8 to 9 languages and from 179 to 210 PII models
+  - Added a Portuguese model-card/README one-liner and smoke-example coverage
+
+### Changed
+
+- Expanded PII label normalization and replacement mapping for CPF/CNPJ and Portuguese model labels.
+
+## [1.0.0] - 2026-04-03
+
+### Added
+
+- **Apple MLX inference backend** for hardware-accelerated NER on Apple Silicon
+  - `openmed.mlx.models.bert_tc`: Pure MLX BERT implementation with token-classification head
+  - `openmed.mlx.inference`: MLX NER pipeline producing HuggingFace-compatible output format
+  - `openmed.mlx.convert`: CLI tool to convert HuggingFace token-classification models to MLX format with optional 4/8-bit quantization
+  - Supports BIO tag decoding with `simple`, `first`, `average`, and `max` aggregation strategies
+  - Auto-detection: prefers MLX on Apple Silicon when available, falls back to HuggingFace/PyTorch
+- **CoreML export** for iOS and macOS deployment
+  - `openmed.coreml.convert`: CLI tool to convert HuggingFace models to CoreML `.mlpackage` format
+  - Supports flexible sequence lengths via `ct.RangeDim`, float16/float32 precision
+  - Embeds `id2label` mapping in model metadata for self-contained deployment
+- **Swift package: OpenMedKit** (`swift/OpenMedKit/`)
+  - SPM package for iOS 16+ / macOS 13+ with CoreML-based NER inference
+  - `NERPipeline`: CoreML inference with softmax → BIO decoding → entity extraction
+  - `PostProcessing`: BIO tag grouping with first/average/max aggregation strategies
+  - `EntityPrediction`: Swift equivalent of Python's EntityPrediction dataclass
+  - Uses `swift-transformers` for HuggingFace-compatible tokenization
+  - Includes unit tests for BIO decoding and aggregation strategies
+- **Backend abstraction layer** (`openmed.core.backends`)
+  - `InferenceBackend` protocol with `is_available()` and `create_pipeline()` interface
+  - `HuggingFaceBackend` and `MLXBackend` implementations
+  - `get_backend()` auto-detection with explicit override via `config.backend`
+- **New optional dependency groups**: `pip install openmed[mlx]` and `pip install openmed[coreml]`
+- **Pilot model**: `OpenMed-PII-SuperClinical-Small-44M-v1` as conversion and testing target
+- **37 new tests** for backends, MLX conversion key remapping, MLX pipeline output format, CoreML module structure
+
+### Changed
+
+- Added `backend` field to `OpenMedConfig` (None/auto, "hf", "mlx")
+
+### Documentation
+
+- Updated README, CHANGELOG, and website for the `v1.0.0` release
+
+## [0.6.4] - 2026-03-24
+
+### Added
+
+- **Aadhaar national ID support** for Hindi and Telugu PII detection
+  - Added Verhoeff checksum validator (`validate_aadhaar`) for 12-digit Aadhaar numbers
+  - Added Aadhaar patterns with context-aware scoring to Hindi and Telugu pattern libraries
+- **PII accuracy test suite** (`tests/unit/test_pii_accuracy.py`)
+  - Validation-failure confidence penalty tests
+  - Pattern tightening regression tests (postal codes, phone numbers, Steuer-ID)
+  - Confidence calibration verification
+  - New normalize_label coverage tests
+
+### Changed
+
+- **`_fix_entity_spans` now Unicode-aware** — replaced `.isalnum()` with `unicodedata.category` check covering letters, combining marks, and numbers; capped forward extension at 10 characters; removed redundant `.strip()` that caused text-mismatch false positives
+- **Quality gate text-mismatch relaxed** — whitespace-only differences (common after span normalization) are now downgraded to INFO level instead of WARNING
+- **Failed pattern validation now penalized in merged confidence** — unvalidated patterns contribute only 10% weight (down from 40%) in the model/pattern confidence blend
+- **`normalize_label` expanded** with `bsn`, `dni`, `nie`, `aadhaar` → `national_id`; `mrn` → `medical_record`; `account_number` → `account`; `credit_debit_card` → `payment_card`
+
+### Fixed
+
+- **French postal code pattern** tightened from bare `\d{5}` to range-constrained `01-95 + DOM-TOM 971-976` prefixes — reduces false positives from medical codes
+- **German Steuer-ID pattern** tightened to reject leading-zero numbers (`[1-9]\d{10}`); base_score raised to 0.35
+- **German postal code pattern** tightened to exclude `00xxx` range
+- **German phone pattern** now requires at least 4 digits after area code, reducing short-number false positives
+- **French NIR base_score** raised from 0.4 to 0.55 to reflect high structural specificity with validator
+
+### Documentation
+
+- Updated README, CHANGELOG, and website for the `v0.6.4` release
+
+## [0.6.3] - 2026-03-19
+
+### Added
+
+- **Span-boundary quality gates** (`openmed.core.quality_gates`)
+  - `validate_entity_spans()` checks start < end, in-bounds, text-match, and zero-length invariants for every entity after tokenizer repair and smart merging
+  - `detect_overlapping_entities()` returns pairs of overlapping character spans for informational use
+  - `SpanValidationWarning` emitted on violations — warn-only, never silently drops entities
+  - Integrated into `OutputFormatter.format_predictions()` (after `_fix_entity_spans`) and `extract_pii()` (after smart merging)
+- **Multilingual PII regression test suite** (`tests/unit/test_pii_multilingual_regression.py`)
+  - Golden-input regression tests for all 8 supported languages (en, fr, de, it, es, nl, hi, te)
+  - Validates entity type detection, span text matching, confidence thresholds, and smart merging boundaries
+  - 31 deterministic test cases using mocked model output
+- **Span-boundary guard tests** (`tests/unit/test_quality_gates.py`)
+  - 19 tests covering valid entities, inverted/zero-length spans, out-of-bounds, text mismatch, overlap detection, and integration with `_fix_entity_spans`
+- **Label-map consistency tests** (`tests/unit/ner/test_label_map_consistency.py`)
+  - Validates `defaults.json` domain invariants (at least 1 label per domain, no case-insensitive duplicates, `generic` domain exists)
+  - `normalize_label()` idempotency checks across all known label variants
+  - Specificity hierarchy validation against `is_more_specific()`
+  - All PII `entity_types` in `OPENMED_MODELS` recognized and idempotent under `normalize_label()`
+  - At least one PII model per supported language in the registry
+
+### Changed
+
+- Updated website model count from 640+ to 750+
+
+### Documentation
+
+- Updated README, website copy, and CHANGELOG for the `v0.6.3` release
+
+## [0.6.2] - 2026-03-10
+
+### Added
+
+- **Dutch, Hindi, and Telugu PII support**
+  - `extract_pii()` and `deidentify()` now accept `lang="nl"`, `lang="hi"`, and `lang="te"`
+  - Added sparse public registry entries for:
+    - `OpenMed/OpenMed-PII-Dutch-SuperClinical-Large-434M-v1`
+    - `OpenMed/OpenMed-PII-Hindi-SuperClinical-Large-434M-v1`
+    - `OpenMed/OpenMed-PII-Telugu-SuperClinical-Large-434M-v1`
+  - Added locale-aware patterns for Dutch BSN, Dutch postcodes, India PIN codes, localized month names, and day-first date shifting
+  - Added Dutch BSN checksum validation and locale-specific fake replacement data for `nl`, `hi`, and `te`
+  - Added `examples/pii_multilingual_new_languages.py` for registry, regex, and live-model smoke coverage
+- **REST service runtime hardening**
+  - Added `openmed.service.runtime.ServiceRuntime` for shared per-process config and model-loader reuse
+  - Added `OPENMED_SERVICE_PRELOAD_MODELS` to warm selected models at startup
+  - Added structured validation/bad-request/timeout/internal-error JSON envelopes for non-2xx responses
+  - Added request timeout enforcement around blocking inference work
+- **Testing coverage**
+  - Added regression tests for Dutch, Hindi, and Telugu routing, patterns, fake data, date handling, and entity merging
+  - Added REST service tests for validation errors, timeout behavior, shared-loader reuse, preload parsing, and the new `lang` values
+
+### Changed
+
+- Expanded the multilingual PII catalog from 176 to 179 models across 8 languages
+- `get_pii_models_by_language()` now returns sparse public releases for `nl`, `hi`, and `te` while keeping English filtering correct
+- `ModelLoader.create_pipeline()` now caches created pipelines for repeated requests with identical parameters
+- REST schemas now validate model names, confidence thresholds, extra fields, and the legacy `shift_dates` alias more strictly
+- Updated multilingual examples, notebook guidance, website copy, and install snippets to reflect the 8-language / 179-model PII catalog and `uv pip install "openmed[hf]"`
+
+### Fixed
+
+- Smart semantic-merge resolution no longer lets weaker model labels overwrite stronger validated pattern labels
+- Localized Dutch, Hindi, and Telugu month-name parsing now falls back correctly during date shifting instead of relying only on `dateutil`
+- Dutch phone, BSN, and street-address patterns were tightened after live smoke review to reduce overlap and improve entity labeling
+
+### Documentation
+
+- Updated README, REST service docs, website copy, notebook index, and the multilingual PII notebook for the `v0.6.2` release
+
+## [0.6.1] - 2026-03-01
+
+### Added
+
+- **Dockerized REST MVP** for OpenMed service use-cases
+  - New FastAPI service module at `openmed.service`
+  - `GET /health` endpoint for service status and active profile reporting
+  - `POST /analyze` endpoint mapped to `analyze_text(..., output_format="dict")`
+  - `POST /pii/extract` endpoint mapped to `extract_pii(...)`
+  - `POST /pii/deidentify` endpoint mapped to `deidentify(...)`
+- **Container runtime support**
+  - New CPU-focused `Dockerfile` for service deployment
+  - Added `.dockerignore` for smaller build contexts
+- **Service validation tests**
+  - New unit tests covering endpoint success/failure paths, schema validation, and profile selection
+
+### Changed
+
+- Added optional `service` dependency extra in `pyproject.toml` (`fastapi`, `uvicorn[standard]`)
+- Expanded `dev` extra with API test dependencies (`fastapi`, `httpx`)
+
+### Documentation
+
+- Added REST service guide: `docs/rest-service.md`
+- Added MkDocs navigation entry for REST service docs
+- Updated README with REST API and Docker usage examples
+
+## [0.6.0] - 2026-02-23
+
+### Removed
+
+- **CLI and TUI surfaces removed**: OpenMed is now a Python API-first package
+  - Removed `openmed` console entrypoint from package metadata
+  - Removed `openmed.cli` and `openmed.tui` modules
+  - Removed zero-shot CLI modules under `openmed.zero_shot.cli`
+  - Removed `cli_main` from the top-level `openmed` public API
+
+### Changed
+
+- Updated package metadata to remove CLI/TUI extras (`cli`, `tui`)
+- Updated docs and website content to API-only guidance
+- Consolidated PyPI publishing into a single tag-driven workflow (`publish.yml`)
+- Updated release tooling to use `openmed/__about__.py` as the version source of truth
+
+## [0.5.8] - 2026-02-19
+
+### Fixed
+
+- **PII replace label mapping coverage**:
+  - Added robust normalization map so replacement data is generated for label variants (`first_name`, `last_name`, `dob`, `postal_code`, etc.)
+  - Expanded locale fake-data dictionaries with `FIRST_NAME`, `LAST_NAME`, and `ZIPCODE` values across supported languages
+- **Span alignment stability**:
+  - `extract_pii()` and `deidentify()` now strip leading/trailing whitespace before inference so spans remain aligned with `analyze_text()` validation behavior
+- **Spanish accent remapping robustness**:
+  - Added regression coverage for off-by-one spans combined with accent restoration
+
+## [0.5.7] - 2026-02-18
+
+### Fixed
+
+- **Entity span repair in output formatter**:
+  - Added `_fix_entity_spans()` to correct tokenizer end-offset truncation and trim whitespace around predicted spans
+  - Integrated span repair into output formatting before grouping
+- **Regression coverage**:
+  - Added dedicated tests for off-by-one span fixes, whitespace trimming, and boundary handling
+- **Documentation notebook refresh**:
+  - Updated multilingual PII notebook examples to reflect span-fix behavior
+
+## [0.5.6] - 2026-02-18
+
+### Added
+
+- **Spanish PII Detection & De-identification**: Full Spanish language support for PII extraction
+  - `extract_pii()` and `deidentify()` now accept `lang="es"` for Spanish clinical text
+  - Automatic model selection for Spanish — correct language-specific model chosen when `lang="es"`
+  - 7 new Spanish-specific regex patterns for dates, phone numbers, addresses, postal codes, and national IDs
+  - Spanish date format support with unique "de" connector (e.g., "15 de enero de 2020")
+
+- **Spanish National ID Validators**: DNI and NIE document validation with checksum verification
+  - `validate_spanish_dni()` — Spanish DNI 8-digit + check letter (mod-23 lookup table)
+  - `validate_spanish_nie()` — Spanish NIE with X/Y/Z prefix conversion and DNI algorithm
+
+- **2 New English Base Model Architectures**: Expanded PII model coverage
+  - `pii_biomed_bert_full` — BiomedBERTFull-Base-110M for comprehensive biomedical PII detection
+  - `pii_lite_clinical_u` — LiteClinicalU-Small-66M for universal lightweight PII detection
+  - Both architectures auto-generate variants for all 5 supported languages
+
+- **Expanded Model Registry**: 35 Spanish PII models + 8 new models across existing languages
+  - Total PII models expanded from 133 to 176+ (36 English + 35 x 4 languages)
+  - `get_pii_models_by_language("es")` returns all 35 Spanish models
+  - `get_default_pii_model("es")` returns the recommended Spanish default model
+
+- **Accent Normalization**: Transparent accent stripping for models trained on accent-free text
+  - `normalize_accents` parameter on `extract_pii()` and `deidentify()` (auto-enabled for Spanish)
+  - Strips diacritical marks before model inference, maps entity positions back to original accented text
+  - `_strip_accents()` helper preserves character count via NFC/NFD normalization
+  - Can be explicitly enabled (`normalize_accents=True`) or disabled (`normalize_accents=False`) for any language
+
+- **Spanish Locale Data**: Culturally appropriate synthetic data for the `replace` method
+  - Spanish fake names, emails, phone numbers (+34), addresses, and IDs (DNI/NIE)
+  - Spanish month names for date parsing and formatting
+  - European DD/MM/YYYY date handling for Spanish
+
+- **Testing**: Comprehensive Spanish PII test coverage
+  - Spanish DNI validator tests (6 tests) and NIE validator tests (6 tests)
+  - Spanish pattern matching tests for dates, phones, DNI, NIE
+  - Spanish model registry tests: count, naming, mirror structure
+  - Updated existing tests: fixed `"es"` to `"ja"` in unsupported language assertions
+
+### Changed
+
+- `_LANGUAGE_CONFIG` in model registry now includes `"es": {"name": "Spanish", "prefix": "Spanish-"}`
+- French, German, and Italian model counts updated from 33 to 35 per language (2 new base architectures)
+- `SUPPORTED_LANGUAGES` expanded to include `"es"`
+- Date handling functions (`_shift_date`, `_shift_date_basic`, `_format_date_like_original`) now support Spanish
+
+## [0.5.5] - 2026-02-11
+
+### Added
+
+- **Multilingual PII Detection & De-identification**: Language-aware PII extraction for clinical text
+  - `extract_pii()` and `deidentify()` now accept a `lang` parameter (ISO 639-1: `en`, `fr`, `de`, `it`)
+  - Automatic model selection — correct language-specific model chosen when `lang` is specified
+  - Language-specific regex patterns for dates, phone numbers, addresses, postal codes, and national IDs
+  - 18 new regex patterns (6 per language) for French, German, and Italian
+
+- **National ID Validators**: Country-specific document validation with checksum verification
+  - `validate_french_nir()` — French NIR/INSEE 15-digit social security numbers (mod-97 checksum)
+  - `validate_german_steuer_id()` — German 11-digit tax identification numbers (digit-frequency rules)
+  - `validate_italian_codice_fiscale()` — Italian 16-character alphanumeric fiscal codes
+
+- **Locale-Aware Date Handling**: Language-appropriate date parsing and formatting
+  - European day-first parsing for `fr`/`de`/`it` (DD/MM/YYYY, DD.MM.YYYY)
+  - US month-first parsing for `en` (MM/DD/YYYY)
+  - Localized month names preserved during date shifting
+
+- **Culturally Appropriate De-identification**: Language-specific synthetic data for the `replace` method
+  - Fake names, emails, phone numbers, addresses, and IDs per locale
+  - `LANGUAGE_FAKE_DATA` dictionary for English, French, German, and Italian
+
+- **Expanded Model Registry**: Multilingual model generation across all PII architectures
+  - ~99 new multilingual PII models (33 architectures x 3 new languages)
+  - Total PII models expanded from 33 to 132+
+  - `get_pii_models_by_language()` — returns all PII models for a given language
+  - `get_default_pii_model()` — returns the recommended default model for a language
+
+- **New Module**: `openmed/core/pii_i18n.py` — Internationalization module
+  - `SUPPORTED_LANGUAGES`, `DEFAULT_PII_MODELS`, `LANGUAGE_PII_PATTERNS` constants
+  - `get_patterns_for_language()` — returns combined English + language-specific regex patterns
+  - `LANGUAGE_MONTH_NAMES` dictionary with month names in all 4 languages
+
+- **Documentation**
+  - New [Multilingual PII Detection Guide](examples/notebooks/Multilingual_PII_Detection_Guide.ipynb) notebook
+    - Cross-language comparison, batch processing, and custom model selection
+    - Examples for French, German, and Italian clinical notes
+    - All de-identification methods with multilingual fake data
+
+- **Testing**
+  - `test_pii_i18n.py` — unit tests for the i18n module (373 lines)
+  - `test_model_registry_multilingual.py` — unit tests for multilingual model generation (202 lines)
+  - Updated `test_pii.py` and `test_pii_entity_merger.py` with multilingual test cases
+
+### Changed
+
+- `_redact_entity()` and `_generate_fake_pii()` now propagate `lang` parameter for language-appropriate replacements
+- `normalize_label()` handles national ID variants (`nir`, `insee`, `steuer_id`, `codice_fiscale`) and postal code variants (`postcode`, `zipcode`, `postal_code`)
+- Label specificity hierarchy expanded with `national_id` sub-types for cross-language entity resolution
+- `CATEGORIES["Privacy"]` dynamically includes all PII model keys (English + multilingual)
+- Updated `__init__.py` exports with multilingual PII support functions
+
+## [0.5.1] - 2026-01-14
+
+### Added
+
+- **Context-Aware PII Scoring**: Presidio-inspired confidence scoring system
+  - `PIIPattern` dataclass extended with `base_score`, `context_words`, `context_boost`, and `validator` fields
+  - Context detection via `find_context_words()` - boosts confidence when keywords like "SSN:", "DOB:", "NPI:" appear near detected entities
+  - Checksum validation functions: `validate_ssn()`, `validate_luhn()` (credit cards), `validate_npi()`, `validate_phone_us()`
+  - Invalid matches (e.g., SSN starting with 000 or 666) get reduced confidence scores
+  - Combined model + pattern scoring (60/40 weighted average) for optimal accuracy
+  - Low base scores prevent false positives; context words confirm true PHI
+
+- **Website Updates**
+  - New "Clinical Text De-Identification" section on landing page
+  - Key stats row: 18+ PHI types, 100% local processing, $0 API fees, Apache-2.0
+  - Six feature cards: Context-Aware Detection, Checksum Validation, Smart Merging, Zero Data Movement, Flexible Redaction, HIPAA Safe Harbor
+  - Syntax-highlighted code example with correct API usage
+  - CTA buttons linking to documentation and HuggingFace models
+
+### Changed
+
+- Updated default PII detection model name to `OpenMed-PII-SuperClinical-Small-44M-v1`
+- `merge_entities_with_semantic_units()` now supports context-aware pattern scoring
+
+### Fixed
+
+- MkDocs navigation: Added `medical-tokenizer.md` and `pii-smart-merging.md` to nav structure
+- Broken link in `cli.md` to PII notebook (now links to GitHub)
+- Broken links in `pii-smart-merging.md` to non-existent documentation pages
+- Website code example now uses correct API (`entity.text`, `entity.label`, `entity.confidence`)
+
+## [0.5.0] - 2026-01-13
+
+### Added
+
+- **PII Detection & De-identification**: HIPAA-compliant PII extraction and de-identification
+  - `extract_pii()` function for detecting PII entities in clinical text
+  - `deidentify()` function with 5 de-identification methods:
+    - `mask`: Replace with placeholders (`[NAME]`, `[DATE]`, etc.)
+    - `remove`: Complete removal of PII entities
+    - `replace`: Replace with synthetic data
+    - `hash`: Cryptographic hashing for record linking
+    - `shift_dates`: Shift dates while preserving temporal relationships
+  - `reidentify()` function for reversing de-identification with stored mappings
+  - Support for all 18 HIPAA Safe Harbor identifiers
+  - Configurable confidence thresholds for precision/recall control
+  - Batch processing support for PII extraction and de-identification
+  - `PIIEntity` and `DeidentificationResult` dataclasses
+
+- **Smart Entity Merging**: Advanced post-processing to fix tokenization fragmentation
+  - Regex-based semantic unit detection with 20+ PII patterns
+  - Automatic merging of fragmented entities (e.g., dates split as "01" + "/15/1970" → "01/15/1970")
+  - Dominant label selection with confidence-based tie-breaking
+  - Label specificity hierarchy (e.g., `date_of_birth` > `date`)
+  - Support for dates (6 formats), SSN, phone numbers, emails, URLs, addresses, IP addresses, MAC addresses, ZIPs, credit cards
+  - Custom pattern support via `PIIPattern` class
+  - Enabled by default with `use_smart_merging=True` parameter
+  - Public API exports: `merge_entities_with_semantic_units()`, `find_semantic_units()`, `calculate_dominant_label()`, `PII_PATTERNS`
+  - Minimal performance overhead (~5-10%)
+
+- **PII CLI Commands**: Comprehensive command-line interface for PII operations
+  - `openmed pii extract`: Extract PII entities from text or files
+  - `openmed pii deidentify`: De-identify text or files with method selection
+  - `openmed pii batch-extract`: Batch PII extraction from directories
+  - `openmed pii batch-deidentify`: Batch de-identification with method selection
+  - All commands support confidence thresholds, smart merging, and output formatting
+  - Date shifting parameter (`--date-shift-days`) for temporal preservation
+
+- **PII TUI Mode**: Interactive PII detection in the terminal interface
+  - Visual PII entity highlighting with color coding
+  - Real-time de-identification preview
+  - Model selection for PII detection models
+
+- **PII Model Registry**: Added PII detection models
+  - `pii_detection_superclinical` (434M parameters)
+  - Covers 18+ PII entity types (names, dates, SSN, phone, email, addresses, medical records, etc.)
+
+- **Comprehensive Documentation**
+  - [PII Detection & Smart Merging Guide](docs/pii-smart-merging.md) (452 lines)
+    - Algorithm explanation and implementation details
+    - Complete API reference with examples
+    - Supported PII patterns catalog
+    - Performance characteristics
+    - Troubleshooting guide
+  - [Complete PII Jupyter Notebook](examples/notebooks/PII_Detection_Complete_Guide.ipynb) (48 cells)
+    - Step-by-step tutorial covering all PII functionality
+    - Before/after smart merging comparisons
+    - All 5 de-identification methods demonstrated
+    - Re-identification workflows
+    - Batch processing examples
+    - Confidence thresholding guidelines
+    - Custom PII patterns
+    - Clinical use cases (discharge summaries, research datasets, HIPAA compliance)
+    - HTML visualization examples
+    - CLI usage reference
+    - Best practices and security considerations
+  - [Notebooks README](examples/notebooks/README.md)
+    - Navigation guide for all notebooks
+    - Learning paths for different user types
+    - Quick reference table
+  - Updated README.md with PII capabilities
+  - Updated CLI documentation with PII commands
+  - Updated feature map and documentation index
+
+- **Testing**
+  - Comprehensive PII extraction and de-identification test suite
+  - Smart entity merging validation tests
+  - All 5 de-identification methods tested
+  - Complex clinical note integration tests
+
+### Changed
+
+- Default PII extraction behavior now uses smart entity merging (`use_smart_merging=True`)
+- Enhanced model registry with PII detection category
+
+## [0.4.0] - 2025-12-29
+
+### Added
+
+- **Interactive TUI (Terminal User Interface)**: Full-featured terminal workbench for clinical NER analysis
+  - Rich text input with multi-line support
+  - Color-coded entity highlighting in annotated view
+  - Entity table with confidence bars sorted by score
+  - Model switcher modal (F2) for switching between models
+  - Configuration panel (F3) for adjusting threshold and settings
+  - Profile switcher (F4) for quick dev/prod/test/fast presets
+  - Analysis history (F5) with recall and deletion
+  - Export results (F6) to JSON, CSV, or clipboard
+  - File navigation (Ctrl+O) for loading text files
+  - Status bar showing model, profile, threshold, and inference time
+  - CLI command: `openmed tui`
+
+- **TUI Documentation**: Comprehensive guide at `docs/tui.md`
+  - Interface overview with ASCII preview
+  - Keyboard shortcuts reference
+  - Profile presets documentation
+  - Export format examples
+  - Python API usage
+
+- **Website Updates**
+  - New Python Toolkit section showcasing TUI, CLI, batch processing, and profiles
+  - Interactive TUI preview with color-coded entities
+  - CLI and TUI tabs in hero code block
+  - Updated software version metadata
+
+### Changed
+
+- Updated mkdocs navigation to include TUI documentation
+
+## [0.3.0] - 2025-12-26
+
+### Added
+
+- **Batch Processing**: Process multiple texts or files in a single operation
+  - `BatchProcessor` class for configurable batch operations
+  - `BatchItem`, `BatchItemResult`, `BatchResult` dataclasses
+  - `process_batch()` convenience function
+  - File discovery with glob patterns and recursive search
+  - Progress callbacks for monitoring long-running jobs
+  - Configurable error handling (fail-fast or continue)
+  - CLI `batch` command with full feature support
+
+- **Configuration Profiles**: Named configuration presets for different environments
+  - Built-in profiles: `dev`, `prod`, `test`, `fast`
+  - `OpenMedConfig.from_profile()` and `with_profile()` methods
+  - `list_profiles()`, `get_profile()`, `save_profile()`, `delete_profile()` functions
+  - Custom profile persistence to disk
+  - CLI commands: `config profiles`, `profile-show`, `profile-use`, `profile-save`, `profile-delete`
+  - `--profile` flag for `config show` command
+
+- **Performance Profiling**: Built-in timing and metrics utilities
+  - `Timer` context manager for measuring code blocks
+  - `Profiler` class for tracking metrics across multiple runs
+  - `@profile` decorator for easy function profiling
+  - `ProfilingMetrics` dataclass for structured timing data
+  - Support for nested profiling and statistical aggregation
+
+- **Documentation**
+  - New [Batch Processing](./docs/batch-processing.md) guide
+  - New [Configuration Profiles](./docs/profiles.md) guide
+  - New [Performance Profiling](./docs/profiling.md) guide
+  - Updated CLI documentation with new commands
+  - Updated feature map and documentation index
+
+- **Testing**
+  - 89 new unit tests for batch, profiles, and profiling modules
+  - Total test count: 218 passing tests
+
+## [0.2.2] - 2024-12-20
+
+### Added
+
+- Medical-aware tokenizer with customizable exceptions
+- CLI `--use-medical-tokenizer` and `--medical-tokenizer-exceptions` flags
+
+### Fixed
+
+- Token boundary issues with medical terminology
+
+## [0.2.1] - 2024-12-18
+
+### Added
+
+- GLiNER2 support for zero-shot NER
+- Enhanced model registry with GLiNER2 family
+
+## [0.2.0] - 2024-12-15
+
+### Added
+
+- Typer-based CLI interface (`openmed` command)
+- `analyze` command for single text analysis
+- `models list` and `models info` commands
+- `config show` and `config set` commands
+- Rich terminal output formatting
+
+### Changed
+
+- Migrated CLI from argparse to Typer
+
+## [0.1.10] - 2024-12-10
+
+### Added
+
+- Initial public release
+- Core NER pipeline with HuggingFace integration
+- Model registry with curated biomedical models
+- `analyze_text()` one-call inference API
+- Advanced NER post-processing (grouping, filtering)
+- Multiple output formats (dict, JSON, HTML, CSV)
+- YAML/ENV configuration via `OpenMedConfig`
+- Zero-shot toolkit with GLiNER support
+
+[Unreleased]: https://github.com/maziyarpanahi/openmed/compare/v1.8.1...HEAD
+[1.8.1]: https://github.com/maziyarpanahi/openmed/compare/v1.8.0...v1.8.1
+[1.8.0]: https://github.com/maziyarpanahi/openmed/compare/v1.7.0...v1.8.0
+[1.7.0]: https://github.com/maziyarpanahi/openmed/compare/v1.6.0...v1.7.0
+[1.6.0]: https://github.com/maziyarpanahi/openmed/compare/v1.5.5...v1.6.0
+[0.6.1]: https://github.com/OpenMed/openmed/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/OpenMed/openmed/compare/v0.5.8...v0.6.0
+[0.5.8]: https://github.com/OpenMed/openmed/compare/v0.5.7...v0.5.8
+[0.5.7]: https://github.com/OpenMed/openmed/compare/v0.5.6...v0.5.7
+[0.5.6]: https://github.com/OpenMed/openmed/compare/v0.5.5...v0.5.6
+[0.5.5]: https://github.com/OpenMed/openmed/compare/v0.5.1...v0.5.5
+[0.5.1]: https://github.com/OpenMed/openmed/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/OpenMed/openmed/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/OpenMed/openmed/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/OpenMed/openmed/compare/v0.2.2...v0.3.0
+[0.2.2]: https://github.com/OpenMed/openmed/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/OpenMed/openmed/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/OpenMed/openmed/compare/v0.1.10...v0.2.0
+[0.1.10]: https://github.com/OpenMed/openmed/releases/tag/v0.1.10

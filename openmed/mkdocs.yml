@@ -1,0 +1,203 @@
+site_name: OpenMed
+site_description: "Open-source healthcare NLP toolkit with curated models, Apple Silicon MLX acceleration, OpenMedKit for Swift apps, advanced NER, and one-call orchestration."
+site_url: https://openmed.life/docs/
+site_dir: site/docs
+repo_url: https://github.com/maziyarpanahi/openmed
+repo_name: maziyarpanahi/openmed
+edit_uri: edit/master/docs/
+copyright: "© {year} Maziyar Panahi — Apache-2.0"
+strict: true
+
+nav:
+  - Overview:
+      - Welcome: index.md
+      - Feature Map: feature-map.md
+      - OpenMed 1.8.0 Release Notes: release/v1.8.0.md
+      - v1.6-v1.7 Feature Coverage: release/v1.6-v1.7-feature-coverage.md
+      - Quick Start: getting-started.md
+      - Persona Quickstarts: quickstarts.md
+  - Core Guides:
+      - Analyze Text Helper: analyze-text.md
+      - REST Service (MVP): rest-service.md
+      - REST API Recipes: rest-recipes.md
+      - REST Tracing: serving/tracing.md
+      - Serving Resilience: serving/resilience.md
+      - Hardened Service Image: deploy/hardened-image.md
+      - Async REST Jobs & Webhooks: serving/async-jobs.md
+      - gRPC Service: serving/grpc.md
+      - REST Authentication: serving/authentication.md
+      - Helm Deployment: deploy/helm.md
+      - Multi-Arch Containers: deploy/multi-arch.md
+      - ModelLoader & Pipelines: model-loader.md
+      - Model Registry: model-registry.md
+      - Model Manifest: model-manifest.md
+      - Advanced NER & Output Formatting: output-formatting.md
+      - Clinical Context & Extraction Depth: clinical/context-and-extraction.md
+      - Medication Sig Parser: clinical/sig-parser.md
+      - Medical Tokenizer: medical-tokenizer.md
+      - Configuration & Validation: configuration.md
+      - Configuration Profiles: profiles.md
+      - Batch Processing: batch-processing.md
+      - Performance Profiling: profiling.md
+      - Zero-shot NER How-to: zero-shot-howto.md
+      - Zero-shot Toolkit: zero-shot-ner.md
+      - Examples & Copy/Paste Recipes: examples.md
+      - Document Adapter Provenance: document-adapter-provenance.md
+      - EPUB Extraction: multimodal/epub-extraction.md
+      - Testing & QA: testing.md
+      - Eval Harness & Metrics: eval-harness.md
+      - Experiencer Refinement: clinical/experiencer-refinement.md
+      - OpenVINO Runtime: runtimes/openvino.md
+      - Device Tiers & SLOs: tiers.md
+      - AWQ Export: export-awq.md
+      - GPTQ Export: export-gptq.md
+  - PII & De-identification:
+      - De-identification API: api/deidentification.md
+      - PII Anonymization: anonymization.md
+      - Smart Entity Merging: pii-smart-merging.md
+      - No-Raw-PHI Logging: security/no-raw-phi-logging.md
+      - LangChain Redaction Wrapper: integrations-langchain.md
+      - Columnar Redactor: integrations/columnar-redactor.md
+      - Lakehouse Table Redaction: integrations/lakehouse-redaction.md
+      - Dask DataFrame De-identification: integrations/dask.md
+      - DuckDB De-identification UDFs: duckdb-deidentification.md
+      - spaCy Pipeline Component: spacy-component.md
+      - HL7 v2 De-identification: hl7v2-deidentification.md
+      - Compliance Posture: compliance.md
+      - Breach Notification Runbook: compliance/breach-notification-runbook.md
+      - Breach Report Template: compliance/templates/breach-report-template.md
+      - FHIR Interop Helpers: fhir-interop.md
+  - Apple Silicon & Mobile:
+      - MLX Backend: mlx-backend.md
+      - Torch MPS Performance: performance-mps.md
+      - MLX Quantized Export: export-mlx-quant.md
+      - Transformers.js Export: export-transformersjs.md
+      - ONNX Runtime Web Loader: runtimes/onnxruntime-web.md
+      - Android ONNX Export: export-onnx-android.md
+      - Android Span Parity: android-parity.md
+      - CoreML Packaging: coreml-export.md
+      - Swift Package (OpenMedKit): swift-openmedkit.md
+      - Swift-Kotlin API Parity: swift-kotlin-parity.md
+  - Project:
+      - FAQ: faq.md
+      - Troubleshooting & Common Errors: troubleshooting.md
+      - Onboarding: onboarding.md
+      - Contributing & Releases: contributing.md
+      - Reproducible Dependencies: contributing/reproducible-dependencies.md
+      - Security & Disclosure: security/disclosure-policy.md
+      - Redactor Threat Model: security/threat-model.md
+      - HF Write Token Policy: security/hf-token-policy.md
+      - Supply Chain Controls: security/supply-chain.md
+      - Vulnerability Scanning: supply-chain/vulnerability-scanning.md
+      - Software Bill of Materials: security/sbom.md
+      - SLSA Build Provenance: supply-chain/provenance.md
+      - Container Image SBOM: supply-chain/sbom.md
+      - Container Image Signing: supply-chain/image-signing.md
+      - Release Streams & Channels: release/semver-and-channels.md
+      - PyPI Publishing: release/trusted-publishing.md
+      - OpenMed 1.8.0 Release Notes: release/v1.8.0.md
+      - OpenMed 1.7.0 Release Notes: release/v1.7.0.md
+      - Generative Model Policy: generative-model-policy.md
+      - API Reference: api-reference.md
+
+extra_css:
+  - stylesheets/openmed-brand.css
+
+theme:
+  name: material
+  language: en
+  logo: assets/openmed-mark.svg
+  favicon: assets/openmed-favicon.svg
+  font:
+    text: Inter Tight
+    code: JetBrains Mono
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tracking
+    - toc.integrate
+    - content.action.edit
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - announce.dismiss
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/maziyarpanahi/openmed
+      name: GitHub
+    - icon: simple/huggingface
+      link: https://huggingface.co/OpenMed
+      name: Hugging Face
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/MaziyarPanahi
+      name: Maziyar on X
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/openmed-ai/
+      name: LinkedIn
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+      fallback_to_build_date: true
+  - minify:
+      minify_html: true
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+
+hooks:
+  - docs/_hooks.py
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      permalink_title: Link to this section
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+watch:
+  - openmed
+  - openmed/zero_shot
+
+exclude_docs: |
+  website/**
+  brand/**

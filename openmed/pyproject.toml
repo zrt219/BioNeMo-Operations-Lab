@@ -1,0 +1,325 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openmed"
+dynamic = ["version"]
+description = "OpenMed delivers state-of-the-art biomedical and clinical LLMs that rival proprietary enterprise stacks, unifying model discovery, advanced extractions, and one-line orchestration."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+keywords = [
+  "biomedical",
+  "clinical",
+  "NLP",
+  "LLM",
+  "healthcare",
+  "medical",
+  "natural language processing",
+  "medical language models",
+  "medical LLMs",
+  "medical NLP",
+  "medical NER",
+  "medical de-identification",
+  "medical extraction",
+  "medical reasoning",
+]
+dependencies = [
+  "pysbd>=0.3.4,<0.4",
+  "faker>=22.0",
+  "pyyaml>=6.0",
+]
+
+authors = [
+  { name = "Maziyar Panahi" }
+]
+
+[project.optional-dependencies]
+dev = [
+  "pre-commit>=4.0",
+  "pytest>=7.0",
+  "pytest-cov>=4.0",
+  "jsonschema>=4.0",
+  "mypy==2.2.0",
+  "duckdb>=1.0,<2",
+  "numpy>=1.26",
+  "fastapi>=0.110",
+  "httpx>=0.27",
+  "dask[dataframe]>=2024.8",
+  "opentelemetry-api>=1.26,<2",
+  "opentelemetry-exporter-otlp-proto-http>=1.26,<2",
+  "opentelemetry-sdk>=1.26,<2",
+  "pandas>=2.0",
+  "polars>=0.20",
+  "python-dateutil>=2.8",
+  "hypothesis>=6.100",
+  "fsspec>=2025.9.0",
+  "grpcio>=1.64",
+  "grpcio-tools>=1.64",
+  "protobuf>=5.26,<7",
+  "ruff==0.15.20",
+  "tomli>=2.0; python_version < '3.11'",
+]
+
+cli = [
+  "rich>=13.0",
+  "typer>=0.12",
+]
+
+mcp = [
+  "mcp>=1.9",
+]
+
+presidio = [
+  "presidio-analyzer>=2.2.354,<3",
+]
+
+philter = [
+  "philter-ucsf>=1.0.3,<2",
+]
+
+pydeid = [
+  "pyDeid>=0.0.1",
+]
+
+pandas = [
+  "pandas>=2.0",
+]
+
+polars = [
+  "polars>=0.20",
+]
+
+columnar = [
+  "pyarrow>=16",
+]
+
+dask = [
+  "dask[dataframe]>=2024.8",
+]
+
+spacy = [
+  "click>=8.0",
+  "spacy>=3.5",
+]
+
+multimodal = [
+  "numpy>=1.26",
+  "pdfplumber>=0.11",
+  "python-docx>=1.1",
+  "Pillow>=10.0",
+  "python-doctr>=1.0",
+  "piexif>=1.1",
+  "pikepdf>=9.0",
+  "pydicom>=3.0",
+  "pytesseract>=0.3.10",
+  "markdown-it-py>=3.0,<5",
+  "easyocr>=1.7",
+]
+
+# PaddleOCR is a heavy, platform-sensitive backend (pulls in paddlepaddle), so
+# it is opt-in rather than bundled into the general multimodal extra.
+ocr-paddle = [
+  "paddleocr>=2.7",
+]
+
+awq = [
+  "autoawq>=0.2.9",
+]
+
+gptq = [
+  "auto-gptq>=0.7.1",
+]
+
+grounding = [
+  "rapidfuzz>=3.9,<4",
+]
+
+langchain = [
+  "langchain-core>=0.2,<2",
+]
+
+llamaindex = [
+  "llama-index-core>=0.10,<1",
+]
+
+agents = [
+  "langchain-core>=0.2,<2",
+  "llama-index-core>=0.10,<1",
+]
+
+duckdb = [
+  "duckdb>=1.0,<2",
+  "numpy>=1.26",
+]
+
+kafka = [
+  "confluent-kafka>=2.3",
+]
+
+cloud = [
+  "fsspec>=2025.9.0",
+  "s3fs>=2025.9.0",
+  "gcsfs>=2025.9.0",
+  "adlfs>=2025.8.0",
+]
+
+spark = [
+  "pyspark>=3.5,<4",
+]
+
+hf = [
+  "transformers>=4.50",
+  "huggingface-hub>=0.30",
+  "accelerate>=0.29",
+  "tokenizers>=0.15"
+]
+
+service = [
+  "fastapi>=0.110",
+  "grpcio>=1.64",
+  "httpx>=0.27",
+  "opentelemetry-api>=1.26,<2",
+  "opentelemetry-exporter-otlp-proto-http>=1.26,<2",
+  "opentelemetry-sdk>=1.26,<2",
+  "protobuf>=5.26,<7",
+  "uvicorn[standard]>=0.29",
+]
+
+gliner = [
+  "gliner[tokenizers]>=0.2.0",
+  "torch>=2.0"
+]
+
+mlx = [
+  "mlx>=0.22",
+  "mlx-lm>=0.31",
+  "huggingface-hub>=0.30",
+  "transformers>=4.50",
+  "tokenizers>=0.15",
+  "safetensors>=0.4",
+  "tiktoken>=0.7",
+]
+
+coreml = [
+  "coremltools>=8.0",
+  "huggingface-hub>=0.30",
+  "torch>=2.0",
+  "transformers>=4.50",
+]
+
+onnx = [
+  "onnx>=1.14",
+  "onnxruntime>=1.16",
+  "onnxscript>=0.1.0",
+  "torch>=2.0",
+  "transformers>=4.50",
+]
+
+openvino = [
+  "openvino>=2024.0",
+  "nncf>=2.10",
+  "onnxruntime>=1.16",
+  "transformers>=4.50",
+]
+
+docs = [
+  "mkdocs>=1.6",
+  "mkdocs-material>=9.5",
+  "mkdocs-git-revision-date-localized-plugin>=1.2.6",
+  "mkdocs-minify-plugin>=0.8.0",
+  "pymdown-extensions>=10.8",
+  "mkdocstrings[python]",
+  "griffe",
+]
+
+[project.scripts]
+openmed = "openmed.cli:main"
+
+[tool.hatch.build]
+include = [
+  "openmed/**",
+  "openmed/py.typed",
+  "openmed/core/thresholds.json",
+  "openmed/core/policies/*.json",
+  "openmed/core/schemas/json/*.json",
+  "gates/baseline.json",
+  "models.jsonl",
+  "LICENSE",
+  "NOTICE",
+  "README.md",
+  "pyproject.toml"
+]
+
+[tool.hatch.version]
+path = "openmed/__about__.py"
+
+[tool.hatch.publish.index]
+disable = false
+
+[tool.hatch.publish.index.repos]
+pypi = { url = "https://upload.pypi.org/legacy/" }
+
+[tool.pytest.ini_options]
+markers = [
+  "integration: marks end-to-end or external integration tests",
+  "slow: marks tests that are expected to run slowly",
+  "fuzz: marks property-based (Hypothesis) fuzz tests",
+  "doctest_examples: runs doctest examples for targeted public modules"
+]
+python_files = [
+  "test_*.py",
+  "*_test.py",
+]
+testpaths = [
+  "tests",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+extend-exclude = [
+  "examples/notebooks",
+  "openmed/service/proto/generated",
+]
+
+[tool.ruff.lint]
+select = [
+  "E9",
+  "F63",
+  "F7",
+  "F82",
+  "I",
+]
+fixable = ["I"]
+unfixable = [
+  "E9",
+  "F63",
+  "F7",
+  "F82",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["openmed"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+# Scoped type-checking configuration. This intentionally covers only the newer
+# v1.6 public surfaces that already ship precise annotations and a py.typed
+# marker; it is not a strict project-wide gate. The pinned development checker,
+# local Make target, regression test, and CI lint job all use this same scope.
+[tool.mypy]
+python_version = "3.10"
+files = [
+  "openmed/core/audit.py",
+  "openmed/core/pipeline.py",
+  "openmed/clinical/context.py",
+  "openmed/clinical/exporters/fhir/bundle.py",
+]
+ignore_missing_imports = true
+follow_imports = "silent"
+warn_unused_ignores = false
