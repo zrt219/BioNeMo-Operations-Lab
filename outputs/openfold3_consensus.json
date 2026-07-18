@@ -1,0 +1,459 @@
+{
+  "msa": {
+    "columns": [
+      {
+        "confidence": 1.0,
+        "consensus": "M",
+        "entropy": -0.0,
+        "index": 1
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "T",
+        "entropy": -0.0,
+        "index": 2
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "E",
+        "entropy": -0.0,
+        "index": 3
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "Y",
+        "entropy": -0.0,
+        "index": 4
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "K",
+        "entropy": -0.0,
+        "index": 5
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "L",
+        "entropy": -0.0,
+        "index": 6
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "V",
+        "entropy": -0.0,
+        "index": 7
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "V",
+        "entropy": -0.0,
+        "index": 8
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "V",
+        "entropy": -0.0,
+        "index": 9
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "G",
+        "entropy": -0.0,
+        "index": 10
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "A",
+        "entropy": -0.0,
+        "index": 11
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "G",
+        "entropy": -0.0,
+        "index": 12
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "G",
+        "entropy": -0.0,
+        "index": 13
+      },
+      {
+        "confidence": 0.9733959449944267,
+        "consensus": "V",
+        "entropy": 0.17706440061719667,
+        "index": 14
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "G",
+        "entropy": -0.0,
+        "index": 15
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "K",
+        "entropy": -0.0,
+        "index": 16
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "S",
+        "entropy": -0.0,
+        "index": 17
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "A",
+        "entropy": -0.0,
+        "index": 18
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "L",
+        "entropy": -0.0,
+        "index": 19
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "T",
+        "entropy": -0.0,
+        "index": 20
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "I",
+        "entropy": -0.0,
+        "index": 21
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "Q",
+        "entropy": -0.0,
+        "index": 22
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "L",
+        "entropy": -0.0,
+        "index": 23
+      },
+      {
+        "confidence": 0.9733959449944267,
+        "consensus": "I",
+        "entropy": 0.17706440061719667,
+        "index": 24
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "Q",
+        "entropy": -0.0,
+        "index": 25
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "N",
+        "entropy": -0.0,
+        "index": 26
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "H",
+        "entropy": -0.0,
+        "index": 27
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "F",
+        "entropy": -0.0,
+        "index": 28
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "V",
+        "entropy": -0.0,
+        "index": 29
+      },
+      {
+        "confidence": 0.9635444190070155,
+        "consensus": "D",
+        "entropy": 0.22579817213507597,
+        "index": 30
+      },
+      {
+        "confidence": 0.9615791718432206,
+        "consensus": "E",
+        "entropy": 0.23500429668095,
+        "index": 31
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "Y",
+        "entropy": -0.0,
+        "index": 32
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "D",
+        "entropy": -0.0,
+        "index": 33
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "P",
+        "entropy": -0.0,
+        "index": 34
+      },
+      {
+        "confidence": 0.90333806466421,
+        "consensus": "T",
+        "entropy": 0.554985907488923,
+        "index": 35
+      },
+      {
+        "confidence": 0.8354703085675876,
+        "consensus": "I",
+        "entropy": 0.7959796455491934,
+        "index": 36
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "E",
+        "entropy": -0.0,
+        "index": 37
+      }
+    ],
+    "consensus_sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+    "query_prior": 0.85
+  },
+  "note": "Demo consensus derived from weighted branch support, not a real homolog search.",
+  "paired_msa": {
+    "columns": [
+      {
+        "confidence": 1.0,
+        "consensus": "M",
+        "entropy": -0.0,
+        "index": 1
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "T",
+        "entropy": -0.0,
+        "index": 2
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "E",
+        "entropy": -0.0,
+        "index": 3
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "Y",
+        "entropy": -0.0,
+        "index": 4
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "K",
+        "entropy": -0.0,
+        "index": 5
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "L",
+        "entropy": -0.0,
+        "index": 6
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "V",
+        "entropy": -0.0,
+        "index": 7
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "V",
+        "entropy": -0.0,
+        "index": 8
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "V",
+        "entropy": -0.0,
+        "index": 9
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "G",
+        "entropy": -0.0,
+        "index": 10
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "A",
+        "entropy": -0.0,
+        "index": 11
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "G",
+        "entropy": -0.0,
+        "index": 12
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "G",
+        "entropy": -0.0,
+        "index": 13
+      },
+      {
+        "confidence": 0.9754290342742532,
+        "consensus": "V",
+        "entropy": 0.16638783483329278,
+        "index": 14
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "G",
+        "entropy": -0.0,
+        "index": 15
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "K",
+        "entropy": -0.0,
+        "index": 16
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "S",
+        "entropy": -0.0,
+        "index": 17
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "A",
+        "entropy": -0.0,
+        "index": 18
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "L",
+        "entropy": -0.0,
+        "index": 19
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "T",
+        "entropy": -0.0,
+        "index": 20
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "I",
+        "entropy": -0.0,
+        "index": 21
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "Q",
+        "entropy": -0.0,
+        "index": 22
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "L",
+        "entropy": -0.0,
+        "index": 23
+      },
+      {
+        "confidence": 0.9754290342742532,
+        "consensus": "I",
+        "entropy": 0.16638783483329278,
+        "index": 24
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "Q",
+        "entropy": -0.0,
+        "index": 25
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "N",
+        "entropy": -0.0,
+        "index": 26
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "H",
+        "entropy": -0.0,
+        "index": 27
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "F",
+        "entropy": -0.0,
+        "index": 28
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "V",
+        "entropy": -0.0,
+        "index": 29
+      },
+      {
+        "confidence": 0.9663303646416622,
+        "consensus": "D",
+        "entropy": 0.21247352543602194,
+        "index": 30
+      },
+      {
+        "confidence": 0.9645153022124909,
+        "consensus": "E",
+        "entropy": 0.2211920595707143,
+        "index": 31
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "Y",
+        "entropy": -0.0,
+        "index": 32
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "D",
+        "entropy": -0.0,
+        "index": 33
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "P",
+        "entropy": -0.0,
+        "index": 34
+      },
+      {
+        "confidence": 0.9107249966359449,
+        "consensus": "T",
+        "entropy": 0.523320235437087,
+        "index": 35
+      },
+      {
+        "confidence": 0.8485327970150665,
+        "consensus": "I",
+        "entropy": 0.7524589645705249,
+        "index": 36
+      },
+      {
+        "confidence": 1.0,
+        "consensus": "E",
+        "entropy": -0.0,
+        "index": 37
+      }
+    ],
+    "consensus_sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+    "query_prior": 0.85
+  }
+}

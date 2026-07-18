@@ -1,0 +1,1961 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BioNeMo Operations Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="/outputs/js/jquery.min.js"></script>
+  <script src="/outputs/js/3Dmol-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #060a14;
+      --surface: rgba(10, 15, 28, 0.94);
+      --surface2: rgba(16, 22, 38, 0.92);
+      --surface3: rgba(22, 30, 50, 0.88);
+      --border: rgba(0, 242, 254, 0.10);
+      --border-hl: rgba(0, 242, 254, 0.28);
+      --border-glow: rgba(0, 242, 254, 0.45);
+      --accent: #00f2fe;
+      --accent2: #b8ff2a;
+      --accent3: #a78bfa;
+      --text: #eaf0f8;
+      --muted: #91a4bd;
+      --muted-strong: #b8c7d9;
+      --danger: #ff6b7a;
+      --focus-ring: #fff08a;
+      --focus-shadow: rgba(255, 240, 138, 0.32);
+      --font: 'Inter', -apple-system, sans-serif;
+      --radius: 20px;
+      --radius-sm: 12px;
+      --shadow: 0 20px 60px rgba(0,0,0,0.55);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+    a, button, input, select, textarea, summary, [role="button"] {
+      transition: border-color 0.2s, background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    summary:focus-visible,
+    [role="button"]:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 4px var(--focus-shadow);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(0,242,254,0.06), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(184,255,42,0.04), transparent),
+        radial-gradient(ellipse 50% 30% at 50% 100%, rgba(167,139,250,0.04), transparent);
+      z-index: 0;
+    }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1600px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 0 0 48px;
+    }
+
+    /* ─── HEADER ─── */
+    .mission-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 14px 24px;
+      background: rgba(6, 10, 20, 0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: #060a14;
+      box-shadow: 0 0 20px rgba(0,242,254,0.35);
+    }
+    .logo-text h1 {
+      font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    .logo-text p {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .truth-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 242, 254, 0.45);
+      background: rgba(0, 242, 254, 0.14);
+      color: #e7ffff !important;
+      font-size: 13px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.1em !important;
+      text-transform: uppercase !important;
+      box-shadow: 0 0 0 1px rgba(0, 242, 254, 0.1), 0 10px 28px rgba(0, 242, 254, 0.08);
+    }
+    .truth-banner.truth-demo {
+      border-color: rgba(255, 183, 3, 0.5);
+      background: rgba(255, 183, 3, 0.16);
+      color: #fff3d5 !important;
+      box-shadow: 0 0 0 1px rgba(255, 183, 3, 0.14), 0 10px 28px rgba(255, 183, 3, 0.08);
+    }
+    .trust-panel {
+      margin-bottom: 18px;
+      padding: 18px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(0, 242, 254, 0.16);
+      background: linear-gradient(180deg, rgba(8, 15, 28, 0.98), rgba(12, 19, 36, 0.96));
+      box-shadow: var(--shadow);
+    }
+    .trust-panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .trust-panel-title {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .trust-panel-title h2 {
+      font-size: 1.05rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .trust-panel-subtitle {
+      font-size: 12px;
+      color: var(--muted-strong);
+      line-height: 1.45;
+      max-width: 72ch;
+    }
+    .trust-verdict {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--text);
+    }
+    .trust-verdict strong {
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .trust-verdict .verdict-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      font-size: 14px;
+      font-weight: 900;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.04);
+    }
+    .trust-verdict.hosted {
+      border-color: rgba(184,255,42,0.35);
+      background: linear-gradient(90deg, rgba(184,255,42,0.10), rgba(0,242,254,0.06));
+    }
+    .trust-verdict.demo {
+      border-color: rgba(255, 183, 3, 0.36);
+      background: linear-gradient(90deg, rgba(255,183,3,0.10), rgba(255,255,255,0.03));
+    }
+    .trust-score {
+      min-width: 220px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(0, 242, 254, 0.16);
+      background: rgba(0, 242, 254, 0.06);
+    }
+    .trust-score-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-strong);
+    }
+    .trust-score-bar {
+      position: relative;
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 242, 254, 0.22);
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+    .trust-score-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 92%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 16px rgba(0,242,254,0.18);
+    }
+    .trust-score-note {
+      margin-top: 8px;
+      font-size: 11px;
+      line-height: 1.35;
+      color: var(--muted-strong);
+    }
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .trust-item {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+    }
+    .trust-item .label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-strong);
+    }
+    .trust-item .value {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .trust-item .source {
+      display: block;
+      margin-top: 4px;
+      font-size: 10px;
+      line-height: 1.35;
+      color: var(--muted-strong);
+    }
+    .trust-raw {
+      margin-top: 12px;
+    }
+    .trust-raw summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(0, 242, 254, 0.16);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .trust-raw summary::-webkit-details-marker { display: none; }
+    .trust-raw summary:focus-visible {
+      background: rgba(255, 240, 138, 0.1);
+    }
+    .trust-raw-body {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .trust-raw-body pre {
+      max-height: 220px;
+      margin-top: 0;
+    }
+    .header-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: var(--muted-strong);
+      background: rgba(255,255,255,0.04);
+      line-height: 1.2;
+    }
+    .badge-link {
+      color: var(--text);
+      text-decoration: none;
+      border-color: rgba(0, 242, 254, 0.2);
+      background: rgba(0, 242, 254, 0.08);
+    }
+    .badge-link:hover,
+    .badge-link:focus-visible {
+      border-color: var(--focus-ring);
+      background: rgba(255, 240, 138, 0.12);
+      color: #fffdf0;
+      text-decoration: underline;
+    }
+    .badge-icon {
+      width: 15px;
+      height: 15px;
+      display: inline-block;
+      flex-shrink: 0;
+      vertical-align: middle;
+    }
+    .badge-icon-img {
+      width: 15px;
+      height: 15px;
+      border-radius: 3px;
+      object-fit: contain;
+      display: inline-block;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.9);
+    }
+    .badge-glow {
+      border-color: rgba(184,255,42,0.48);
+      background: linear-gradient(90deg, rgba(184,255,42,0.18), rgba(0,242,254,0.12));
+      color: #f5ffd1;
+      box-shadow: 0 0 18px rgba(184,255,42,0.18), inset 0 0 0 1px rgba(184,255,42,0.12);
+      font-weight: 700;
+    }
+    .badge-glow:hover,
+    .badge-glow:focus-visible {
+      border-color: var(--focus-ring);
+      background: linear-gradient(90deg, rgba(255,240,138,0.22), rgba(0,242,254,0.16));
+      color: #fffdf0;
+      text-decoration: none;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,242,254,0.22);
+      background: rgba(0,242,254,0.06);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #b8f8ff;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(0,242,254,0.15);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(0,242,254,0.15); }
+      50% { box-shadow: 0 0 0 8px rgba(0,242,254,0.08); }
+    }
+
+    /* ─── SECTION KICKER ─── */
+    .section-kicker {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    /* ─── PIPELINE CONVEYOR ─── */
+    .pipeline-section {
+      margin-top: 20px;
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .pipeline-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 16% 50%, rgba(0,242,254,0.05), transparent 40%),
+        radial-gradient(circle at 84% 50%, rgba(184,255,42,0.04), transparent 40%);
+    }
+    .conveyor {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .stage-node {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(12,18,32,0.98), rgba(8,12,22,0.99));
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+      position: relative;
+      transition: border-color 0.4s, box-shadow 0.4s;
+    }
+    .stage-node.status-active {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 30px rgba(0,242,254,0.12), inset 0 0 20px rgba(0,242,254,0.04);
+      animation: stageGlow 2s ease-in-out infinite;
+    }
+    .stage-node.status-ready {
+      border-color: rgba(184,255,42,0.3);
+      box-shadow: 0 0 20px rgba(184,255,42,0.08);
+    }
+    .stage-node.status-error {
+      border-color: rgba(255,107,122,0.4);
+    }
+    @keyframes stageGlow {
+      0%, 100% { box-shadow: 0 0 30px rgba(0,242,254,0.12), inset 0 0 20px rgba(0,242,254,0.04); }
+      50% { box-shadow: 0 0 50px rgba(0,242,254,0.20), inset 0 0 30px rgba(0,242,254,0.06); }
+    }
+    .stage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .stage-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(0,242,254,0.08);
+      border: 1px solid rgba(0,242,254,0.15);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stage-pill {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .pill-idle { background: rgba(90,109,136,0.15); color: var(--muted); border: 1px solid rgba(90,109,136,0.2); }
+    .pill-active { background: rgba(0,242,254,0.12); color: var(--accent); border: 1px solid rgba(0,242,254,0.25); }
+    .pill-ready { background: rgba(184,255,42,0.10); color: var(--accent2); border: 1px solid rgba(184,255,42,0.25); }
+    .pill-error { background: rgba(255,107,122,0.12); color: var(--danger); border: 1px solid rgba(255,107,122,0.25); }
+    .pill-na { background: rgba(90,109,136,0.08); color: rgba(90,109,136,0.5); border: 1px solid rgba(90,109,136,0.1); }
+    .stage-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .stage-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .stage-artifacts {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .stage-artifacts code {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(0,242,254,0.06);
+      border: 1px solid rgba(0,242,254,0.1);
+      color: #8cd4da;
+    }
+    .stage-empty {
+      font-size: 11px;
+      color: rgba(90,109,136,0.6);
+    }
+    .conveyor-line {
+      width: 48px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(0,242,254,0.3), rgba(184,255,42,0.3));
+      position: relative;
+      overflow: hidden;
+      justify-self: center;
+    }
+    .conveyor-line::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: conveyorPulse 1.8s linear infinite;
+    }
+    @keyframes conveyorPulse {
+      0% { left: -50%; }
+      100% { left: 150%; }
+    }
+
+    /* ─── OPS GRID ─── */
+    .ops-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 18px;
+      margin-top: 18px;
+      align-items: start;
+    }
+    .panel {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .panel-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    /* ─── VIEWER ─── */
+    .viewer-wrap {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #040810;
+    }
+    .viewer-wrap::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 17px;
+      pointer-events: none;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, rgba(0,242,254,0.15), transparent 40%, rgba(184,255,42,0.1)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+    .viewer-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--muted);
+      font-size: 14px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .viewer-placeholder .icon-mol { font-size: 48px; opacity: 0.3; }
+    .viewer-toolbar {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .vbtn {
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font);
+    }
+    .vbtn:hover {
+      border-color: var(--border-hl);
+      background: rgba(0,242,254,0.06);
+    }
+    .vbtn:focus-visible {
+      border-color: var(--focus-ring);
+      background: rgba(255, 240, 138, 0.12);
+      color: #fffdf0;
+    }
+    .vbtn.active {
+      border-color: var(--accent);
+      background: rgba(0,242,254,0.10);
+      color: #dffcff;
+      box-shadow: inset 0 0 0 1px rgba(0,242,254,0.35);
+    }
+    .viewer-info {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      gap: 16px;
+    }
+    .viewer-info strong { color: var(--text); }
+
+    /* ─── CONTROLS ─── */
+    .controls-stack {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    /* Telemetry */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .tel-card {
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.015);
+      padding: 12px;
+      display: grid;
+      gap: 4px;
+    }
+    .tel-card .label {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .tel-card .value {
+      font-size: 13px;
+      font-weight: 600;
+      word-break: break-word;
+      line-height: 1.35;
+    }
+    .live-msg {
+      grid-column: 1 / -1;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(0,242,254,0.08);
+      background: rgba(0,242,254,0.03);
+      font-size: 12px;
+      color: #a0d8dd;
+      line-height: 1.5;
+    }
+
+    /* Presets */
+    .presets {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .preset-btn {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: linear-gradient(90deg, rgba(0,242,254,0.04), rgba(184,255,42,0.03));
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .preset-btn:hover {
+      border-color: var(--border-hl);
+      background: rgba(0,242,254,0.08);
+      transform: translateX(4px);
+    }
+    .preset-btn:focus-visible {
+      border-color: var(--focus-ring);
+      background: rgba(255, 240, 138, 0.12);
+      transform: translateX(4px);
+    }
+    .preset-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .form-panel label {
+      display: block;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .form-panel input,
+    .form-panel select {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(4, 6, 14, 0.9);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      margin-bottom: 10px;
+      transition: border-color 0.2s;
+    }
+    .form-panel input:focus,
+    .form-panel select:focus {
+      border-color: var(--accent);
+    }
+    .launch-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(0,242,254,0.3);
+      background: linear-gradient(90deg, rgba(0,242,254,0.14), rgba(184,255,42,0.10));
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.25s;
+      text-transform: uppercase;
+    }
+    .launch-btn:hover {
+      background: linear-gradient(90deg, rgba(0,242,254,0.22), rgba(184,255,42,0.16));
+      box-shadow: 0 0 30px rgba(0,242,254,0.15);
+      transform: translateY(-1px);
+    }
+    .launch-btn:focus-visible {
+      border-color: var(--focus-ring);
+      background: linear-gradient(90deg, rgba(255,240,138,0.22), rgba(0,242,254,0.16));
+      color: #fffdf0;
+    }
+    .launch-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ─── GALLERY ─── */
+    .gallery-section {
+      margin-top: 18px;
+      padding: 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .gallery-card {
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .gallery-card:hover {
+      border-color: var(--border-hl);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .gallery-card:focus-visible {
+      border-color: var(--focus-ring);
+      background: rgba(255, 240, 138, 0.08);
+      transform: translateY(-2px);
+    }
+    .gallery-card img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      display: block;
+    }
+    .gallery-card span {
+      display: block;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ─── DRAWERS ─── */
+    .drawers-section {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+    .drawer {
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .drawer summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+      transition: background 0.2s;
+    }
+    .drawer summary:hover { background: rgba(255,255,255,0.02); }
+    .drawer summary:focus-visible { background: rgba(255, 240, 138, 0.08); }
+    .drawer summary::-webkit-details-marker { display: none; }
+    .drawer-body {
+      padding: 0 16px 16px;
+    }
+    .drawer-badge {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+    }
+    .artifact-list {
+      list-style: none;
+      display: grid;
+      gap: 6px;
+    }
+    .artifact-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.015);
+      font-size: 12px;
+    }
+    .artifact-list code { color: #8cd4da; font-size: 12px; }
+    .artifact-list a { color: var(--accent); text-decoration: none; font-size: 11px; margin-left: auto; }
+    .artifact-list a:hover { text-decoration: underline; }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 280px;
+      overflow: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(4, 6, 14, 0.9);
+      padding: 14px;
+      font-size: 12px;
+      color: #c5d8f0;
+    }
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      resize: vertical;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(4, 6, 14, 0.9);
+      color: var(--text);
+      padding: 12px;
+      font: inherit;
+      font-size: 13px;
+    }
+    textarea:focus { border-color: var(--accent); }
+
+    /* ─── FOOTER ─── */
+    .lab-footer {
+      margin-top: 18px;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .lab-footer a { color: var(--accent); text-decoration: none; }
+    .lab-footer a:hover { text-decoration: underline; }
+    .lab-footer a:focus-visible {
+      color: #fffdf0;
+      text-decoration: underline;
+    }
+    .trust-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted-strong);
+      font-size: 11px;
+      line-height: 1.2;
+    }
+    .trust-demo,
+    .trust-local {
+      border-color: rgba(255, 240, 138, 0.28);
+      background: rgba(255, 240, 138, 0.08);
+      color: #fff1a6;
+    }
+    .trust-just_ran,
+    .trust-latest {
+      border-color: rgba(0, 242, 254, 0.35);
+      background: rgba(0, 242, 254, 0.12);
+      color: #d6fbff;
+    }
+    .trust-runtime {
+      border-style: dashed;
+    }
+
+    /* ─── GSAP ENTRY TARGETS ─── */
+    .anim-in {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1100px) {
+      .ops-grid { grid-template-columns: 1fr; }
+      .viewer-wrap { height: 420px; }
+    }
+    @media (max-width: 800px) {
+      .conveyor { grid-template-columns: 1fr; gap: 10px; }
+      .conveyor-line { width: 4px; height: 28px; justify-self: center; }
+      .conveyor-line::after { animation-name: conveyorPulseV; }
+      @keyframes conveyorPulseV { 0% { top: -50%; left: 0; } 100% { top: 150%; left: 0; } }
+      .telemetry-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="mission-bar anim-in">
+    <div class="logo-group">
+        <div class="logo-mark">Z</div>
+        <div class="logo-text">
+          <h1>BioNeMo Operations Lab</h1>
+          <p id="hdrTruthInline" class="truth-banner truth-demo">DEMO FALLBACK - NOT REAL</p>
+        </div>
+      </div>
+    <div class="header-badges">
+      <span class="badge badge-glow" id="hdrWorkflow">$workflow</span>
+      <span class="badge" id="hdrArtifact">Latest Run: $newest_run</span>
+      <span class="status-pill" role="status" aria-live="polite" aria-label="Current run status"><span class="pulse-dot" aria-hidden="true"></span> <span id="hdrStatus">$run_status_upper</span></span>
+      <a class="badge badge-link badge-glow" href="/learning_pack.html" aria-label="Open the learning pack page">Learning Pack</a>
+      <a class="badge badge-link" href="/viewer/" aria-label="Open the protein viewer page">Viewer</a>
+      <a class="badge badge-link" href="https://github.com/zrt219" target="_blank" rel="noopener noreferrer" aria-label="Open GitHub profile for zrt219 in a new tab">
+        <svg class="badge-icon" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.73 0 8.33c0 3.68 2.29 6.8 5.47 7.9.4.08.55-.18.55-.4 0-.2-.01-.86-.01-1.56-2.01.45-2.53-.51-2.69-.98-.09-.24-.48-.98-.82-1.18-.28-.16-.68-.57-.01-.58.63-.01 1.08.6 1.23.85.72 1.27 1.87.91 2.33.69.07-.54.28-.91.51-1.12-1.78-.21-3.64-.92-3.64-4.1 0-.91.31-1.65.82-2.23-.08-.21-.36-1.06.08-2.2 0 0 .67-.22 2.2.85A7.34 7.34 0 0 1 8 4.77c.68 0 1.37.09 2.01.27 1.53-1.07 2.2-.85 2.2-.85.44 1.14.16 1.99.08 2.2.51.58.82 1.31.82 2.23 0 3.19-1.87 3.89-3.65 4.1.29.26.54.76.54 1.54 0 1.12-.01 2.02-.01 2.3 0 .22.14.49.55.4A8.39 8.39 0 0 0 16 8.33C16 3.73 12.42 0 8 0Z"/></svg>
+        <span>GitHub | zrt219</span>
+      </a>
+      <a class="badge badge-link" href="https://www.linkedin.com/in/zhane-umattr" target="_blank" rel="noopener noreferrer" aria-label="Open LinkedIn profile for Zhane Umattr in a new tab">
+        <svg class="badge-icon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5a2.5 2.5 0 0 0-.02-5ZM3 9h4v12H3zm7 0h3.83v1.64h.05c.53-1 1.84-2.06 3.79-2.06C21.72 8.58 24 10.65 24 14.73V21h-4v-5.56c0-1.33-.03-3.05-1.86-3.05-1.86 0-2.14 1.45-2.14 2.95V21h-4z"/></svg>
+        <span>LinkedIn | Zhane Umattr</span>
+      </a>
+      <a class="badge badge-link" href="https://careercircle.app/" target="_blank" rel="noopener noreferrer" aria-label="Open CareerCircle in a new tab">
+        <img class="badge-icon-img" src="/outputs/careercircle-icon.png" alt="" aria-hidden="true" />
+        <span>CareerCircle</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ═══ PIPELINE ═══ -->
+  <section class="pipeline-section anim-in">
+    <h2 class="section-kicker">Pipeline Floor</h2>
+    <div class="conveyor" id="stageGrid">$stage_cards_html</div>
+  </section>
+
+  <!-- ═══ OPS GRID ═══ -->
+  <section class="trust-panel anim-in" aria-label="Run trust summary">
+    <div class="trust-panel-head">
+      <div class="trust-panel-title">
+        <h2>Telemetry Trust Panel</h2>
+        <div class="trust-panel-subtitle">
+          This is the fastest read on the page. It separates the verdict, the explanation, and the source so you can tell what is real in two seconds.
+        </div>
+        <div class="trust-verdict demo" id="trustVerdict">
+          <div class="verdict-icon" id="trustVerdictIcon">!</div>
+          <div>
+            <strong id="trustVerdictTitle">DEMO FALLBACK - NOT REAL</strong>
+            <div id="trustVerdictText">This is deterministic local output. It is not a hosted NVIDIA response.</div>
+          </div>
+        </div>
+      </div>
+      <div class="trust-score" aria-label="Telemetry trust score">
+        <div class="trust-score-label">
+          <span>Provenance confidence</span>
+          <span id="trustScoreValue">92%</span>
+        </div>
+        <div class="trust-score-bar" aria-hidden="true">
+          <div class="trust-score-fill" id="trustScoreFill"></div>
+        </div>
+        <div class="trust-score-note" id="trustScoreNote">
+          Real hosted runs score higher because they expose a provider endpoint, request ID, run ID, and returned confidence.
+        </div>
+      </div>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-item">
+        <span class="label">Run Truth</span>
+        <span class="value" id="trustRunTruth">DEMO FALLBACK - NOT REAL</span>
+        <span class="source" id="trustRunTruthSource">Derived from runtime, runtime kind, request ID, and provider source.</span>
+      </div>
+      <div class="trust-item">
+        <span class="label">Provider</span>
+        <span class="value" id="trustProvider">NVIDIA BioNeMo / OpenFold2</span>
+        <span class="source" id="trustProviderSource">The provider line tells you where the telemetry came from.</span>
+      </div>
+      <div class="trust-item">
+        <span class="label">Run ID</span>
+        <span class="value" id="trustRunId">unknown</span>
+        <span class="source" id="trustRunIdSource">Freshest completed run appears here.</span>
+      </div>
+      <div class="trust-item">
+        <span class="label">Request ID</span>
+        <span class="value" id="trustRequestId">unknown</span>
+        <span class="source" id="trustRequestIdSource">Returned by the hosted API when this is a real NVIDIA run.</span>
+      </div>
+      <div class="trust-item">
+        <span class="label">API Endpoint</span>
+        <span class="value" id="trustEndpoint">unknown</span>
+        <span class="source" id="trustEndpointSource">Hosted NVIDIA endpoint when real; local demo path only when explicitly chosen.</span>
+      </div>
+      <div class="trust-item">
+        <span class="label">Artifact Hash</span>
+        <span class="value" id="trustArtifactHash">unknown</span>
+        <span class="source" id="trustArtifactHashSource">SHA-256 fingerprint of the latest run summary.</span>
+      </div>
+      <div class="trust-item">
+        <span class="label">Runtime</span>
+        <span class="value" id="trustRuntime">auto</span>
+        <span class="source" id="trustRuntimeSource">Hosted is the default path; local demo must be selected in settings.</span>
+      </div>
+      <div class="trust-item">
+        <span class="label">Metric Evidence</span>
+        <span class="value" id="trustEvidence">Waiting for a completed run</span>
+        <span class="source" id="trustEvidenceSource">Returned fields are labeled. Computed fields are labeled. Missing fields are not invented.</span>
+      </div>
+    </div>
+    <details class="trust-raw">
+      <summary>Raw Telemetry Snapshot</summary>
+      <div class="trust-raw-body">
+        <div>
+          <div class="trust-item">
+            <span class="label">Run State JSON</span>
+            <span class="source">Current live execution snapshot.</span>
+          </div>
+          <pre id="trustRawRunState">$run_state_json</pre>
+        </div>
+        <div>
+          <div class="trust-item">
+            <span class="label">Run Summary JSON</span>
+            <span class="source">Completed run metadata and provenance.</span>
+          </div>
+          <pre id="trustRawSummary">$summary_json</pre>
+        </div>
+        <div>
+          <div class="trust-item">
+            <span class="label">Report Preview</span>
+            <span class="source">Human-readable markdown handoff.</span>
+          </div>
+          <pre id="trustRawReport">$report_safe</pre>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <main class="ops-grid" aria-label="BioNeMo operations lab interface">
+
+    <!-- Left Column Stack -->
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <!-- Viewer Panel -->
+      <div class="panel anim-in">
+        <h2 class="panel-title">Structure Viewer</h2>
+        <div class="viewer-wrap" id="viewerContainer" aria-label="3D protein structure viewer">
+          <div class="viewer-placeholder" id="viewerPlaceholder">
+            <span class="icon-mol">🧬</span>
+            <span>Run a protein pipeline to view structures here</span>
+            <span style="font-size:12px; color: var(--muted-strong);">or load a saved structure from the gallery below</span>
+          </div>
+        </div>
+        <div class="viewer-toolbar">
+          <button type="button" class="vbtn active" onclick="setStyle('cartoon')" id="btnCartoon" aria-pressed="true">Cartoon</button>
+          <button type="button" class="vbtn" onclick="setStyle('stick')" id="btnStick" aria-pressed="false">Stick</button>
+          <button type="button" class="vbtn" onclick="setStyle('sphere')" id="btnSphere" aria-pressed="false">Sphere</button>
+          <button type="button" class="vbtn" onclick="setStyle('line')" id="btnLine" aria-pressed="false">Line</button>
+          <button type="button" class="vbtn" onclick="toggleColor()" id="btnColor" aria-label="Change structure color mapping">Color: Spectrum</button>
+          <button type="button" class="vbtn" onclick="toggleSpin()" id="btnSpin" aria-pressed="false">Spin: Off</button>
+          <button type="button" class="vbtn" onclick="resetView()">Reset View</button>
+        </div>
+        <div class="viewer-info" id="viewerInfo" role="status" aria-live="polite">
+          <span>No structure loaded</span>
+        </div>
+      </div>
+
+      <!-- Analytical Metrics & Residue Characteristics Panel -->
+      <div class="panel anim-in" style="display: flex; flex-direction: column; gap: 12px;">
+        <h2 class="panel-title">Analytical Metrics & Residue Properties</h2>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+          <div class="tel-card" style="padding: 10px;">
+            <span class="label">Sequence Length</span>
+            <span class="value" id="metricLength" style="font-size: 14px; color: var(--accent); font-weight: bold;">N/A</span>
+            <div class="metric-source" id="metricLengthSource" style="margin-top: 4px; font-size: 10px; color: var(--muted-strong); line-height: 1.3;">Source: computed from input sequence</div>
+          </div>
+          <div class="tel-card" style="padding: 10px;">
+            <span class="label">Estimated Molecular Weight</span>
+            <span class="value" id="metricMW" style="font-size: 14px; color: var(--accent2); font-weight: bold;">N/A</span>
+            <div class="metric-source" id="metricMWSource" style="margin-top: 4px; font-size: 10px; color: var(--muted-strong); line-height: 1.3;">Source: computed from input sequence</div>
+          </div>
+          <div class="tel-card" style="padding: 10px;">
+            <span class="label">Residue Composition</span>
+            <span class="value" id="metricHydrophobic" style="font-size: 14px; color: var(--accent3); font-weight: bold;">N/A</span>
+            <div class="metric-source" id="metricHydrophobicSource" style="margin-top: 4px; font-size: 10px; color: var(--muted-strong); line-height: 1.3;">Source: heuristic residue buckets</div>
+          </div>
+          <div class="tel-card" style="padding: 10px;">
+            <span class="label">Polar / Charged Buckets</span>
+            <span class="value" id="metricPolar" style="font-size: 14px; color: #a78bfa; font-weight: bold;">N/A</span>
+            <div class="metric-source" id="metricPolarSource" style="margin-top: 4px; font-size: 10px; color: var(--muted-strong); line-height: 1.3;">Source: heuristic residue buckets</div>
+          </div>
+        </div>
+        
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <span class="label" style="display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-strong);">Model Confidence (pLDDT)</span>
+            <div id="metricConfidence" style="font-size: 13px; font-weight: bold; color: var(--text);">N/A</div>
+            <span id="metricConfidenceSource" style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Source: unavailable</span>
+            <span style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Model confidence, not experimental validation.</span>
+          </div>
+          <div>
+            <span class="label" style="display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-strong);">Alignment RMSD</span>
+            <div id="metricRMSD" style="font-size: 13px; font-weight: bold; color: var(--text);">N/A</div>
+            <span id="metricRMSDSource" style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Source: unavailable</span>
+            <span style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Backbone alignment distance after structural fit.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Specimen Persistence Database Gallery -->
+      <div class="panel anim-in" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 200px;">
+        <h2 class="panel-title" style="margin-bottom: 2px;">Structure Gallery</h2>
+        <div style="font-size: 12px; color: var(--muted-strong); margin-bottom: 4px; line-height: 1.4;">Select any recorded run to review its structure, provenance, and saved configuration.</div>
+        <div class="gallery-grid" id="galleryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; overflow-y: auto; max-height: 250px; padding-right: 4px;">
+          $gallery_cards_html
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-stack">
+      <!-- Run Console -->
+      <div class="panel anim-in" style="display: flex; flex-direction: column; gap: 8px;">
+        <h2 class="panel-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <span>Run Console</span>
+          <span style="font-size: 11px; color: var(--accent); font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(0,242,254,0.1); padding: 2px 6px; border-radius: 4px;">Live Stream</span>
+        </h2>
+        <div id="terminalLog" role="log" aria-live="polite" aria-label="Live run console output" style="height: 140px; overflow-y: auto; background: rgba(4, 6, 14, 0.95); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.4; color: #8cd4da; scroll-behavior: smooth;">
+          <div style="color: var(--muted); font-style: italic;">Standing by. Launch a run to initiate console stream...</div>
+        </div>
+      </div>
+
+      <!-- Telemetry -->
+      <div class="panel anim-in" style="display: flex; flex-direction: column; gap: 10px;">
+        <h2 class="panel-title">Run Telemetry</h2>
+        <div class="telemetry-grid">
+          <div class="tel-card" style="grid-column: 1 / -1; padding: 12px;">
+            <span class="label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-strong);">Telemetry Truth</span>
+            <div id="telTruth" style="font-size: 15px; font-weight: 800; letter-spacing: 0.02em; color: var(--text);">DEMO FALLBACK - NOT REAL</div>
+            <div id="telTruthSource" style="margin-top: 4px; font-size: 11px; line-height: 1.35; color: var(--muted-strong);">This view is deterministic local output, not NVIDIA telemetry.</div>
+          </div>
+          <div class="tel-card">
+            <span class="label">Pipeline Step</span>
+            <span class="value" id="telStep" style="text-transform: uppercase; color: var(--accent); font-weight: bold;">$run_step</span>
+          </div>
+          <div class="tel-card">
+            <span class="label">Active Workflow</span>
+            <span class="value" id="telWorkflow" style="color: var(--accent2);">$workflow</span>
+          </div>
+          <div class="tel-card">
+            <span class="label">Execution Engine</span>
+            <span class="value" id="telRuntime" style="font-weight: bold; color: var(--text);">DETECTING</span>
+          </div>
+          <div class="tel-card">
+            <span class="label">Last Registered Artifact</span>
+            <span class="value" id="telArtifact" style="font-family: monospace; font-size: 11px; color: #8cd4da; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">$newest_run</span>
+          </div>
+        </div>
+        
+        <div style="border-top: 1px solid var(--border); padding-top: 8px;">
+          <span class="label" style="display: block; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-strong);">Active Process Command</span>
+          <div id="telCommand" style="background: rgba(4,6,14,0.6); padding: 8px 10px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #e0e0e0; word-break: break-all; border: 1px solid rgba(255,255,255,0.03);">$active_command</div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+          <span class="label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-strong);">Current Action Narrative</span>
+          <div class="live-msg" id="telMessage" role="status" aria-live="polite" style="margin-bottom: 2px;">$live_action</div>
+          <div id="telDetailedExplanation" style="font-size: 11px; line-height: 1.4; color: #a5b4fc; background: rgba(165,180,252,0.03); border: 1px dashed rgba(165,180,252,0.15); padding: 8px 10px; border-radius: 4px;">
+            The lab is currently standing by. Queue a new design to begin pipeline floor execution.
+          </div>
+        </div>
+      </div>
+
+      <!-- Experiment Configuration & Job Dispatch -->
+      <div class="panel form-panel anim-in" style="display: flex; flex-direction: column; gap: 12px;">
+        <h2 class="panel-title">Experiment Configuration</h2>
+        <div style="font-size: 12px; color: var(--muted-strong); line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+          Configure a design or folding run, confirm the run label, keep hosted NVIDIA selected by default, and only switch to local demo from settings when you explicitly want deterministic simulation.
+        </div>
+        
+        <span class="label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-strong); margin-bottom: -4px;">Pre-configured Benchmarks</span>
+        <div class="presets">
+          <button type="button" class="preset-btn" onclick="launchPreset('Design a 100-residue helical bundle protein', '')" style="font-size: 11px;">
+            <span class="preset-icon" style="background:rgba(0,242,254,0.1);color:var(--accent);">🌀</span>
+            De Novo Helix Scaffold
+          </button>
+          <button type="button" class="preset-btn" onclick="launchPreset('Fold insulin A-chain protein', 'GIVEQCCTSICSLYQLENYCN')" style="font-size: 11px;">
+            <span class="preset-icon" style="background:rgba(184,255,42,0.1);color:var(--accent2);">🔬</span>
+            Insulin A-Chain Fold
+          </button>
+          <button type="button" class="preset-btn" onclick="launchPreset('Design a stable 80-residue de novo protein fold', '')" style="font-size: 11px;">
+            <span class="preset-icon" style="background:rgba(167,139,250,0.1);color:var(--accent3);">🧪</span>
+            80aa Monomer Topology
+          </button>
+        </div>
+
+        <form id="runForm" style="display: flex; flex-direction: column; gap: 10px;">
+          <div>
+            <label style="display: block; margin-bottom: 3px;">Run / Protein Name</label>
+            <input id="displayName" value="$display_name_value" placeholder="e.g. Helical Bundle Atlas Run" style="width: 100%;" />
+            <span style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">This label is saved with the run summary so local, demo, latest, and just-ran artifacts remain easy to distinguish.</span>
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 3px;">Design Objective (Natural Language Constraints)</label>
+            <input id="goal" value="$goal_value" placeholder="e.g. Design a 100-residue helical bundle target scaffold" style="width: 100%;" />
+            <span style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Describe the target fold, geometry, or design intent. The lab uses this to route the run through the appropriate pipeline path.</span>
+          </div>
+
+          <div>
+            <label style="display: block; margin-bottom: 3px;">Primary Target Sequence (Optional IUPAC FASTA)</label>
+            <input id="sequence" value="$sequence_value" placeholder="e.g. MALWMRLLPLLALLALWGPDPAAA..." style="width: 100%; font-family: monospace;" />
+            <span style="font-size: 11px; color: var(--muted-strong); display: block; margin-top: 4px; line-height: 1.35;">Provide a sequence for structure prediction runs. Leave this blank to trigger de novo inverse-folding sequence design.</span>
+          </div>
+
+          <div>
+            <label style="display: block; margin-bottom: 3px;">Compute Infrastructure & Inference Nodes</label>
+            <select id="runtime" style="width: 100%;">
+              <option value="auto" $runtime_auto_sel>Use Hosted NVIDIA (Default)</option>
+              <option value="hosted" $runtime_hosted_sel>NVIDIA Cloud Health NIMs (Live Hosted Inference)</option>
+              <option value="local-demo" $runtime_demo_sel>Local Workstation Sandbox (Advanced / Manual Only)</option>
+            </select>
+          </div>
+
+          <button type="submit" class="launch-btn" id="launchBtn" style="margin-top: 5px;">Launch Scientist Run</button>
+        </form>
+        
+        <textarea id="notes" aria-label="Run notes and observations" placeholder="Run notes: document hypotheses, results, or structural observations. Notes remain stored locally in this browser." style="margin-top: 4px; height: 70px;"></textarea>
+      </div>
+    </div>
+  </main>
+
+
+
+  <!-- ═══ DRAWERS ═══ -->
+  <section class="drawers-section">
+    <details class="drawer anim-in">
+      <summary>Latest Artifacts <span class="drawer-badge">$artifact_count</span></summary>
+      <div class="drawer-body"><ul class="artifact-list">$artifact_items_html</ul></div>
+    </details>
+    <details class="drawer anim-in">
+      <summary>Live Run State <span class="drawer-badge">json</span></summary>
+      <div class="drawer-body"><pre id="runStatePane">$run_state_json</pre></div>
+    </details>
+    <details class="drawer anim-in">
+      <summary>Event Log <span class="drawer-badge">events</span></summary>
+      <div class="drawer-body"><pre id="eventLogPane">$event_log_json</pre></div>
+    </details>
+    <details class="drawer anim-in">
+      <summary>Run Summary <span class="drawer-badge">summary</span></summary>
+      <div class="drawer-body"><pre id="summaryPane">$summary_json</pre></div>
+    </details>
+    <details class="drawer anim-in">
+      <summary>Report <span class="drawer-badge">markdown</span></summary>
+      <div class="drawer-body"><pre id="reportPane">$report_safe</pre></div>
+    </details>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="lab-footer">
+    <span>BioNeMo Operations Lab | Professional local demonstration environment</span>
+    <span>
+      <a href="/api/state">/api/state</a> |
+      <a href="/report">/report</a> |
+      <a href="/viewer">Viewer</a>
+    </span>
+  </footer>
+</div>
+
+<script>
+  /* ─── NOTES PERSISTENCE ─── */
+  const notes = document.getElementById('notes');
+  notes.value = localStorage.getItem('bionemo-lab-notes') || '';
+  notes.addEventListener('input', function() { localStorage.setItem('bionemo-lab-notes', notes.value); });
+  const displayName = document.getElementById('displayName');
+  const goalInput = document.getElementById('goal');
+  const sequenceInput = document.getElementById('sequence');
+  const displayNameKey = 'bionemo-lab-display-name';
+  const displayNameManualKey = 'bionemo-lab-display-name-manual';
+  let displayNameManual = localStorage.getItem(displayNameManualKey) === '1';
+
+  function slugFragment(text, fallback) {
+    var slug = (text || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return slug || fallback;
+  }
+
+  function suggestDisplayName() {
+    if (displayNameManual || !displayName) return;
+    var goal = (goalInput && goalInput.value ? goalInput.value : '').trim();
+    var seq = (sequenceInput && sequenceInput.value ? sequenceInput.value : '').trim();
+    var focus = 'fold';
+    var lowered = goal.toLowerCase();
+    if (lowered.indexOf('design') >= 0 || lowered.indexOf('generate') >= 0 || lowered.indexOf('backbone') >= 0) {
+      focus = 'designer';
+    } else if (lowered.indexOf('complex') >= 0) {
+      focus = 'complex';
+    } else if (lowered.indexOf('screen') >= 0 || lowered.indexOf('dock') >= 0) {
+      focus = 'screen';
+    }
+    var token = seq ? seq.slice(0, 12) : goal.slice(0, 18);
+    displayName.value = slugFragment(token, focus);
+  }
+
+  if (displayName) {
+    displayName.value = localStorage.getItem(displayNameKey) || displayName.value || '';
+    if (displayName.value) {
+      displayNameManual = true;
+    }
+    displayName.addEventListener('input', function() {
+      displayNameManual = true;
+      localStorage.setItem(displayNameManualKey, '1');
+      localStorage.setItem(displayNameKey, displayName.value);
+    });
+  }
+  if (goalInput) goalInput.addEventListener('input', suggestDisplayName);
+  if (sequenceInput) sequenceInput.addEventListener('input', suggestDisplayName);
+  suggestDisplayName();
+
+  /* ─── VIEWER STATE ─── */
+  var viewer3d = null;
+  var viewerModel = null;
+  var isSpinning = false;
+  var currentStyle = 'cartoon';
+  var currentColor = 'spectrum';
+  var loadedStructureName = '';
+
+  function initViewer() {
+    if (viewer3d) return;
+    var config = { backgroundColor: '#040810' };
+    var el = document.getElementById('viewerContainer');
+    var ph = document.getElementById('viewerPlaceholder');
+    if (ph) ph.remove();
+    viewer3d = $3Dmol.createViewer(el, config);
+  }
+
+  function loadPDBInViewer(url, name) {
+    initViewer();
+    fetch(url)
+      .then(function(r) { return r.text(); })
+      .then(function(pdbData) {
+        viewer3d.clear();
+        viewerModel = viewer3d.addModel(pdbData, 'pdb');
+        applyStyle();
+        viewer3d.zoomTo();
+        viewer3d.render();
+        if (isSpinning) viewer3d.spin(true);
+        loadedStructureName = name || url.split('/').pop();
+        document.getElementById('viewerInfo').innerHTML =
+          '<span>Loaded: <strong>' + loadedStructureName + '</strong></span>' +
+          '<span>Atoms: <strong>' + viewerModel.selectedAtoms({}).length + '</strong></span>';
+      })
+      .catch(function(err) { console.error('Failed to load PDB:', err); });
+  }
+
+  function applyStyle() {
+    if (!viewer3d || !viewerModel) return;
+    var scheme = currentColor === 'spectrum'
+      ? { prop: 'resi', gradient: new $3Dmol.Gradient.Sinebow() }
+      : (currentColor === 'chain' ? { prop: 'chain', map: $3Dmol.elementColors.rasmol } : { prop: 'b', gradient: new $3Dmol.Gradient.RWB(40, 90) });
+    var styleObj = {};
+    if (currentStyle === 'cartoon') styleObj = { cartoon: { colorscheme: scheme } };
+    else if (currentStyle === 'stick') styleObj = { stick: { radius: 0.2, colorscheme: scheme } };
+    else if (currentStyle === 'sphere') styleObj = { sphere: { scale: 0.6, colorscheme: scheme } };
+    else styleObj = { line: { linewidth: 1.5, colorscheme: scheme } };
+    viewer3d.setStyle({}, styleObj);
+    viewer3d.render();
+  }
+
+  function setStyle(name) {
+    currentStyle = name;
+    document.querySelectorAll('.viewer-toolbar .vbtn').forEach(function(b) { b.classList.remove('active'); if (b.id && b.id.indexOf('btn') === 0 && b.id !== 'btnColor' && b.id !== 'btnSpin') b.setAttribute('aria-pressed', 'false'); });
+    var activeBtn = document.getElementById('btn' + name.charAt(0).toUpperCase() + name.slice(1)); activeBtn.classList.add('active'); activeBtn.setAttribute('aria-pressed', 'true');
+    applyStyle();
+  }
+
+  function toggleColor() {
+    var modes = ['spectrum', 'chain', 'plddt'];
+    var idx = (modes.indexOf(currentColor) + 1) % modes.length;
+    currentColor = modes[idx];
+    document.getElementById('btnColor').textContent = 'Color: ' + currentColor.charAt(0).toUpperCase() + currentColor.slice(1);
+    applyStyle();
+  }
+
+  function toggleSpin() {
+    isSpinning = !isSpinning;
+    if (viewer3d) viewer3d.spin(isSpinning);
+    var spinBtn = document.getElementById('btnSpin'); spinBtn.textContent = 'Spin: ' + (isSpinning ? 'On' : 'Off'); spinBtn.setAttribute('aria-pressed', isSpinning ? 'true' : 'false');
+  }
+
+  function resetView() {
+    if (viewer3d) { viewer3d.zoomTo(); viewer3d.render(); }
+  }
+
+  /* ─── STATE POLLING ─── */
+  var prevStatus = '$run_status';
+  var prevActive = false;
+  var pollTimeout = null;
+  var currentInterval = 1800;
+
+  function inferWorkflow(goal, sw) {
+    if (sw) return sw;
+    var t = (goal || '').toLowerCase();
+    if (t.indexOf('design') >= 0 || t.indexOf('generate') >= 0 || t.indexOf('backbone') >= 0) return 'protein-design';
+    return 'protein-fold';
+  }
+
+  function latestMsg(state) {
+    var ev = state.events || [];
+    return ev.length ? (ev[ev.length - 1].message || 'Standing by.') : 'Idle. Launch a run to begin.';
+  }
+
+  function latestCmd(state) {
+    var ev = state.events || [];
+    for (var i = ev.length - 1; i >= 0; i--) {
+      var d = ev[i].detail || {};
+      if (d.command) return d.command;
+    }
+    return 'No active command';
+  }
+
+  function renderStages(payload) {
+    var summary = payload.summary || {};
+    var state = payload.run_state || {};
+    var artifacts = payload.artifacts || [];
+    var names = {};
+    artifacts.forEach(function(a) { names[a.name] = true; });
+    var wf = inferWorkflow(state.goal, summary.workflow);
+    var step = state.step || 'idle';
+    var active = !!state.active;
+
+    function sf(key) {
+      if (wf !== 'protein-design') {
+        return key === 'fold' ? (((summary.status || '') + '').toUpperCase() || (active ? 'ACTIVE' : 'IDLE')) : 'N/A';
+      }
+      if (key === 'design') {
+        if (active && (step === 'intake' || step === 'route')) return 'ACTIVE';
+        return (names['design_pdb'] || names['design_json']) ? 'READY' : 'IDLE';
+      }
+      if (key === 'sequence') {
+        if (active && step === 'execute') return 'ACTIVE';
+        return (names['mpnn_fasta'] || names['mpnn_json']) ? 'READY' : 'IDLE';
+      }
+      if (active && (step === 'inspect' || step === 'finish')) return 'ACTIVE';
+      return (names['fold_pdb'] || names['fold_json'] || names['fold_cif']) ? 'READY' : 'IDLE';
+    }
+
+    var stages = [
+      { title: 'Design Backbone', desc: 'RFDiffusion de novo backbone generation', key: 'design', arts: ['design_json','design_pdb'] },
+      { title: 'Design Sequence', desc: 'ProteinMPNN inverse folding & sequences', key: 'sequence', arts: ['mpnn_json','mpnn_fasta'] },
+      { title: 'Fold & Validate', desc: 'MSA Search → OpenFold2 structure prediction', key: 'fold', arts: ['msa_json','msa_a3m','fold_json','fold_pdb','fold_scores','fold_cif'] }
+    ];
+
+    var html = '';
+    for (var i = 0; i < stages.length; i++) {
+      var s = stages[i];
+      var status = sf(s.key);
+      var sl = status.toLowerCase();
+      var present = s.arts.filter(function(n) { return names[n]; });
+      var artHtml = present.length
+        ? present.map(function(n) { return '<code>' + n + '</code>'; }).join('')
+        : '<span class="stage-empty">No artifacts yet</span>';
+      var pillClass = 'pill-' + (sl === 'n/a' ? 'na' : sl);
+      html += '<div class="stage-node status-' + sl + '">' +
+        '<div class="stage-header"><span class="stage-num">' + (i+1) + '</span><span class="stage-pill ' + pillClass + '">' + status + '</span></div>' +
+        '<div class="stage-title">' + s.title + '</div>' +
+        '<div class="stage-desc">' + s.desc + '</div>' +
+        '<div class="stage-artifacts">' + artHtml + '</div></div>';
+      if (i < stages.length - 1) html += '<div class="conveyor-line"></div>';
+    }
+    document.getElementById('stageGrid').innerHTML = html;
+  }
+
+  function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function updateTerminal(events) {
+    var term = document.getElementById('terminalLog');
+    if (!term || !events) return;
+    var lines = [];
+    for (var i = 0; i < events.length; i++) {
+      var ev = events[i];
+      var timeStr = ev.time ? ev.time.split('T')[1].split('.')[0] : '';
+      if (ev.kind === 'log') {
+        lines.push('<div style="color: #8cd4da; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> ' + escapeHtml(ev.message) + '</div>');
+      } else if (ev.kind === 'step') {
+        lines.push('<div style="color: #ffb703; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> 🚀 STEP: ' + escapeHtml(ev.message) + '</div>');
+      } else if (ev.kind === 'start') {
+        lines.push('<div style="color: #00f2fe; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> 🟢 PIPELINE INITIATED</div>');
+      } else if (ev.kind === 'process') {
+        lines.push('<div style="color: #00f2fe; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> 💻 CLI Completed: ' + (ev.detail.returncode === 0 ? 'SUCCESS' : 'ERROR') + '</div>');
+      } else if (ev.kind === 'error') {
+        lines.push('<div style="color: #ff2a2a; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> 🔴 ERROR: ' + escapeHtml(ev.message) + '</div>');
+      } else if (ev.kind === 'done') {
+        lines.push('<div style="color: #b8ff2a; font-weight: bold; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> ✅ FINISHED SUCCESSFULLY</div>');
+      } else {
+        lines.push('<div style="color: #e0e0e0; margin-bottom: 2px;"><span style="color: var(--muted); font-size: 9px;">[' + timeStr + ']</span> ' + escapeHtml(ev.message) + '</div>');
+      }
+    }
+    if (lines.length > 0) {
+      var joined = lines.join('');
+      if (term.innerHTML !== joined) {
+        term.innerHTML = joined;
+        term.scrollTop = term.scrollHeight;
+      }
+    }
+  }
+
+  function explainOperationalState(step, active, events, goal) {
+    if (!active) {
+      return "The lab is currently standing by. Queue a new design to begin pipeline floor execution.";
+    }
+    var latestLog = "";
+    if (events && events.length) {
+      for (var i = events.length - 1; i >= 0; i--) {
+        if (events[i].kind === 'log') {
+          latestLog = events[i].message.toLowerCase();
+          break;
+        }
+      }
+    }
+    if (step === 'intake') {
+      return "🤖 <b>Intake Phase:</b> Parsing goal specification and setting up deterministic local workspaces. Checking file system buffers and resolving target properties.";
+    }
+    if (step === 'route') {
+      return "🎯 <b>Routing Phase:</b> Evaluating design prompts. Selecting deep learning capability paths (RFDiffusion de novo backbone generation + ProteinMPNN sequence co-design + OpenFold model prediction).";
+    }
+    if (step === 'execute') {
+      if (latestLog.indexOf('rfdiffusion') >= 0) {
+        return "🧬 <b>RFDiffusion In Progress:</b> Invoking deep denoising diffusion probabilistic model (DDPM) to design a stable de novo protein backbone. Designing structural coordinates from random Gaussian noise.";
+      }
+      if (latestLog.indexOf('proteinmpnn') >= 0) {
+        return "🧠 <b>ProteinMPNN In Progress:</b> Designing amino acid sequences that fold into the newly generated backbone target. Evaluating structural environment via a deep graph neural network.";
+      }
+      if (latestLog.indexOf('msa search') >= 0 || latestLog.indexOf('colabfold') >= 0) {
+        return "🔍 <b>MSA Search In Progress:</b> Building a Multiple Sequence Alignment (MSA) by searching homology databases (UniRef30) for evolutionary sequence counterparts.";
+      }
+      if (latestLog.indexOf('openfold') >= 0) {
+        return "📉 <b>OpenFold Prediction In Progress:</b> Folding designed target sequence through end-to-end differentiable neural network to resolve physical 3D atomic coordinates.";
+      }
+      return "⚙️ <b>Execution Phase:</b> BioNeMo Scientist process is running. Capturing subprocess stdout stream in real time...";
+    }
+    if (step === 'inspect') {
+      return "🔬 <b>Inspection Phase:</b> Subprocess completed. Reading run summaries, analyzing structural metrics, and verifying coordinates are valid.";
+    }
+    if (step === 'finish') {
+      return "📈 <b>Publishing Phase:</b> Writing run report and registering generated specimens in the interactive viewer dashboard.";
+    }
+      return "Standing by.";
+  }
+
+  function computeSequenceMetrics(sequence) {
+    if (!sequence) return null;
+    var len = sequence.length;
+    var hydrophobic = 0;
+    var polar = 0;
+    var charged = 0;
+    var hpMap = {A:1, F:1, G:1, I:1, L:1, M:1, P:1, V:1, W:1, Y:1};
+    var polarMap = {N:1, Q:1, S:1, T:1, C:1, Y:1};
+    var chargedMap = {D:1, E:1, K:1, R:1, H:1};
+    for (var i = 0; i < len; i++) {
+      var char = sequence[i].toUpperCase();
+      if (hpMap[char]) hydrophobic++;
+      if (polarMap[char]) polar++;
+      if (chargedMap[char]) charged++;
+    }
+    var mw = (len * 110 / 1000).toFixed(1) + ' kDa';
+    return {
+      length: len,
+      hydrophobicPct: ((hydrophobic / len) * 100).toFixed(0) + '%',
+      polarPct: ((polar / len) * 100).toFixed(0) + '%',
+      chargedPct: ((charged / len) * 100).toFixed(0) + '%',
+      mw: mw,
+      source: 'computed from input sequence'
+    };
+  }
+
+  function refreshState(callback) {
+    fetch('/api/state')
+      .then(function(r) { return r.json(); })
+      .then(function(payload) {
+        var state = payload.run_state || {};
+        var summary = payload.summary || {};
+        var artifacts = payload.artifacts || [];
+        var msg = latestMsg(state);
+        var cmd = latestCmd(state);
+        var step = state.step || 'idle';
+        var status = (state.status || 'idle');
+        var runLabel = summary.display_name || state.display_name || 'None';
+        var runtimeDisplay = summary.runtime || state.runtime || 'auto';
+        var runId = summary.run_id || state.run_id || 'unknown';
+        var requestId = summary.request_id || state.request_id || 'unknown';
+        var runtimeKind = summary.runtime_kind || 'unknown';
+        var truthMode = runtimeDisplay === 'hosted' ? 'HOSTED NVIDIA RUN - REAL TELEMETRY' : 'DEMO FALLBACK - NOT REAL';
+        var trustScore = runtimeDisplay === 'hosted' ? 92 : 35;
+        var trustProvider = runtimeDisplay === 'hosted' ? 'NVIDIA BioNeMo / OpenFold2' : 'Local workstation';
+        var trustVerdictClass = runtimeDisplay === 'hosted' ? 'hosted' : 'demo';
+        var trustVerdictIcon = runtimeDisplay === 'hosted' ? '✓' : '!';
+        var trustVerdictTitle = runtimeDisplay === 'hosted' ? 'HOSTED NVIDIA RUN - REAL TELEMETRY' : 'DEMO FALLBACK - NOT REAL';
+        var trustVerdictText = runtimeDisplay === 'hosted'
+          ? 'This is a real hosted result. The page shows the provider, run ID, request ID, and returned confidence.'
+          : 'This is deterministic local output, not a hosted NVIDIA response.';
+
+        document.getElementById('hdrStatus').textContent = status.toUpperCase();
+        document.getElementById('hdrWorkflow').textContent = inferWorkflow(state.goal, summary.workflow);
+        document.getElementById('hdrArtifact').textContent = 'Latest Run: ' + runLabel;
+        document.getElementById('hdrTruthInline').textContent = truthMode;
+        var verdictEl = document.getElementById('trustVerdict');
+        if (verdictEl) {
+          verdictEl.className = 'trust-verdict ' + trustVerdictClass;
+        }
+        var verdictIconEl = document.getElementById('trustVerdictIcon');
+        if (verdictIconEl) verdictIconEl.textContent = trustVerdictIcon;
+        var verdictTitleEl = document.getElementById('trustVerdictTitle');
+        if (verdictTitleEl) verdictTitleEl.textContent = trustVerdictTitle;
+        var verdictTextEl = document.getElementById('trustVerdictText');
+        if (verdictTextEl) verdictTextEl.textContent = trustVerdictText;
+        document.getElementById('trustRunTruth').textContent = truthMode;
+        document.getElementById('trustRunTruthSource').textContent = runtimeDisplay === 'hosted'
+          ? 'Latest completed run is backed by a hosted NVIDIA response.'
+          : 'Latest completed run is deterministic local demo output.';
+        document.getElementById('trustProvider').textContent = runtimeDisplay === 'hosted' ? 'NVIDIA BioNeMo / OpenFold2' : 'Local workstation';
+        document.getElementById('trustProviderSource').textContent = runtimeDisplay === 'hosted'
+          ? 'Telemetry returned by the hosted NVIDIA endpoint.'
+          : 'Deterministic local output only.';
+        document.getElementById('trustRunId').textContent = runId;
+        document.getElementById('trustRunIdSource').textContent = summary.completed_at ? ('Completed ' + summary.completed_at) : 'Freshest completed run appears here.';
+        document.getElementById('trustRequestId').textContent = requestId;
+        document.getElementById('trustRequestIdSource').textContent = runtimeDisplay === 'hosted'
+          ? 'Returned by the hosted API.'
+          : 'Local demo runs do not generate a hosted request ID.';
+        document.getElementById('trustEndpoint').textContent = summary.api_endpoint || (runtimeDisplay === 'hosted' ? 'NVIDIA hosted endpoint' : 'local demo path');
+        document.getElementById('trustEndpointSource').textContent = runtimeDisplay === 'hosted'
+          ? 'Hosted NVIDIA OpenFold endpoint.'
+          : 'Local simulation path.';
+        document.getElementById('trustArtifactHash').textContent = summary.artifact_hash || 'unknown';
+        document.getElementById('trustArtifactHashSource').textContent = summary.artifact_hash ? 'SHA-256 fingerprint of the latest run summary.' : 'Fingerprint unavailable until a run completes.';
+        document.getElementById('trustRuntime').textContent = runtimeDisplay + ' · ' + runtimeKind;
+        document.getElementById('trustRuntimeSource').textContent = runtimeDisplay === 'hosted'
+          ? 'Hosted inference path.'
+          : 'Local workstation simulation path.';
+        document.getElementById('trustEvidence').textContent = runtimeDisplay === 'hosted'
+          ? 'Returned confidence plus provider, request, and run IDs.'
+          : 'Sequence metrics are local; confidence and RMSD are not real hosted telemetry.';
+        document.getElementById('trustEvidenceSource').textContent = runtimeDisplay === 'hosted'
+          ? 'Confidence is returned by NVIDIA; sequence length and composition remain local computations.'
+          : 'No hosted telemetry is used for this run.';
+        document.getElementById('trustScoreValue').textContent = trustScore + '%';
+        document.getElementById('trustScoreFill').style.width = trustScore + '%';
+        document.getElementById('trustScoreNote').textContent = runtimeDisplay === 'hosted'
+          ? 'Real hosted runs score higher because they expose a provider endpoint, request ID, run ID, and returned confidence.'
+          : 'Demo runs score lower because they are locally simulated and do not return provider telemetry.';
+        document.getElementById('telStep').textContent = step;
+        var provenance = summary.status || state.status || 'unknown';
+        document.getElementById('telArtifact').textContent = runLabel + ' Â· ' + runId + ' Â· ' + runtimeKind + ' Â· ' + provenance + (summary.completed_at ? ' Â· ' + summary.completed_at : '');
+        document.getElementById('telWorkflow').textContent = inferWorkflow(state.goal, summary.workflow);
+        document.getElementById('telCommand').textContent = cmd;
+        document.getElementById('telMessage').textContent = msg;
+
+        // Dynamic Sequence Analysis Updates
+        var seq = summary.sequence || state.sequence || '';
+        if (seq) {
+          var metrics = computeSequenceMetrics(seq);
+          if (metrics) {
+            document.getElementById('metricLength').textContent = metrics.length;
+            document.getElementById('metricMW').textContent = metrics.mw;
+            document.getElementById('metricHydrophobic').textContent = metrics.hydrophobicPct;
+            document.getElementById('metricPolar').textContent = metrics.polarPct + ' / ' + metrics.chargedPct;
+            document.getElementById('metricLengthSource').textContent = 'Source: ' + metrics.source;
+            document.getElementById('metricMWSource').textContent = 'Source: ' + metrics.source;
+            document.getElementById('metricHydrophobicSource').textContent = 'Source: heuristic residue buckets';
+            document.getElementById('metricPolarSource').textContent = 'Source: heuristic residue buckets';
+          }
+        } else {
+          document.getElementById('metricLength').textContent = 'N/A';
+          document.getElementById('metricMW').textContent = 'N/A';
+          document.getElementById('metricHydrophobic').textContent = 'N/A';
+          document.getElementById('metricPolar').textContent = 'N/A';
+          document.getElementById('metricLengthSource').textContent = 'Source: unavailable';
+          document.getElementById('metricMWSource').textContent = 'Source: unavailable';
+          document.getElementById('metricHydrophobicSource').textContent = 'Source: unavailable';
+          document.getElementById('metricPolarSource').textContent = 'Source: unavailable';
+        }
+
+        // Confidence / pLDDT
+        var confidenceVal = 'N/A';
+        var confidenceSource = 'Source: unavailable';
+        if (runtimeDisplay === 'hosted' && summary.fold && summary.fold.mean_plddt) {
+          confidenceVal = summary.fold.mean_plddt.toFixed(1) + ' (High)';
+          confidenceSource = 'Source: returned by NVIDIA OpenFold2';
+        } else if (runtimeDisplay === 'local-demo') {
+          confidenceSource = 'Source: demo fallback; not a real pLDDT measurement';
+        } else if (summary.metric_sources && summary.metric_sources.confidence) {
+          confidenceSource = 'Source: ' + summary.metric_sources.confidence;
+        }
+        document.getElementById('metricConfidence').textContent = confidenceVal;
+        document.getElementById('metricConfidenceSource').textContent = confidenceSource;
+
+        // RMSD
+        var rmsdVal = 'N/A';
+        var rmsdSource = 'Source: unavailable';
+        if (runtimeDisplay === 'hosted' && summary.metrics && summary.metrics.rmsd) {
+          rmsdVal = summary.metrics.rmsd.toFixed(2) + ' Ã…';
+          rmsdSource = 'Source: backend-computed metric';
+        } else if (runtimeDisplay === 'local-demo') {
+          rmsdSource = 'Source: demo fallback; not a real RMSD measurement';
+        } else if (summary.metric_sources && summary.metric_sources.rmsd) {
+          rmsdSource = 'Source: ' + summary.metric_sources.rmsd;
+        }
+        document.getElementById('metricRMSD').textContent = rmsdVal;
+        document.getElementById('metricRMSDSource').textContent = rmsdSource;
+
+        // Dynamic Runtime Display Update
+        var engineText = 'DETECTING...';
+        var engineColor = 'var(--text)';
+        if (runtimeDisplay === 'local-demo') {
+          engineText = 'LOCAL DEMO (OFFLINE)';
+          engineColor = '#ffb703'; // Amber
+        } else if (runtimeDisplay === 'hosted') {
+          engineText = 'NVIDIA NIM (LIVE)';
+          engineColor = '#00f2fe'; // Cyan
+        }
+        var engineEl = document.getElementById('telRuntime');
+        if (engineEl) {
+          engineEl.textContent = engineText + ' Â· ' + runtimeKind;
+          engineEl.style.color = engineColor;
+        }
+        var truthEl = document.getElementById('telTruth');
+        var truthSourceEl = document.getElementById('telTruthSource');
+        if (truthEl) {
+          truthEl.textContent = truthMode;
+        }
+        if (truthSourceEl) {
+          truthSourceEl.textContent = runtimeDisplay === 'hosted'
+            ? ('Real telemetry from NVIDIA hosted endpoints. Run ID ' + runId + '. Request ID ' + requestId + '.')
+            : 'Deterministic local demo output only. Not NVIDIA telemetry.';
+        }
+
+        document.getElementById('telDetailedExplanation').innerHTML = explainOperationalState(step, !!state.active, state.events || [], state.goal);
+        document.getElementById('runStatePane').textContent = JSON.stringify(state, null, 2);
+        document.getElementById('eventLogPane').textContent = JSON.stringify(state.events || [], null, 2);
+        document.getElementById('summaryPane').textContent = JSON.stringify(summary, null, 2);
+        document.getElementById('reportPane').textContent = payload.report || 'No report yet.';
+
+        renderStages(payload);
+        updateTerminal(state.events || []);
+
+        var btn = document.getElementById('launchBtn');
+        if (state.active) {
+          btn.disabled = true;
+          btn.textContent = '⏳ Running...';
+          currentInterval = 600;
+        } else {
+          btn.disabled = false;
+          btn.textContent = '⚡ Launch Scientist Run';
+          currentInterval = 3000;
+        }
+
+        /* Auto-load structure when a run completes */
+        var isActive = !!state.active;
+        if (prevActive && !isActive) {
+          var pdbArt = artifacts.find(function(a) { return a.name === 'fold_pdb' || a.name === 'fold_cif'; });
+          if (pdbArt && pdbArt.path) {
+            var fname = pdbArt.path.replace(/\\/g, '/').split('/').pop();
+            loadPDBInViewer('/outputs/' + fname, fname);
+          } else {
+            var bbArt = artifacts.find(function(a) { return a.name === 'design_pdb'; });
+            if (bbArt && bbArt.path) {
+              var fn2 = bbArt.path.replace(/\\/g, '/').split('/').pop();
+              loadPDBInViewer('/outputs/' + fn2, fn2);
+            }
+          }
+        }
+        prevActive = isActive;
+        prevStatus = status;
+        if (callback) callback();
+      })
+      .catch(function(err) {
+        console.warn('State poll error:', err);
+        if (callback) callback();
+      });
+  }
+
+  /* ─── FORM SUBMIT ─── */
+  document.getElementById('runForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var fd = new FormData();
+    fd.append('goal', document.getElementById('goal').value);
+    fd.append('sequence', document.getElementById('sequence').value);
+    fd.append('runtime', document.getElementById('runtime').value);
+    fd.append('display_name', document.getElementById('displayName').value);
+    
+    // Clear terminal log log on launch
+    document.getElementById('terminalLog').innerHTML = '<div style="color: #00f2fe; font-style: italic;">Initiating scientist subprocess...</div>';
+    
+    fetch('/api/run/start', { method: 'POST', body: fd })
+      .then(function() { 
+        currentInterval = 500;
+        refreshState(function() {
+          scheduleNextPoll(currentInterval);
+        }); 
+      });
+  });
+
+  function launchPreset(goal, seq) {
+    document.getElementById('goal').value = goal;
+    document.getElementById('sequence').value = seq;
+    displayNameManual = false;
+    localStorage.setItem(displayNameManualKey, '0');
+    suggestDisplayName();
+    document.getElementById('runForm').dispatchEvent(new Event('submit'));
+  }
+
+  /* ─── GALLERY CLICK ─── */
+  document.getElementById('galleryGrid').addEventListener('click', function(e) {
+    var card = e.target.closest('.gallery-card');
+    if (!card) return;
+    var src = card.getAttribute('data-pdb');
+    var name = card.getAttribute('data-name');
+    if (src) loadPDBInViewer(src, name);
+  });
+
+  document.getElementById('galleryGrid').addEventListener('keydown', function(e) {
+    var card = e.target.closest('.gallery-card');
+    if (!card) return;
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    var src = card.getAttribute('data-pdb');
+    var name = card.getAttribute('data-name');
+    if (src) loadPDBInViewer(src, name);
+  });
+
+  /* ─── GSAP ENTRY ANIMATION ─── */
+  document.addEventListener('DOMContentLoaded', function() {
+    gsap.to('.anim-in', {
+      opacity: 1,
+      y: 0,
+      stagger: 0.08,
+      duration: 0.6,
+      ease: 'power3.out',
+      delay: 0.1
+    });
+  });
+
+  function scheduleNextPoll(interval) {
+    if (pollTimeout) clearTimeout(pollTimeout);
+    pollTimeout = setTimeout(function() {
+      refreshState(function() {
+        scheduleNextPoll(currentInterval);
+      });
+    }, interval);
+  }
+
+  /* ─── INITIALIZE POLL ─── */
+  scheduleNextPoll(1000);
+</script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,10 @@
+data_bionemo_demo_structure
+# DEMO / LOCAL ONLY
+# goal: Fold a protein sequence and explain the confidence metrics.
+# predicted structure placeholder
+loop_
+_ma_qa_metric.name
+_ma_qa_metric.value
+confidence_score 0.74
+complex_plddt_score 0.78
+ptm_score 0.71

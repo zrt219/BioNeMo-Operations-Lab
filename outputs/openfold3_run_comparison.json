@@ -1,0 +1,40 @@
+{
+  "best_run": {
+    "msa_neff": 11.76759398213665,
+    "msa_top_header": "homolog_01",
+    "paired_neff": 11.828414157248016,
+    "paired_top_key": "pair_02",
+    "run_index": 9
+  },
+  "heuristic_update_rule": {
+    "diversity_strength": "0.7*previous + 0.3*current, clipped to [0.05, 1.0]",
+    "neighbor_identity": "0.8*previous + 0.2*current, clipped to [0.5, 0.99]",
+    "temperature": "average(current, previous)"
+  },
+  "interpretation": "Positive neff deltas suggest broader local support; negative deltas suggest the current input narrowed the effective family. This is a deterministic demo comparison, not a biological truth claim.",
+  "latest_vs_best": {
+    "diversity_strength_delta": 0.2604,
+    "msa_neff_delta": -0.840339,
+    "neighbor_identity_delta": -0.06,
+    "paired_neff_delta": -1.121516,
+    "temperature_delta": -0.1441
+  },
+  "latest_vs_previous": {
+    "diversity_strength_delta": 0.0646,
+    "msa_neff_delta": 0.105484,
+    "msa_top_header": "homolog_01",
+    "neighbor_identity_delta": -0.01,
+    "paired_neff_delta": 0.119464,
+    "paired_top_key": "pair_02",
+    "temperature_delta": 0.0098
+  },
+  "next_heuristic_defaults": {
+    "diversity_strength": 0.6394,
+    "neighbor_identity": 0.9,
+    "rule": "exploit-neff",
+    "temperature": 0.1956
+  },
+  "query": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+  "run_index": 34,
+  "status": "MOCK / DEMO"
+}

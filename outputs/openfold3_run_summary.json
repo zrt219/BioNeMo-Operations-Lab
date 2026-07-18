@@ -1,0 +1,106 @@
+{
+  "comparison_report": {
+    "best_run": {
+      "msa_neff": 11.76759398213665,
+      "msa_top_header": "homolog_01",
+      "paired_neff": 11.828414157248016,
+      "paired_top_key": "pair_02",
+      "run_index": 9
+    },
+    "heuristic_update_rule": {
+      "diversity_strength": "0.7*previous + 0.3*current, clipped to [0.05, 1.0]",
+      "neighbor_identity": "0.8*previous + 0.2*current, clipped to [0.5, 0.99]",
+      "temperature": "average(current, previous)"
+    },
+    "interpretation": "Positive neff deltas suggest broader local support; negative deltas suggest the current input narrowed the effective family. This is a deterministic demo comparison, not a biological truth claim.",
+    "latest_vs_best": {
+      "diversity_strength_delta": 0.25,
+      "msa_neff_delta": -0.9021,
+      "neighbor_identity_delta": -0.05,
+      "paired_neff_delta": -1.19161,
+      "temperature_delta": -0.15
+    },
+    "latest_vs_previous": {
+      "diversity_strength_delta": 0.25,
+      "msa_neff_delta": -0.9021,
+      "msa_top_header": "homolog_01",
+      "neighbor_identity_delta": -0.05,
+      "paired_neff_delta": -1.19161,
+      "paired_top_key": "pair_02",
+      "temperature_delta": -0.15
+    },
+    "next_heuristic_defaults": {
+      "diversity_strength": 0.77,
+      "neighbor_identity": 0.89,
+      "rule": "expand-diversity",
+      "temperature": 0.21
+    },
+    "query": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+    "run_index": 17,
+    "status": "MOCK / DEMO"
+  },
+  "heuristic_defaults": {
+    "diversity_strength": 0.525,
+    "neighbor_identity": 0.94,
+    "temperature": 0.275
+  },
+  "input_msa": "outputs\\openfold3_msa_mock.a3m",
+  "input_paired": "outputs\\openfold3_paired_msa_mock.csv",
+  "latest_run_deltas": {
+    "diversity_strength_delta": 0.24999999999999994,
+    "msa_neff_delta": -0.9021004161354949,
+    "neighbor_identity_delta": -0.04999999999999993,
+    "paired_neff_delta": -1.1916098404261692,
+    "temperature_delta": -0.14999999999999997
+  },
+  "msa_neff": 10.865493566001156,
+  "next_heuristic_defaults": {
+    "diversity_strength": 0.77,
+    "neighbor_identity": 0.89,
+    "rule": "expand-diversity",
+    "temperature": 0.21
+  },
+  "outputs": {
+    "comparison": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_comparison.json",
+    "consensus": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_consensus.json",
+    "diagnostics": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_alignment_diagnostics.json",
+    "feedback_state": "outputs\\openfold3_feedback_state.json",
+    "request": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_request.json",
+    "run_registry": "outputs\\openfold3_run_registry.json",
+    "scores": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_branch_scores.json",
+    "weighted_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_msa.a3m",
+    "weighted_paired_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_paired_msa.csv"
+  },
+  "paired_neff": 10.636804316821847,
+  "request_id": "openfold3-weighted-pack",
+  "seeded_defaults": {},
+  "selected_msa_headers": [
+    "homolog_01",
+    "homolog_12",
+    "homolog_06",
+    "homolog_11",
+    "homolog_05",
+    "homolog_04",
+    "homolog_10",
+    "homolog_08",
+    "homolog_09",
+    "homolog_07",
+    "homolog_03",
+    "homolog_02"
+  ],
+  "selected_paired_keys": [
+    "pair_02",
+    "pair_01",
+    "pair_12",
+    "pair_07",
+    "pair_11",
+    "pair_06",
+    "pair_05",
+    "pair_10",
+    "pair_08",
+    "pair_09",
+    "pair_04",
+    "pair_03"
+  ],
+  "status": "MOCK / DEMO"
+}

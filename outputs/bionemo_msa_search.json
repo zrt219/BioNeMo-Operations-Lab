@@ -1,0 +1,19 @@
+{
+  "alignments": {
+    "Uniref30_2302": {
+      "a3m": {
+        "alignment": ">query\nMALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL\n",
+        "format": "a3m"
+      }
+    },
+    "colabfold_envdb_202108": {
+      "a3m": {
+        "alignment": ">query\nMALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL\n",
+        "format": "a3m"
+      }
+    }
+  },
+  "metrics": {
+    "mode": "demo"
+  }
+}

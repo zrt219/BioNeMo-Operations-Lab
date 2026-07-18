@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZRT BioNeMo 5-Lesson Learning Pack</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #00f2fe;
+            --primary-rgb: 0, 242, 254;
+            --secondary: #4facfe;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 172, 254, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(0, 242, 254, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(11, 15, 25, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 0.75rem; text-decoration: none;}
+        .logo-icon {
+            width: 2rem; height: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #0b0f19;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+        .page-nav {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.45rem 0.8rem;
+            border-radius: 9999px;
+            border: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.04);
+            text-decoration: none;
+        }
+        .badge:hover,
+        .badge:focus-visible {
+            outline: 2px solid #fff08a;
+            outline-offset: 3px;
+            border-color: #fff08a;
+        }
+        .badge-current {
+            border-color: rgba(16, 185, 129, 0.5);
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        h1.logo-title {
+            font-size: 1.25rem; font-weight: 600;
+            background: linear-gradient(to right, #ffffff, #d1d5db);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .hero { text-align: center; margin-bottom: 4rem; }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #fff; }
+        .hero p { font-size: 1.125rem; color: var(--text-muted); }
+
+        .lesson {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.3s ease;
+        }
+        .lesson:hover { border-color: rgba(var(--primary-rgb), 0.2); }
+
+        .lesson h2 { font-size: 1.75rem; margin-bottom: 1rem; color: var(--primary); }
+        .lesson h3 { font-size: 1.25rem; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #fff; }
+        
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+        
+        .alert {
+            background: rgba(var(--primary-rgb), 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+        }
+        .alert strong { color: var(--primary); display: block; margin-bottom: 0.25rem; }
+
+        code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #d1d5db;
+        }
+        pre {
+            background: #080b11;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        pre code { background: none; padding: 0; color: var(--text-main); }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none; color: #0b0f19; padding: 0.6rem 1.2rem;
+            font-size: 0.875rem; font-weight: 600; border-radius: 8px;
+            cursor: pointer; text-decoration: none; display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="logo-container">
+            <div class="logo-icon">Z</div>
+            <h1 class="logo-title">ZRT Protein Designer</h1>
+        </a>
+        <nav class="page-nav" aria-label="Primary">
+            <a href="/" class="badge">Home / Lab</a>
+            <a href="/viewer/" class="badge">Viewer</a>
+            <span class="badge badge-current" aria-current="page">Learning Pack</span>
+        </nav>
+    </header>
+
+    <main>
+        <div class="hero">
+            <h1>NVIDIA BioNeMo & Protein Folding</h1>
+            <p>From Zero to De Novo Design. A 5-Lesson Curriculum.</p>
+        </div>
+
+        <section class="lesson" id="lesson-1">
+            <h2>Lesson 1: Protein Physics & The Folding Problem</h2>
+            <p>Proteins are the molecular workhorses of life, orchestrating almost every biological process. To design them, we must first understand how their physical chemistry drives their three-dimensional shapes.</p>
+            
+            <h3>The Central Dogma & Amino Acids</h3>
+            <p>Proteins start as linear chains of <strong>amino acids</strong> translated from mRNA. Each amino acid shares a common backbone but has a unique sidechain (often designated as the <strong>R-group</strong>).</p>
+            <ul>
+                <li><strong>Hydrophobic (Apolar)</strong>: Alanine (A), Valine (V), Leucine (L), Isoleucine (I), etc.</li>
+                <li><strong>Polar (Uncharged)</strong>: Serine (S), Threonine (T), Glutamine (Q), etc.</li>
+                <li><strong>Charged</strong>: Lysine (K+, basic), Aspartic Acid (D-, acidic), etc.</li>
+            </ul>
+
+            <h3>Hierarchical Protein Structure</h3>
+            <ol>
+                <li><strong>Primary (1°) Structure</strong>: The linear sequence of amino acids linked by covalent peptide bonds.</li>
+                <li><strong>Secondary (2°) Structure</strong>: Local folding patterns stabilized by hydrogen bonds between backbone carbonyl (C=O) and amide (N-H) groups (Alpha-helices and Beta-sheets).</li>
+                <li><strong>Tertiary (3°) Structure</strong>: The overall 3D folding of a single polypeptide chain, driven by hydrophobic collapse.</li>
+                <li><strong>Quaternary (4°) Structure</strong>: The assembly of multiple folded polypeptide subunits into a functional complex.</li>
+            </ol>
+
+            <h3>Anfinsen's Dogma & Levinthal's Paradox</h3>
+            <ul>
+                <li><strong>Anfinsen's Dogma</strong> states that, for small globular proteins, the 3D structure is determined solely by the primary sequence and represents the thermodynamic global minimum free energy state.</li>
+                <li><strong>Levinthal's Paradox</strong> notes that folding by random sampling would take longer than the age of the universe. Yet, proteins fold spontaneously in milliseconds, implying folding is directed along specific local energy pathways.</li>
+            </ul>
+        </section>
+
+        <section class="lesson" id="lesson-2">
+            <h2>Lesson 2: Introduction to NVIDIA BioNeMo</h2>
+            <p>NVIDIA BioNeMo is a domain-specific cloud and software platform designed to accelerate digital biology and drug discovery. It hosts state-of-the-art models as optimized Microservices (NIMs) that can be run either via hosted API endpoints or deployed locally as Docker containers on NVIDIA GPUs.</p>
+
+            <h3>The BioNeMo NIM Architecture</h3>
+            <p>NIM (NVIDIA Inference Microservice) packages models with optimized runtimes (like TensorRT-LLM and Triton Inference Server) so they can execute lightning-fast forward passes.</p>
+            
+            <h3>Key API Integration Patterns</h3>
+            <p>To interact with BioNeMo's hosted endpoints, you authenticate using an API key (<code>Authorization: Bearer $NGC_API_KEY</code>) and communicate via JSON payloads.</p>
+            
+            <div class="alert">
+                <strong>Important</strong>
+                The hosted endpoint URL structure for molecular modeling is: <code>https://health.api.nvidia.com/v1/biology/{developer}/{model}/{action}</code>
+            </div>
+        </section>
+
+        <section class="lesson" id="lesson-3">
+            <h2>Lesson 3: Generative Backbone Design with RFDiffusion</h2>
+            <p>Traditionally, protein design relied on modifying existing natural proteins. <strong>De novo design</strong> allows us to generate entirely new proteins from scratch to target specific shapes or receptors.</p>
+            
+            <h3>How RFDiffusion Works</h3>
+            <p>RFDiffusion is a generative model based on <strong>Denoising Diffusion Probabilistic Models (DDPM)</strong>. Starting from complete structural noise, it iteratively denoises the coordinate positions over a series of steps (typically 50) until it resolves into a clean, biologically viable protein backbone.</p>
+
+            <h3>The Contig DSL (Domain Specific Language)</h3>
+            <p>RFDiffusion uses a specialized syntax to define what sections of a protein to generate and what parts of an existing target to keep fixed:</p>
+            <ul>
+                <li><code>"100"</code>: Generate a de novo backbone of exactly 100 residues.</li>
+                <li><code>"A1-50/0 80"</code>: Keep residues 1 to 50 of chain A and design an 80-residue binder around it separated by a chain break.</li>
+            </ul>
+
+            <div class="alert">
+                <strong>Tip</strong>
+                When running de novo designs hosted on NVIDIA's API, a dummy input PDB (like a single Alanine) must be provided in the <code>input_pdb</code> payload parameter to pass endpoint validation.
+            </div>
+        </section>
+
+        <section class="lesson" id="lesson-4">
+            <h2>Lesson 4: Sequence Design via Inverse Folding (ProteinMPNN)</h2>
+            <p>Once RFDiffusion outputs a 3D backbone coordinate file, we have a shape but no sequence of amino acids to make it. <strong>ProteinMPNN</strong> solves the "inverse folding" problem.</p>
+            
+            <h3>Message Passing Neural Networks (MPNN)</h3>
+            <p>While folding models go from Sequence &rarr; Structure, ProteinMPNN goes from <strong>Structure &rarr; Sequence</strong>. It models the protein backbone as a graph and performs message passing over this graph to predict the probability distribution of the 20 amino acids at each position.</p>
+
+            <h3>Fine-Tuning Design Parameters</h3>
+            <ul>
+                <li><strong>Sampling Temperature</strong>: Controls sequence diversity. Low temperatures yield highly deterministic results. Higher temperatures introduce sequence variation.</li>
+                <li><strong>Omit Amino Acids</strong>: You can explicitly block specific amino acids (e.g., avoiding Cysteines <code>"omit_AAs": ["C"]</code> to prevent unwanted disulfide cross-linking).</li>
+            </ul>
+        </section>
+
+        <section class="lesson" id="lesson-5">
+            <h2>Lesson 5: High-Fidelity Structure Prediction (OpenFold3 and Boltz2)</h2>
+            <p>To verify if our designed sequence will fold into the target backbone shape we generated, we run forward structure prediction models. This forms an in silico validation loop.</p>
+
+            <h3>OpenFold3 and Boltz2</h3>
+            <ul>
+                <li><strong>OpenFold3</strong> is a fast, PyTorch-based implementation of AlphaFold3. It predicts 3D structures and confidence scores.</li>
+                <li><strong>Boltz2</strong> is a highly accurate open-source biomolecular structure prediction model optimized for multi-entity complexes.</li>
+            </ul>
+
+            <h3>Key Validation Metrics</h3>
+            <p>To evaluate if a designed protein is successful, we look at the following metrics:</p>
+            <ul>
+                <li><strong>pLDDT (Predicted Local Distance Difference Test)</strong>: A per-residue confidence score from 0 to 100. &ge;90 is high confidence, 70-90 is good confidence, and &lt;50 is low confidence.</li>
+                <li><strong>TM-Score / RMSD (Root-Mean-Square Deviation)</strong>: Measures structural similarity between the predicted structure and the original designed backbone. An RMSD &lt;2.0 &Aring; indicates excellent structural agreement.</li>
+            </ul>
+
+            <h3>The Design Loop Summary</h3>
+            <ol>
+                <li><strong>RFDiffusion</strong> creates the coordinate envelope.</li>
+                <li><strong>ProteinMPNN</strong> writes the code (sequence).</li>
+                <li><strong>OpenFold3</strong> validates that the code compiles back into the correct shape.</li>
+            </ol>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,505 @@
+{
+  "diff": {
+    "documentation_pair": [
+      true,
+      true
+    ],
+    "labeling_pair": [
+      true,
+      true
+    ],
+    "live_state_pair": [
+      true,
+      true
+    ],
+    "mode": "helical",
+    "msa_neff_pair": [
+      10.821770976485611,
+      10.92725466443204
+    ],
+    "next_diversity_pair": [
+      0.7104,
+      0.6394
+    ],
+    "next_neighbor_pair": [
+      0.89,
+      0.9
+    ],
+    "next_rule_pair": [
+      "expand-diversity",
+      "exploit-neff"
+    ],
+    "next_temperature_pair": [
+      0.2059,
+      0.1956
+    ],
+    "paired_neff_pair": [
+      10.587433779538275,
+      10.706898051196486
+    ],
+    "run_index_pair": [
+      33,
+      34
+    ],
+    "status_pair": [
+      "PASS",
+      "PASS"
+    ],
+    "verification_status_pair": [
+      "PASS",
+      "PASS"
+    ]
+  },
+  "first": {
+    "loop_command": [
+      "C:\\Users\\Zhane\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+      "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop.py",
+      "--mode",
+      "helical"
+    ],
+    "loop_stderr": "",
+    "loop_stdout": "{\n  \"artifacts\": {\n    \"backbone\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\helical_bundle_backbone.pdb\",\n    \"comparison\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_comparison.json\",\n    \"feedback_state\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_feedback_state.json\",\n    \"folded\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\helical_bundle_folded.pdb\",\n    \"msa\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_msa_mock.a3m\",\n    \"next_run_command\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_next_run_command.txt\",\n    \"next_run_rationale\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_next_run_rationale.txt\",\n    \"paired\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_paired_msa_mock.csv\",\n    \"root_status\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\protein_loop_status.md\",\n    \"run_registry\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_registry.json\",\n    \"run_review\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_review.md\",\n    \"seed_comparison\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_comparison.json\",\n    \"sequence_file\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\sequences.fa\",\n    \"session_index\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_session_index.md\",\n    \"summary\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\protein_loop_run_summary.json\"\n  },\n  \"comparison_report\": {\n    \"best_run\": {\n      \"msa_neff\": 11.76759398213665,\n      \"msa_top_header\": \"homolog_01\",\n      \"paired_neff\": 11.828414157248016,\n      \"paired_top_key\": \"pair_02\",\n      \"run_index\": 9\n    },\n    \"heuristic_update_rule\": {\n      \"diversity_strength\": \"0.7*previous + 0.3*current, clipped to [0.05, 1.0]\",\n      \"neighbor_identity\": \"0.8*previous + 0.2*current, clipped to [0.5, 0.99]\",\n      \"temperature\": \"average(current, previous)\"\n    },\n    \"interpretation\": \"Positive neff deltas suggest broader local support; negative deltas suggest the current input narrowed the effective family. This is a deterministic demo comparison, not a biological truth claim.\",\n    \"latest_vs_best\": {\n      \"diversity_strength_delta\": 0.1958,\n      \"msa_neff_delta\": -0.945823,\n      \"neighbor_identity_delta\": -0.05,\n      \"paired_neff_delta\": -1.24098,\n      \"temperature_delta\": -0.1539\n    },\n    \"latest_vs_previous\": {\n      \"diversity_strength_delta\": -0.0718,\n      \"msa_neff_delta\": -0.11049,\n      \"msa_top_header\": \"homolog_01\",\n      \"neighbor_identity_delta\": 0.01,\n      \"paired_neff_delta\": -0.125164,\n      \"paired_top_key\": \"pair_02\",\n      \"temperature_delta\": -0.0103\n    },\n    \"next_heuristic_defaults\": {\n      \"diversity_strength\": 0.7104,\n      \"neighbor_identity\": 0.89,\n      \"rule\": \"expand-diversity\",\n      \"temperature\": 0.2059\n    },\n    \"query\": \"MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE\",\n    \"run_index\": 33,\n    \"status\": \"MOCK / DEMO\"\n  },\n  \"design_label\": \"helical_bundle\",\n  \"mode\": \"helical\",\n  \"next_heuristic_defaults\": {\n    \"diversity_strength\": 0.7104,\n    \"neighbor_identity\": 0.89,\n    \"rule\": \"expand-diversity\",\n    \"temperature\": 0.2059\n  },\n  \"pipeline_run\": {\n    \"command\": [\n      \"C:\\\\Users\\\\Zhane\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python310\\\\python.exe\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_msa_weighting_pipeline.py\",\n      \"--msa\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_msa_mock.a3m\",\n      \"--paired\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_paired_msa_mock.csv\",\n      \"--output-dir\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\",\n      \"--feedback-state\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_feedback_state.json\",\n      \"--run-registry\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_registry.json\",\n      \"--summary\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\protein_loop_run_summary.json\"\n    ],\n    \"stderr\": \"\",\n    \"stdout\": \"Wrote openfold3_weighted_msa.a3m\\nWrote openfold3_weighted_paired_msa.csv\\nWrote openfold3_branch_scores.json\\nWrote openfold3_consensus.json\\nWrote openfold3_alignment_diagnostics.json\\nWrote openfold3_weighted_request.json\\nWrote openfold3_feedback_state.json\\nWrote openfold3_run_registry.json\\nWrote openfold3_run_comparison.json\\nWrote openfold3_next_run_command.txt\\nWrote openfold3_next_run_rationale.txt\\nWrote protein_loop_run_summary.json\\nMSA consensus: MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE\\nPaired consensus: MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE\\n\"\n  },\n  \"sequence\": \"AEKEKLREKLSELLERLKEAKEDESKEEEREELIEELKELLREEGFEELEEKLEEAEEEEDRIELTMELIEEEIERLEEE\",\n  \"status\": \"MOCK / DEMO\"\n}\n",
+    "mode": "helical",
+    "run_summary": {
+      "comparison_report": {
+        "best_run": {
+          "msa_neff": 11.76759398213665,
+          "msa_top_header": "homolog_01",
+          "paired_neff": 11.828414157248016,
+          "paired_top_key": "pair_02",
+          "run_index": 9
+        },
+        "heuristic_update_rule": {
+          "diversity_strength": "0.7*previous + 0.3*current, clipped to [0.05, 1.0]",
+          "neighbor_identity": "0.8*previous + 0.2*current, clipped to [0.5, 0.99]",
+          "temperature": "average(current, previous)"
+        },
+        "interpretation": "Positive neff deltas suggest broader local support; negative deltas suggest the current input narrowed the effective family. This is a deterministic demo comparison, not a biological truth claim.",
+        "latest_vs_best": {
+          "diversity_strength_delta": 0.1958,
+          "msa_neff_delta": -0.945823,
+          "neighbor_identity_delta": -0.05,
+          "paired_neff_delta": -1.24098,
+          "temperature_delta": -0.1539
+        },
+        "latest_vs_previous": {
+          "diversity_strength_delta": -0.0718,
+          "msa_neff_delta": -0.11049,
+          "msa_top_header": "homolog_01",
+          "neighbor_identity_delta": 0.01,
+          "paired_neff_delta": -0.125164,
+          "paired_top_key": "pair_02",
+          "temperature_delta": -0.0103
+        },
+        "next_heuristic_defaults": {
+          "diversity_strength": 0.7104,
+          "neighbor_identity": 0.89,
+          "rule": "expand-diversity",
+          "temperature": 0.2059
+        },
+        "query": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+        "run_index": 33,
+        "status": "MOCK / DEMO"
+      },
+      "heuristic_defaults": {
+        "diversity_strength": 0.6961,
+        "neighbor_identity": 0.892,
+        "temperature": 0.2012
+      },
+      "input_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_msa_mock.a3m",
+      "input_paired": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_paired_msa_mock.csv",
+      "latest_run_deltas": {
+        "diversity_strength_delta": -0.07179999999999997,
+        "msa_neff_delta": -0.11048974851874149,
+        "neighbor_identity_delta": 0.010000000000000009,
+        "paired_neff_delta": -0.12516409610238632,
+        "temperature_delta": -0.010300000000000004
+      },
+      "msa_neff": 10.821770976485611,
+      "next_heuristic_defaults": {
+        "diversity_strength": 0.7104,
+        "neighbor_identity": 0.89,
+        "rule": "expand-diversity",
+        "temperature": 0.2059
+      },
+      "outputs": {
+        "comparison": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_comparison.json",
+        "consensus": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_consensus.json",
+        "diagnostics": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_alignment_diagnostics.json",
+        "feedback_state": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_feedback_state.json",
+        "next_run_command": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_command.txt",
+        "next_run_rationale": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_rationale.txt",
+        "request": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_request.json",
+        "run_registry": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_registry.json",
+        "scores": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_branch_scores.json",
+        "weighted_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_msa.a3m",
+        "weighted_paired_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_paired_msa.csv"
+      },
+      "paired_neff": 10.587433779538275,
+      "request_id": "openfold3-weighted-pack",
+      "seeded_defaults": {
+        "diversity_strength": 0.6458,
+        "neighbor_identity": 0.9,
+        "rule": "exploit-neff",
+        "temperature": 0.1961
+      },
+      "selected_msa_headers": [
+        "homolog_01",
+        "homolog_12",
+        "homolog_06",
+        "homolog_04",
+        "homolog_11",
+        "homolog_05",
+        "homolog_10",
+        "homolog_08",
+        "homolog_09",
+        "homolog_07",
+        "homolog_03",
+        "homolog_02"
+      ],
+      "selected_paired_keys": [
+        "pair_02",
+        "pair_01",
+        "pair_12",
+        "pair_07",
+        "pair_05",
+        "pair_11",
+        "pair_06",
+        "pair_10",
+        "pair_08",
+        "pair_09",
+        "pair_04",
+        "pair_03"
+      ],
+      "status": "MOCK / DEMO"
+    },
+    "status": "PASS",
+    "verification_command": [
+      "C:\\Users\\Zhane\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+      "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_verify.py",
+      "--report",
+      "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\protein_loop_verification_report.json"
+    ],
+    "verification_report": {
+      "documentation_ok": true,
+      "generated_at": null,
+      "labeling_ok": true,
+      "live_state_ok": true,
+      "next_rule": "expand-diversity",
+      "required_artifacts": [
+        {
+          "exists": true,
+          "name": "backbone",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\helical_bundle_backbone.pdb"
+        },
+        {
+          "exists": true,
+          "name": "folded",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\helical_bundle_folded.pdb"
+        },
+        {
+          "exists": true,
+          "name": "sequence_file",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\sequences.fa"
+        },
+        {
+          "exists": true,
+          "name": "msa",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_msa_mock.a3m"
+        },
+        {
+          "exists": true,
+          "name": "paired",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_paired_msa_mock.csv"
+        },
+        {
+          "exists": true,
+          "name": "feedback_state",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_feedback_state.json"
+        },
+        {
+          "exists": true,
+          "name": "run_registry",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_registry.json"
+        },
+        {
+          "exists": true,
+          "name": "comparison",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_comparison.json"
+        },
+        {
+          "exists": true,
+          "name": "next_run_command",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_command.txt"
+        },
+        {
+          "exists": true,
+          "name": "next_run_rationale",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_rationale.txt"
+        },
+        {
+          "exists": true,
+          "name": "run_review",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_review.md"
+        },
+        {
+          "exists": true,
+          "name": "session_index",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_session_index.md"
+        },
+        {
+          "exists": true,
+          "name": "root_status",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_status.md"
+        },
+        {
+          "exists": true,
+          "name": "root_runbook",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_runbook.md"
+        },
+        {
+          "exists": true,
+          "name": "root_evidence_matrix",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_evidence_matrix.md"
+        },
+        {
+          "exists": true,
+          "name": "summary",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\protein_loop_run_summary.json"
+        }
+      ],
+      "run_index": 33,
+      "status": "PASS",
+      "summary_path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\protein_loop_run_summary.json"
+    },
+    "verification_stderr": "",
+    "verification_stdout": "{\n  \"documentation_ok\": true,\n  \"generated_at\": null,\n  \"labeling_ok\": true,\n  \"live_state_ok\": true,\n  \"next_rule\": \"expand-diversity\",\n  \"required_artifacts\": [\n    {\n      \"exists\": true,\n      \"name\": \"backbone\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\helical_bundle_backbone.pdb\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"folded\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\helical_bundle_folded.pdb\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"sequence_file\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\sequences.fa\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"msa\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_msa_mock.a3m\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"paired\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_paired_msa_mock.csv\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"feedback_state\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_feedback_state.json\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"run_registry\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_registry.json\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"comparison\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_comparison.json\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"next_run_command\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_next_run_command.txt\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"next_run_rationale\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_next_run_rationale.txt\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"run_review\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_review.md\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"session_index\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_session_index.md\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"root_status\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\protein_loop_status.md\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"root_runbook\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\protein_loop_runbook.md\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"root_evidence_matrix\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\protein_loop_evidence_matrix.md\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"summary\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\protein_loop_run_summary.json\"\n    }\n  ],\n  \"run_index\": 33,\n  \"status\": \"PASS\",\n  \"summary_path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\protein_loop_run_summary.json\"\n}\n"
+  },
+  "mode": "helical",
+  "second": {
+    "loop_command": [
+      "C:\\Users\\Zhane\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+      "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop.py",
+      "--mode",
+      "helical"
+    ],
+    "loop_stderr": "",
+    "loop_stdout": "{\n  \"artifacts\": {\n    \"backbone\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\helical_bundle_backbone.pdb\",\n    \"comparison\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_comparison.json\",\n    \"feedback_state\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_feedback_state.json\",\n    \"folded\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\helical_bundle_folded.pdb\",\n    \"msa\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_msa_mock.a3m\",\n    \"next_run_command\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_next_run_command.txt\",\n    \"next_run_rationale\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_next_run_rationale.txt\",\n    \"paired\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_paired_msa_mock.csv\",\n    \"root_status\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\protein_loop_status.md\",\n    \"run_registry\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_registry.json\",\n    \"run_review\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_review.md\",\n    \"seed_comparison\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_comparison.json\",\n    \"sequence_file\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\sequences.fa\",\n    \"session_index\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_session_index.md\",\n    \"summary\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\protein_loop_run_summary.json\"\n  },\n  \"comparison_report\": {\n    \"best_run\": {\n      \"msa_neff\": 11.76759398213665,\n      \"msa_top_header\": \"homolog_01\",\n      \"paired_neff\": 11.828414157248016,\n      \"paired_top_key\": \"pair_02\",\n      \"run_index\": 9\n    },\n    \"heuristic_update_rule\": {\n      \"diversity_strength\": \"0.7*previous + 0.3*current, clipped to [0.05, 1.0]\",\n      \"neighbor_identity\": \"0.8*previous + 0.2*current, clipped to [0.5, 0.99]\",\n      \"temperature\": \"average(current, previous)\"\n    },\n    \"interpretation\": \"Positive neff deltas suggest broader local support; negative deltas suggest the current input narrowed the effective family. This is a deterministic demo comparison, not a biological truth claim.\",\n    \"latest_vs_best\": {\n      \"diversity_strength_delta\": 0.2604,\n      \"msa_neff_delta\": -0.840339,\n      \"neighbor_identity_delta\": -0.06,\n      \"paired_neff_delta\": -1.121516,\n      \"temperature_delta\": -0.1441\n    },\n    \"latest_vs_previous\": {\n      \"diversity_strength_delta\": 0.0646,\n      \"msa_neff_delta\": 0.105484,\n      \"msa_top_header\": \"homolog_01\",\n      \"neighbor_identity_delta\": -0.01,\n      \"paired_neff_delta\": 0.119464,\n      \"paired_top_key\": \"pair_02\",\n      \"temperature_delta\": 0.0098\n    },\n    \"next_heuristic_defaults\": {\n      \"diversity_strength\": 0.6394,\n      \"neighbor_identity\": 0.9,\n      \"rule\": \"exploit-neff\",\n      \"temperature\": 0.1956\n    },\n    \"query\": \"MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE\",\n    \"run_index\": 34,\n    \"status\": \"MOCK / DEMO\"\n  },\n  \"design_label\": \"helical_bundle\",\n  \"mode\": \"helical\",\n  \"next_heuristic_defaults\": {\n    \"diversity_strength\": 0.6394,\n    \"neighbor_identity\": 0.9,\n    \"rule\": \"exploit-neff\",\n    \"temperature\": 0.1956\n  },\n  \"pipeline_run\": {\n    \"command\": [\n      \"C:\\\\Users\\\\Zhane\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python310\\\\python.exe\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_msa_weighting_pipeline.py\",\n      \"--msa\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_msa_mock.a3m\",\n      \"--paired\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_paired_msa_mock.csv\",\n      \"--output-dir\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\",\n      \"--feedback-state\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_feedback_state.json\",\n      \"--run-registry\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_registry.json\",\n      \"--summary\",\n      \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\protein_loop_run_summary.json\"\n    ],\n    \"stderr\": \"\",\n    \"stdout\": \"Wrote openfold3_weighted_msa.a3m\\nWrote openfold3_weighted_paired_msa.csv\\nWrote openfold3_branch_scores.json\\nWrote openfold3_consensus.json\\nWrote openfold3_alignment_diagnostics.json\\nWrote openfold3_weighted_request.json\\nWrote openfold3_feedback_state.json\\nWrote openfold3_run_registry.json\\nWrote openfold3_run_comparison.json\\nWrote openfold3_next_run_command.txt\\nWrote openfold3_next_run_rationale.txt\\nWrote protein_loop_run_summary.json\\nMSA consensus: MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE\\nPaired consensus: MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE\\n\"\n  },\n  \"sequence\": \"AEKEKLREKLSELLERLKEAKEDESKEEEREELIEELKELLREEGFEELEEKLEEAEEEEDRIELTMELIEEEIERLEEE\",\n  \"status\": \"MOCK / DEMO\"\n}\n",
+    "mode": "helical",
+    "run_summary": {
+      "comparison_report": {
+        "best_run": {
+          "msa_neff": 11.76759398213665,
+          "msa_top_header": "homolog_01",
+          "paired_neff": 11.828414157248016,
+          "paired_top_key": "pair_02",
+          "run_index": 9
+        },
+        "heuristic_update_rule": {
+          "diversity_strength": "0.7*previous + 0.3*current, clipped to [0.05, 1.0]",
+          "neighbor_identity": "0.8*previous + 0.2*current, clipped to [0.5, 0.99]",
+          "temperature": "average(current, previous)"
+        },
+        "interpretation": "Positive neff deltas suggest broader local support; negative deltas suggest the current input narrowed the effective family. This is a deterministic demo comparison, not a biological truth claim.",
+        "latest_vs_best": {
+          "diversity_strength_delta": 0.2604,
+          "msa_neff_delta": -0.840339,
+          "neighbor_identity_delta": -0.06,
+          "paired_neff_delta": -1.121516,
+          "temperature_delta": -0.1441
+        },
+        "latest_vs_previous": {
+          "diversity_strength_delta": 0.0646,
+          "msa_neff_delta": 0.105484,
+          "msa_top_header": "homolog_01",
+          "neighbor_identity_delta": -0.01,
+          "paired_neff_delta": 0.119464,
+          "paired_top_key": "pair_02",
+          "temperature_delta": 0.0098
+        },
+        "next_heuristic_defaults": {
+          "diversity_strength": 0.6394,
+          "neighbor_identity": 0.9,
+          "rule": "exploit-neff",
+          "temperature": 0.1956
+        },
+        "query": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+        "run_index": 34,
+        "status": "MOCK / DEMO"
+      },
+      "heuristic_defaults": {
+        "diversity_strength": 0.6652,
+        "neighbor_identity": 0.898,
+        "temperature": 0.201
+      },
+      "input_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_msa_mock.a3m",
+      "input_paired": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_paired_msa_mock.csv",
+      "latest_run_deltas": {
+        "diversity_strength_delta": 0.06459999999999999,
+        "msa_neff_delta": 0.10548368794642826,
+        "neighbor_identity_delta": -0.010000000000000009,
+        "paired_neff_delta": 0.11946427165821127,
+        "temperature_delta": 0.009800000000000003
+      },
+      "msa_neff": 10.92725466443204,
+      "next_heuristic_defaults": {
+        "diversity_strength": 0.6394,
+        "neighbor_identity": 0.9,
+        "rule": "exploit-neff",
+        "temperature": 0.1956
+      },
+      "outputs": {
+        "comparison": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_comparison.json",
+        "consensus": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_consensus.json",
+        "diagnostics": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_alignment_diagnostics.json",
+        "feedback_state": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_feedback_state.json",
+        "next_run_command": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_command.txt",
+        "next_run_rationale": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_rationale.txt",
+        "request": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_request.json",
+        "run_registry": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_registry.json",
+        "scores": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_branch_scores.json",
+        "weighted_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_msa.a3m",
+        "weighted_paired_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_paired_msa.csv"
+      },
+      "paired_neff": 10.706898051196486,
+      "request_id": "openfold3-weighted-pack",
+      "seeded_defaults": {
+        "diversity_strength": 0.7104,
+        "neighbor_identity": 0.89,
+        "rule": "expand-diversity",
+        "temperature": 0.2059
+      },
+      "selected_msa_headers": [
+        "homolog_01",
+        "homolog_12",
+        "homolog_06",
+        "homolog_11",
+        "homolog_05",
+        "homolog_04",
+        "homolog_10",
+        "homolog_08",
+        "homolog_09",
+        "homolog_07",
+        "homolog_03",
+        "homolog_02"
+      ],
+      "selected_paired_keys": [
+        "pair_02",
+        "pair_01",
+        "pair_12",
+        "pair_07",
+        "pair_11",
+        "pair_06",
+        "pair_05",
+        "pair_10",
+        "pair_08",
+        "pair_09",
+        "pair_04",
+        "pair_03"
+      ],
+      "status": "MOCK / DEMO"
+    },
+    "status": "PASS",
+    "verification_command": [
+      "C:\\Users\\Zhane\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+      "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_verify.py",
+      "--report",
+      "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\protein_loop_verification_report.json"
+    ],
+    "verification_report": {
+      "documentation_ok": true,
+      "generated_at": null,
+      "labeling_ok": true,
+      "live_state_ok": true,
+      "next_rule": "exploit-neff",
+      "required_artifacts": [
+        {
+          "exists": true,
+          "name": "backbone",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\helical_bundle_backbone.pdb"
+        },
+        {
+          "exists": true,
+          "name": "folded",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\helical_bundle_folded.pdb"
+        },
+        {
+          "exists": true,
+          "name": "sequence_file",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\sequences.fa"
+        },
+        {
+          "exists": true,
+          "name": "msa",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_msa_mock.a3m"
+        },
+        {
+          "exists": true,
+          "name": "paired",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_paired_msa_mock.csv"
+        },
+        {
+          "exists": true,
+          "name": "feedback_state",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_feedback_state.json"
+        },
+        {
+          "exists": true,
+          "name": "run_registry",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_registry.json"
+        },
+        {
+          "exists": true,
+          "name": "comparison",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_comparison.json"
+        },
+        {
+          "exists": true,
+          "name": "next_run_command",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_command.txt"
+        },
+        {
+          "exists": true,
+          "name": "next_run_rationale",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_rationale.txt"
+        },
+        {
+          "exists": true,
+          "name": "run_review",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_review.md"
+        },
+        {
+          "exists": true,
+          "name": "session_index",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_session_index.md"
+        },
+        {
+          "exists": true,
+          "name": "root_status",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_status.md"
+        },
+        {
+          "exists": true,
+          "name": "root_runbook",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_runbook.md"
+        },
+        {
+          "exists": true,
+          "name": "root_evidence_matrix",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_evidence_matrix.md"
+        },
+        {
+          "exists": true,
+          "name": "summary",
+          "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\protein_loop_run_summary.json"
+        }
+      ],
+      "run_index": 34,
+      "status": "PASS",
+      "summary_path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\protein_loop_run_summary.json"
+    },
+    "verification_stderr": "",
+    "verification_stdout": "{\n  \"documentation_ok\": true,\n  \"generated_at\": null,\n  \"labeling_ok\": true,\n  \"live_state_ok\": true,\n  \"next_rule\": \"exploit-neff\",\n  \"required_artifacts\": [\n    {\n      \"exists\": true,\n      \"name\": \"backbone\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\helical_bundle_backbone.pdb\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"folded\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\helical_bundle_folded.pdb\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"sequence_file\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\sequences.fa\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"msa\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_msa_mock.a3m\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"paired\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_paired_msa_mock.csv\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"feedback_state\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_feedback_state.json\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"run_registry\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_registry.json\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"comparison\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_comparison.json\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"next_run_command\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_next_run_command.txt\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"next_run_rationale\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_next_run_rationale.txt\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"run_review\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_run_review.md\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"session_index\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\openfold3_session_index.md\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"root_status\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\protein_loop_status.md\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"root_runbook\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\protein_loop_runbook.md\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"root_evidence_matrix\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\protein_loop_evidence_matrix.md\"\n    },\n    {\n      \"exists\": true,\n      \"name\": \"summary\",\n      \"path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\protein_loop_run_summary.json\"\n    }\n  ],\n  \"run_index\": 34,\n  \"status\": \"PASS\",\n  \"summary_path\": \"C:\\\\Users\\\\Zhane\\\\Documents\\\\New project\\\\zrt-bionemo\\\\outputs\\\\protein_loop_run_summary.json\"\n}\n"
+  },
+  "status": "PASS"
+}

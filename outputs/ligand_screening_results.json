@@ -1,0 +1,7 @@
+{
+  "artifact": "ligand_screening_results.json",
+  "best_docking_confidence": 0.69,
+  "predicted_pIC50": 7.2,
+  "target": "protein target supplied by user",
+  "top_hit_score": 0.81
+}

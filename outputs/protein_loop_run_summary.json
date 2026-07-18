@@ -1,0 +1,113 @@
+{
+  "comparison_report": {
+    "best_run": {
+      "msa_neff": 11.76759398213665,
+      "msa_top_header": "homolog_01",
+      "paired_neff": 11.828414157248016,
+      "paired_top_key": "pair_02",
+      "run_index": 9
+    },
+    "heuristic_update_rule": {
+      "diversity_strength": "0.7*previous + 0.3*current, clipped to [0.05, 1.0]",
+      "neighbor_identity": "0.8*previous + 0.2*current, clipped to [0.5, 0.99]",
+      "temperature": "average(current, previous)"
+    },
+    "interpretation": "Positive neff deltas suggest broader local support; negative deltas suggest the current input narrowed the effective family. This is a deterministic demo comparison, not a biological truth claim.",
+    "latest_vs_best": {
+      "diversity_strength_delta": 0.2604,
+      "msa_neff_delta": -0.840339,
+      "neighbor_identity_delta": -0.06,
+      "paired_neff_delta": -1.121516,
+      "temperature_delta": -0.1441
+    },
+    "latest_vs_previous": {
+      "diversity_strength_delta": 0.0646,
+      "msa_neff_delta": 0.105484,
+      "msa_top_header": "homolog_01",
+      "neighbor_identity_delta": -0.01,
+      "paired_neff_delta": 0.119464,
+      "paired_top_key": "pair_02",
+      "temperature_delta": 0.0098
+    },
+    "next_heuristic_defaults": {
+      "diversity_strength": 0.6394,
+      "neighbor_identity": 0.9,
+      "rule": "exploit-neff",
+      "temperature": 0.1956
+    },
+    "query": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+    "run_index": 34,
+    "status": "MOCK / DEMO"
+  },
+  "heuristic_defaults": {
+    "diversity_strength": 0.6652,
+    "neighbor_identity": 0.898,
+    "temperature": 0.201
+  },
+  "input_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_msa_mock.a3m",
+  "input_paired": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_paired_msa_mock.csv",
+  "latest_run_deltas": {
+    "diversity_strength_delta": 0.06459999999999999,
+    "msa_neff_delta": 0.10548368794642826,
+    "neighbor_identity_delta": -0.010000000000000009,
+    "paired_neff_delta": 0.11946427165821127,
+    "temperature_delta": 0.009800000000000003
+  },
+  "msa_neff": 10.92725466443204,
+  "next_heuristic_defaults": {
+    "diversity_strength": 0.6394,
+    "neighbor_identity": 0.9,
+    "rule": "exploit-neff",
+    "temperature": 0.1956
+  },
+  "outputs": {
+    "comparison": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_comparison.json",
+    "consensus": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_consensus.json",
+    "diagnostics": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_alignment_diagnostics.json",
+    "feedback_state": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_feedback_state.json",
+    "next_run_command": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_command.txt",
+    "next_run_rationale": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_rationale.txt",
+    "request": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_request.json",
+    "run_registry": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_registry.json",
+    "scores": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_branch_scores.json",
+    "weighted_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_msa.a3m",
+    "weighted_paired_msa": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_weighted_paired_msa.csv"
+  },
+  "paired_neff": 10.706898051196486,
+  "request_id": "openfold3-weighted-pack",
+  "seeded_defaults": {
+    "diversity_strength": 0.7104,
+    "neighbor_identity": 0.89,
+    "rule": "expand-diversity",
+    "temperature": 0.2059
+  },
+  "selected_msa_headers": [
+    "homolog_01",
+    "homolog_12",
+    "homolog_06",
+    "homolog_11",
+    "homolog_05",
+    "homolog_04",
+    "homolog_10",
+    "homolog_08",
+    "homolog_09",
+    "homolog_07",
+    "homolog_03",
+    "homolog_02"
+  ],
+  "selected_paired_keys": [
+    "pair_02",
+    "pair_01",
+    "pair_12",
+    "pair_07",
+    "pair_11",
+    "pair_06",
+    "pair_05",
+    "pair_10",
+    "pair_08",
+    "pair_09",
+    "pair_04",
+    "pair_03"
+  ],
+  "status": "MOCK / DEMO"
+}

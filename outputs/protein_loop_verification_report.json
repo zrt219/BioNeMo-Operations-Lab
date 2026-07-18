@@ -1,0 +1,92 @@
+{
+  "documentation_ok": true,
+  "generated_at": null,
+  "labeling_ok": true,
+  "live_state_ok": true,
+  "next_rule": "exploit-neff",
+  "required_artifacts": [
+    {
+      "exists": true,
+      "name": "backbone",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\helical_bundle_backbone.pdb"
+    },
+    {
+      "exists": true,
+      "name": "folded",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\helical_bundle_folded.pdb"
+    },
+    {
+      "exists": true,
+      "name": "sequence_file",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\sequences.fa"
+    },
+    {
+      "exists": true,
+      "name": "msa",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_msa_mock.a3m"
+    },
+    {
+      "exists": true,
+      "name": "paired",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_paired_msa_mock.csv"
+    },
+    {
+      "exists": true,
+      "name": "feedback_state",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_feedback_state.json"
+    },
+    {
+      "exists": true,
+      "name": "run_registry",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_registry.json"
+    },
+    {
+      "exists": true,
+      "name": "comparison",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_comparison.json"
+    },
+    {
+      "exists": true,
+      "name": "next_run_command",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_command.txt"
+    },
+    {
+      "exists": true,
+      "name": "next_run_rationale",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_next_run_rationale.txt"
+    },
+    {
+      "exists": true,
+      "name": "run_review",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_run_review.md"
+    },
+    {
+      "exists": true,
+      "name": "session_index",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\openfold3_session_index.md"
+    },
+    {
+      "exists": true,
+      "name": "root_status",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_status.md"
+    },
+    {
+      "exists": true,
+      "name": "root_runbook",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_runbook.md"
+    },
+    {
+      "exists": true,
+      "name": "root_evidence_matrix",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\protein_loop_evidence_matrix.md"
+    },
+    {
+      "exists": true,
+      "name": "summary",
+      "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\protein_loop_run_summary.json"
+    }
+  ],
+  "run_index": 34,
+  "status": "PASS",
+  "summary_path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\protein_loop_run_summary.json"
+}

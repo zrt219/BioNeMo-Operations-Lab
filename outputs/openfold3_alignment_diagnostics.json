@@ -1,0 +1,22 @@
+{
+  "formula": {
+    "branch_support": "1.75*identity + 0.90*coverage + 0.40*motif + 0.65*column_information + 0.70*novelty + 0.35*lineage_centrality - 0.95*gap_fraction",
+    "branch_weight": "softmax(branch_support / temperature)",
+    "lineage_centrality": "mean(exp(-sequence_distance^2 / (2*0.12^2)))",
+    "selection": "support - diversity_strength * max_similarity_to_selected"
+  },
+  "interpretation": "Scores describe deterministic alignment heuristics only. They are not evolutionary distances, structure confidence, or evidence of inheritance.",
+  "msa": {
+    "effective_sequence_count": 10.92725466443204,
+    "input_rows": 12,
+    "mean_column_information": 0.9267694169156581,
+    "selected_rows": 12
+  },
+  "paired_msa": {
+    "effective_sequence_count": 10.706898051196486,
+    "input_rows": 12,
+    "mean_column_information": 0.9267694169156581,
+    "selected_rows": 12
+  },
+  "status": "MOCK / DEMO"
+}
