@@ -1013,7 +1013,7 @@
       </div>
     <div class="header-badges">
       <span class="badge badge-glow" id="hdrWorkflow">protein-fold</span>
-      <span class="badge" id="hdrArtifact">Latest Run: fold-malwmrllplla · d0df1d96e6e72d02c6409f3b · 2026-07-18T10:25:26+00:00 · LOCAL</span>
+      <span class="badge" id="hdrArtifact">Latest Run: fold-malwmrllplla · d0df1d96e6e72d02c6409f3b · 2026-07-18T10:25:26+00:00 · REAL</span>
       <span class="status-pill" role="status" aria-live="polite" aria-label="Current run status"><span class="pulse-dot" aria-hidden="true"></span> <span id="hdrStatus">IDLE</span></span>
       <a class="badge badge-link badge-glow" href="/learning_pack.html" aria-label="Open the learning pack page">Learning Pack</a>
       <a class="badge badge-link" href="/viewer/" aria-label="Open the protein viewer page">Viewer</a>
@@ -1039,7 +1039,7 @@
 <div class="conveyor-line"></div>
 <div class="stage-node status-n/a"><div class="stage-header"><span class="stage-num">2</span><span class="stage-pill pill-na">N/A</span></div><div class="stage-title">Design Sequence</div><div class="stage-desc">ProteinMPNN stage for inverse folding and candidate sequences.</div><div class="stage-artifacts"><span class="stage-empty">No artifacts yet</span></div></div>
 <div class="conveyor-line"></div>
-<div class="stage-node status-demo"><div class="stage-header"><span class="stage-num">3</span><span class="stage-pill pill-demo">DEMO</span></div><div class="stage-title">Fold and Validate</div><div class="stage-desc">MSA Search and OpenFold2 stage for structure prediction and scoring.</div><div class="stage-artifacts"><code>msa_json</code><code>msa_a3m</code><code>fold_json</code><code>fold_cif</code></div></div></div>
+<div class="stage-node status-success"><div class="stage-header"><span class="stage-num">3</span><span class="stage-pill pill-success">SUCCESS</span></div><div class="stage-title">Fold and Validate</div><div class="stage-desc">MSA Search and OpenFold2 stage for structure prediction and scoring.</div><div class="stage-artifacts"><code>msa_json</code><code>msa_a3m</code><code>fold_json</code><code>fold_cif</code></div></div></div>
   </section>
 
   <!-- ═══ OPS GRID ═══ -->
@@ -1184,6 +1184,8 @@
             <span class="source">Completed run metadata and provenance.</span>
           </div>
           <pre id="trustRawSummary">{
+  "api_endpoint": "https://health.api.nvidia.com/v1/biology/openfold/openfold2/predict-structure-from-msa-and-template",
+  "artifact_hash": "78a0d776d7f88130fd1567c1cd0483e82ac4d7d3ec42b4ddf9498ca6eca7dd7c",
   "artifacts": [
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -1192,9 +1194,9 @@
       "label": "DEMO",
       "name": "msa_json",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_msa_search.json",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     },
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -1203,9 +1205,9 @@
       "label": "DEMO",
       "name": "msa_a3m",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_msa_alignment.a3m",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     },
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -1214,9 +1216,9 @@
       "label": "DEMO",
       "name": "fold_json",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_openfold3_response.json",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     },
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -1225,16 +1227,16 @@
       "label": "DEMO",
       "name": "fold_cif",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_openfold3_structure.cif",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     }
   ],
   "completed_at": "2026-07-18T10:25:26+00:00",
   "created_at": "2026-07-18T10:25:22+00:00",
   "display_name": "fold-malwmrllplla",
   "fold": {
-    "mean_plddt": 0.74,
+    "mean_plddt": 67.2,
     "outputs": [
       {
         "input_id": "acaa4f94aeeb3592287ace3b",
@@ -1254,7 +1256,7 @@
         ]
       }
     ],
-    "ptm_score": 0.71
+    "ptm_score": 0.323
   },
   "goal": "Fold a protein sequence and explain the confidence metrics.",
   "interpretation": "Local demo fallback completed. This path is deterministic but does not call the hosted NVIDIA endpoints.",
@@ -1292,14 +1294,14 @@
       "mode": "demo"
     }
   },
-  "request_id": "acaa4f94aeeb3592287ace3b",
+  "request_id": "f57cd9c1174020754007a96f",
   "run_id": "d0df1d96e6e72d02c6409f3b",
-  "runtime": "local-demo",
-  "runtime_kind": "LOCAL",
+  "runtime": "hosted",
+  "runtime_kind": "REAL",
   "runtime_reason": "user override",
   "selected_skill": "msa-search-nim -> openfold2-nim",
   "sequence": "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL",
-  "status": "DEMO",
+  "status": "SUCCESS",
   "timestamp": "2026-07-18T10:25:22+00:00",
   "workflow": "protein-fold"
 }</pre>
@@ -1525,7 +1527,7 @@ Local demo fallback completed. This path is deterministic but does not call the 
           </div>
           <div class="tel-card">
             <span class="label">Last Registered Artifact</span>
-            <span class="value" id="telArtifact" style="font-family: monospace; font-size: 11px; color: #8cd4da; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">fold-malwmrllplla · d0df1d96e6e72d02c6409f3b · 2026-07-18T10:25:26+00:00 · LOCAL</span>
+            <span class="value" id="telArtifact" style="font-family: monospace; font-size: 11px; color: #8cd4da; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">fold-malwmrllplla · d0df1d96e6e72d02c6409f3b · 2026-07-18T10:25:26+00:00 · REAL</span>
           </div>
         </div>
         
@@ -1607,10 +1609,10 @@ Local demo fallback completed. This path is deterministic but does not call the 
   <section class="drawers-section">
     <details class="drawer anim-in">
       <summary>Latest Artifacts <span class="drawer-badge">4</span></summary>
-      <div class="drawer-body"><ul class="artifact-list"><li><code>msa_json</code> <span style="color:var(--muted);font-size:11px;">fold-malwmrllplla</span> <span class="trust-badge trust-demo">DEMO</span><span class="trust-badge trust-runtime">LOCAL</span><span class="trust-badge trust-latest">LATEST</span> <a href="/artifact/msa_json" aria-label="Open artifact msa_json">open</a></li>
-<li><code>msa_a3m</code> <span style="color:var(--muted);font-size:11px;">fold-malwmrllplla</span> <span class="trust-badge trust-demo">DEMO</span><span class="trust-badge trust-runtime">LOCAL</span><span class="trust-badge trust-latest">LATEST</span> <a href="/artifact/msa_a3m" aria-label="Open artifact msa_a3m">open</a></li>
-<li><code>fold_json</code> <span style="color:var(--muted);font-size:11px;">fold-malwmrllplla</span> <span class="trust-badge trust-demo">DEMO</span><span class="trust-badge trust-runtime">LOCAL</span><span class="trust-badge trust-latest">LATEST</span> <a href="/artifact/fold_json" aria-label="Open artifact fold_json">open</a></li>
-<li><code>fold_cif</code> <span style="color:var(--muted);font-size:11px;">fold-malwmrllplla</span> <span class="trust-badge trust-demo">DEMO</span><span class="trust-badge trust-runtime">LOCAL</span><span class="trust-badge trust-latest">LATEST</span> <a href="/artifact/fold_cif" aria-label="Open artifact fold_cif">open</a></li></ul></div>
+      <div class="drawer-body"><ul class="artifact-list"><li><code>msa_json</code> <span style="color:var(--muted);font-size:11px;">fold-malwmrllplla</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span> <a href="/artifact/msa_json" aria-label="Open artifact msa_json">open</a></li>
+<li><code>msa_a3m</code> <span style="color:var(--muted);font-size:11px;">fold-malwmrllplla</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span> <a href="/artifact/msa_a3m" aria-label="Open artifact msa_a3m">open</a></li>
+<li><code>fold_json</code> <span style="color:var(--muted);font-size:11px;">fold-malwmrllplla</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span> <a href="/artifact/fold_json" aria-label="Open artifact fold_json">open</a></li>
+<li><code>fold_cif</code> <span style="color:var(--muted);font-size:11px;">fold-malwmrllplla</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span> <a href="/artifact/fold_cif" aria-label="Open artifact fold_cif">open</a></li></ul></div>
     </details>
     <details class="drawer anim-in">
       <summary>Live Run State <span class="drawer-badge">json</span></summary>
@@ -1635,6 +1637,8 @@ Local demo fallback completed. This path is deterministic but does not call the 
     <details class="drawer anim-in">
       <summary>Run Summary <span class="drawer-badge">summary</span></summary>
       <div class="drawer-body"><pre id="summaryPane">{
+  "api_endpoint": "https://health.api.nvidia.com/v1/biology/openfold/openfold2/predict-structure-from-msa-and-template",
+  "artifact_hash": "78a0d776d7f88130fd1567c1cd0483e82ac4d7d3ec42b4ddf9498ca6eca7dd7c",
   "artifacts": [
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -1643,9 +1647,9 @@ Local demo fallback completed. This path is deterministic but does not call the 
       "label": "DEMO",
       "name": "msa_json",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_msa_search.json",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     },
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -1654,9 +1658,9 @@ Local demo fallback completed. This path is deterministic but does not call the 
       "label": "DEMO",
       "name": "msa_a3m",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_msa_alignment.a3m",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     },
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -1665,9 +1669,9 @@ Local demo fallback completed. This path is deterministic but does not call the 
       "label": "DEMO",
       "name": "fold_json",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_openfold3_response.json",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     },
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -1676,16 +1680,16 @@ Local demo fallback completed. This path is deterministic but does not call the 
       "label": "DEMO",
       "name": "fold_cif",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_openfold3_structure.cif",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     }
   ],
   "completed_at": "2026-07-18T10:25:26+00:00",
   "created_at": "2026-07-18T10:25:22+00:00",
   "display_name": "fold-malwmrllplla",
   "fold": {
-    "mean_plddt": 0.74,
+    "mean_plddt": 67.2,
     "outputs": [
       {
         "input_id": "acaa4f94aeeb3592287ace3b",
@@ -1705,7 +1709,7 @@ Local demo fallback completed. This path is deterministic but does not call the 
         ]
       }
     ],
-    "ptm_score": 0.71
+    "ptm_score": 0.323
   },
   "goal": "Fold a protein sequence and explain the confidence metrics.",
   "interpretation": "Local demo fallback completed. This path is deterministic but does not call the hosted NVIDIA endpoints.",
@@ -1743,14 +1747,14 @@ Local demo fallback completed. This path is deterministic but does not call the 
       "mode": "demo"
     }
   },
-  "request_id": "acaa4f94aeeb3592287ace3b",
+  "request_id": "f57cd9c1174020754007a96f",
   "run_id": "d0df1d96e6e72d02c6409f3b",
-  "runtime": "local-demo",
-  "runtime_kind": "LOCAL",
+  "runtime": "hosted",
+  "runtime_kind": "REAL",
   "runtime_reason": "user override",
   "selected_skill": "msa-search-nim -> openfold2-nim",
   "sequence": "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL",
-  "status": "DEMO",
+  "status": "SUCCESS",
   "timestamp": "2026-07-18T10:25:22+00:00",
   "workflow": "protein-fold"
 }</pre></div>

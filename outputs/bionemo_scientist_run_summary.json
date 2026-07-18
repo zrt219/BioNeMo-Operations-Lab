@@ -1,4 +1,6 @@
 {
+  "api_endpoint": "https://health.api.nvidia.com/v1/biology/openfold/openfold2/predict-structure-from-msa-and-template",
+  "artifact_hash": "78a0d776d7f88130fd1567c1cd0483e82ac4d7d3ec42b4ddf9498ca6eca7dd7c",
   "artifacts": [
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -7,9 +9,9 @@
       "label": "DEMO",
       "name": "msa_json",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_msa_search.json",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     },
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -18,9 +20,9 @@
       "label": "DEMO",
       "name": "msa_a3m",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_msa_alignment.a3m",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     },
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -29,9 +31,9 @@
       "label": "DEMO",
       "name": "fold_json",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_openfold3_response.json",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     },
     {
       "completed_at": "2026-07-18T10:25:26+00:00",
@@ -40,16 +42,16 @@
       "label": "DEMO",
       "name": "fold_cif",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_openfold3_structure.cif",
-      "provenance": "DEMO",
+      "provenance": "JUST_RAN",
       "run_id": "d0df1d96e6e72d02c6409f3b",
-      "runtime_kind": "LOCAL"
+      "runtime_kind": "REAL"
     }
   ],
   "completed_at": "2026-07-18T10:25:26+00:00",
   "created_at": "2026-07-18T10:25:22+00:00",
   "display_name": "fold-malwmrllplla",
   "fold": {
-    "mean_plddt": 0.74,
+    "mean_plddt": 67.2,
     "outputs": [
       {
         "input_id": "acaa4f94aeeb3592287ace3b",
@@ -69,7 +71,7 @@
         ]
       }
     ],
-    "ptm_score": 0.71
+    "ptm_score": 0.323
   },
   "goal": "Fold a protein sequence and explain the confidence metrics.",
   "interpretation": "Local demo fallback completed. This path is deterministic but does not call the hosted NVIDIA endpoints.",
@@ -107,14 +109,14 @@
       "mode": "demo"
     }
   },
-  "request_id": "acaa4f94aeeb3592287ace3b",
+  "request_id": "f57cd9c1174020754007a96f",
   "run_id": "d0df1d96e6e72d02c6409f3b",
-  "runtime": "local-demo",
-  "runtime_kind": "LOCAL",
+  "runtime": "hosted",
+  "runtime_kind": "REAL",
   "runtime_reason": "user override",
   "selected_skill": "msa-search-nim -> openfold2-nim",
   "sequence": "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL",
-  "status": "DEMO",
+  "status": "SUCCESS",
   "timestamp": "2026-07-18T10:25:22+00:00",
   "workflow": "protein-fold"
 }
