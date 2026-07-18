@@ -1057,10 +1057,10 @@
       <div class="trust-score" aria-label="Telemetry trust score">
         <div class="trust-score-label">
           <span>Provenance confidence</span>
-          <span id="trustScoreValue">92%</span>
+          <span id="trustScoreValue">$trust_score%</span>
         </div>
         <div class="trust-score-bar" aria-hidden="true">
-          <div class="trust-score-fill" id="trustScoreFill"></div>
+          <div class="trust-score-fill" id="trustScoreFill" style="width: $trust_score%;"></div>
         </div>
         <div class="trust-score-note" id="trustScoreNote">
           Real hosted runs score higher because they expose a provider endpoint, request ID, run ID, and returned confidence.
@@ -1693,7 +1693,36 @@
         var requestId = summary.request_id || state.request_id || 'unknown';
         var runtimeKind = summary.runtime_kind || 'unknown';
         var truthMode = runtimeDisplay === 'hosted' ? 'HOSTED NVIDIA RUN - REAL TELEMETRY' : 'DEMO FALLBACK - NOT REAL';
-        var trustScore = runtimeDisplay === 'hosted' ? 92 : 35;
+        function calculateProvenanceConfidence(state, summary, artifacts) {
+          var runtime = summary.runtime || state.runtime || 'auto';
+          if (runtime !== 'hosted') {
+            var score = 10;
+            if (summary.run_id || state.run_id) score += 5;
+            if (artifacts && artifacts.length > 0) score += 5;
+            return score;
+          }
+          var score = 60;
+          var runId = summary.run_id || state.run_id;
+          if (runId && runId !== 'unknown' && runId !== 'None') score += 10;
+          var requestId = summary.request_id || state.request_id;
+          if (requestId && requestId !== 'unknown' && requestId !== 'None') score += 10;
+          var endpoint = summary.api_endpoint;
+          if (endpoint && endpoint.indexOf('nvidia.com') !== -1) score += 10;
+          var artHash = summary.artifact_hash;
+          if (artHash && artHash !== 'unknown') score += 10;
+          if (artifacts && artifacts.length > 0) {
+            var allOk = true;
+            for (var i = 0; i < artifacts.length; i++) {
+              if (!artifacts[i].sha256 || artifacts[i].provenance !== 'JUST_RAN') {
+                allOk = false;
+                break;
+              }
+            }
+            if (allOk) score += 10;
+          }
+          return score;
+        }
+        var trustScore = calculateProvenanceConfidence(state, summary, artifacts);
         var trustProvider = runtimeDisplay === 'hosted' ? 'NVIDIA BioNeMo / OpenFold2' : 'Local workstation';
         var trustVerdictClass = runtimeDisplay === 'hosted' ? 'hosted' : 'demo';
         var trustVerdictIcon = runtimeDisplay === 'hosted' ? '✓' : '!';

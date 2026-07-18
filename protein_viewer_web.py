@@ -179,6 +179,49 @@ def make_real_nvidia_stats_html(stats: dict) -> str:
     """
 
 
+def calculate_provenance_confidence(summary: dict, run_state: dict, artifacts: list) -> int:
+    runtime = summary.get("runtime", run_state.get("runtime", "auto"))
+    if runtime != "hosted":
+        # Demo mode: 0-20%
+        score = 10
+        if summary.get("run_id") or run_state.get("run_id"):
+            score += 5
+        if artifacts:
+            score += 5
+        return score
+        
+    # Hosted mode: 60-100%
+    score = 60
+    
+    run_id = summary.get("run_id") or run_state.get("run_id")
+    if run_id and run_id != "unknown" and run_id != "None":
+        score += 10
+        
+    request_id = summary.get("request_id") or run_state.get("request_id")
+    if request_id and request_id != "unknown" and request_id != "None":
+        score += 10
+        
+    endpoint = summary.get("api_endpoint")
+    if endpoint and "nvidia.com" in endpoint:
+        score += 10
+        
+    art_hash = summary.get("artifact_hash")
+    if art_hash and art_hash != "unknown":
+        score += 10
+        
+    # Check if all artifacts have hashes and correct provenance
+    if artifacts:
+        all_ok = True
+        for a in artifacts:
+            if not a.get("sha256") or a.get("provenance") != "JUST_RAN":
+                all_ok = False
+                break
+        if all_ok:
+            score += 10
+            
+    return score
+
+
 def latest_artifacts() -> list[dict[str, str]]:
     summary = read_json(SUMMARY_PATH)
     artifacts = []
@@ -559,6 +602,7 @@ def page_html() -> str:
         newest_run=newest_run,
         active_command=active_command,
         real_nvidia_stats_html=real_stats_html,
+        trust_score=str(calculate_provenance_confidence(summary, run_state, artifacts)),
         event_log_json=json.dumps(run_state.get("events", []), indent=2, sort_keys=True),
         goal_value=summary.get("goal", "Design a protein fold and explain the confidence metrics."),
         sequence_value=summary.get("sequence", ""),
