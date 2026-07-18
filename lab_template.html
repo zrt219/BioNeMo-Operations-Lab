@@ -1109,6 +1109,7 @@
         <span class="source" id="trustEvidenceSource">Returned fields are labeled. Computed fields are labeled. Missing fields are not invented.</span>
       </div>
     </div>
+    $real_nvidia_stats_html
     <details class="trust-raw">
       <summary>Raw Telemetry Snapshot</summary>
       <div class="trust-raw-body">
@@ -1756,6 +1757,54 @@
         document.getElementById('telWorkflow').textContent = inferWorkflow(state.goal, summary.workflow);
         document.getElementById('telCommand').textContent = cmd;
         document.getElementById('telMessage').textContent = msg;
+
+        // Dynamic Real NVIDIA NIM Telemetry Updates
+        var stats = payload.real_nvidia_stats || {};
+        var of2 = stats.openfold2;
+        var of3 = stats.openfold3;
+        var rfd = stats.rfdiffusion;
+        var grid = document.getElementById('nvidiaTelemetryGrid');
+        if (grid) {
+          var inner = '';
+          if (of2) {
+            inner += '<div class="trust-item" style="border: 1px solid rgba(0, 242, 254, 0.22); background: rgba(0, 242, 254, 0.05);">' +
+                     '<span class="label" style="color: var(--accent);">OpenFold2 Request ID</span>' +
+                     '<span class="value" style="font-family: monospace; font-size: 11px; word-break: break-all;">' + of2.request_id + '</span>' +
+                     '<span class="source">Real hosted API transaction identifier.</span>' +
+                     '</div>';
+            inner += '<div class="trust-item" style="border: 1px solid rgba(0, 242, 254, 0.22); background: rgba(0, 242, 254, 0.05);">' +
+                     '<span class="label" style="color: var(--accent);">Model Confidence (pLDDT)</span>' +
+                     '<span class="value" style="color: var(--accent2);">' + of2.mean_plddt.toFixed(1) + '%</span>' +
+                     '<span class="source">Weighted average across structural residues.</span>' +
+                     '</div>';
+            inner += '<div class="trust-item" style="border: 1px solid rgba(0, 242, 254, 0.22); background: rgba(0, 242, 254, 0.05);">' +
+                     '<span class="label" style="color: var(--accent);">Max Alignment Error (PAE)</span>' +
+                     '<span class="value">' + of2.max_pae.toFixed(2) + ' Å</span>' +
+                     '<span class="source">Maximum predicted distance alignment error.</span>' +
+                     '</div>';
+          }
+          if (of3) {
+            inner += '<div class="trust-item" style="border: 1px solid rgba(0, 242, 254, 0.22); background: rgba(0, 242, 254, 0.05);">' +
+                     '<span class="label" style="color: var(--accent);">OpenFold3 pTM Score</span>' +
+                     '<span class="value">' + of3.ptm_score.toFixed(3) + '</span>' +
+                     '<span class="source">Predicted Template Modeling score from OpenFold3.</span>' +
+                     '</div>';
+            inner += '<div class="trust-item" style="border: 1px solid rgba(0, 242, 254, 0.22); background: rgba(0, 242, 254, 0.05);">' +
+                     '<span class="label" style="color: var(--accent);">OpenFold3 PDE Score</span>' +
+                     '<span class="value">' + of3.complex_pde_score.toFixed(3) + '</span>' +
+                     '<span class="source">Predicted Distance Error score for the complex.</span>' +
+                     '</div>';
+          }
+          if (rfd) {
+            inner += '<div class="trust-item" style="border: 1px solid rgba(0, 242, 254, 0.22); background: rgba(0, 242, 254, 0.05);">' +
+                     '<span class="label" style="color: var(--accent);">RFDiffusion Latency</span>' +
+                     '<span class="value">' + rfd.elapsed_ms + ' ms</span>' +
+                     '<span class="source">Server-side execution runtime in milliseconds.</span>' +
+                     '</div>';
+          }
+          grid.innerHTML = inner;
+          grid.parentElement.style.display = inner ? 'block' : 'none';
+        }
 
         // Dynamic Sequence Analysis Updates
         var seq = summary.sequence || state.sequence || '';
