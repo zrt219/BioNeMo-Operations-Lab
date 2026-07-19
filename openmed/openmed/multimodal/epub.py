@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import unquote
 from xml.etree import ElementTree as ET
+from defusedxml.ElementTree import fromstring as safe_fromstring
 
 from .base import ExtractedDocument, SourceSpan, register_handler
 from .exceptions import UnsupportedDocumentError
@@ -418,8 +419,8 @@ def _decode_text(data: bytes) -> str:
 
 def _parse_xml(data: bytes, name: str) -> ET.Element:
     try:
-        return ET.fromstring(data)
-    except ET.ParseError as exc:
+        return safe_fromstring(data)
+    except Exception as exc:
         raise UnsupportedDocumentError(f"EPUB {name} XML is invalid") from exc
 
 
