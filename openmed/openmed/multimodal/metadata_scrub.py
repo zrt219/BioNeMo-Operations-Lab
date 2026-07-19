@@ -19,6 +19,8 @@ from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping, Sequence
 from xml.etree import ElementTree
 
+import defusedxml.ElementTree as defused_ET
+
 from .exceptions import MissingDependencyError, UnsupportedDocumentError
 
 _METADATA_INSTALL_HINT = 'Install with: pip install "openmed[multimodal]".'
@@ -638,7 +640,7 @@ def _read_xml_entries(xml_bytes: bytes, *, container: str) -> list[_MetadataEntr
     if not xml_bytes:
         return []
     try:
-        root = ElementTree.fromstring(xml_bytes)
+        root = defused_ET.fromstring(xml_bytes)
     except ElementTree.ParseError:
         return [_MetadataEntry(container=container, key="packet", value=xml_bytes)]
 
@@ -689,7 +691,7 @@ def _read_docx_part_entries(
     container: str,
 ) -> list[_MetadataEntry]:
     try:
-        root = ElementTree.fromstring(xml_bytes)
+        root = defused_ET.fromstring(xml_bytes)
     except ElementTree.ParseError:
         return [_MetadataEntry(container=container, key="xml", value=xml_bytes)]
 
@@ -764,7 +766,7 @@ def _scrub_docx_part(
     allowlist: frozenset[str],
 ) -> bytes:
     try:
-        root = ElementTree.fromstring(xml_bytes)
+        root = defused_ET.fromstring(xml_bytes)
     except ElementTree.ParseError:
         return b""
 
