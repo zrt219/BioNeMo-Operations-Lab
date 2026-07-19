@@ -14,10 +14,10 @@ what files to open when you want to continue the next run.
 
 ## Inputs
 
-- mode: `helical`
+- mode: `mixed`
 - status: `MOCK / DEMO`
-- backbone: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\helical_bundle_backbone.pdb`
-- folded: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\helical_bundle_folded.pdb`
+- backbone: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\mixed_fold_backbone.pdb`
+- folded: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\mixed_fold_folded.pdb`
 - sequence file: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\sequences.fa`
 - msa: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\openfold3_msa_mock.a3m`
 - paired msa: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\openfold3_paired_msa_mock.csv`
@@ -35,16 +35,16 @@ what files to open when you want to continue the next run.
 ## Current Heuristic State
 
 - next rule: `exploit-neff`
-- next temperature: `0.1956`
-- next diversity strength: `0.6394`
+- next temperature: `0.1951`
+- next diversity strength: `0.633`
 - next neighbor identity: `0.9`
 
 ## Comparison Interpretation
 
-- latest vs previous msa neff delta: `0.105484`
-- latest vs previous paired neff delta: `0.119464`
-- latest vs best msa neff delta: `-0.840339`
-- latest vs best paired neff delta: `-1.121516`
+- latest vs previous msa neff delta: `0.106226`
+- latest vs previous paired neff delta: `0.120243`
+- latest vs best msa neff delta: `-0.84538`
+- latest vs best paired neff delta: `-1.127252`
 
 ## Local Rules
 

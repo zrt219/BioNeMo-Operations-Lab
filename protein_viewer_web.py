@@ -21,7 +21,11 @@ from trust_engine import build_trust_record, write_manifest
 
 
 ROOT = Path(__file__).resolve().parent
-OUTPUTS = ROOT / "outputs"
+if os.environ.get("VERCEL"):
+    OUTPUTS = Path("/tmp/outputs")
+    OUTPUTS.mkdir(parents=True, exist_ok=True)
+else:
+    OUTPUTS = ROOT / "outputs"
 SUMMARY_PATH = OUTPUTS / "bionemo_scientist_run_summary.json"
 REPORT_PATH = OUTPUTS / "bionemo_scientist_run_report.md"
 MANIFEST_PATH = OUTPUTS / "bionemo_execution_manifest.json"
@@ -557,10 +561,28 @@ def page_html() -> str:
     workflow = summary.get("workflow") or infer_workflow_from_goal(run_state.get("goal", "") or summary.get("goal", ""))
     stages = compute_stage_state(summary, run_state, artifacts)
 
+    # Find the newest PDB file in the gallery list
+    newest_pdb_name = None
+    newest_time = 0.0
+    for pdb_name, label in GALLERY_PDBS:
+        p = OUTPUTS / pdb_name
+        if p.exists():
+            mtime = p.stat().st_mtime
+            if mtime > newest_time:
+                newest_time = mtime
+                newest_pdb_name = pdb_name
+
     # Gallery cards — show available PDBs and viewer images
     gallery_parts = []
     for pdb_name, label in GALLERY_PDBS:
-        if (OUTPUTS / pdb_name).exists():
+        p = OUTPUTS / pdb_name
+        if p.exists():
+            mtime = p.stat().st_mtime
+            time_str = time.strftime("%b %d, %H:%M:%S", time.localtime(mtime))
+            is_newest = (pdb_name == newest_pdb_name) and (newest_time > 0)
+            card_class = "gallery-card newest-card" if is_newest else "gallery-card"
+            badge_html = '<span class="latest-badge">LATEST</span>' if is_newest else ''
+            
             # Find matching viewer image thumbnail
             base = pdb_name.replace("_folded.pdb", "").replace("_backbone.pdb", "").replace(".pdb", "")
             thumb = None
@@ -570,15 +592,19 @@ def page_html() -> str:
                     break
             if thumb and (ROOT / thumb).exists():
                 gallery_parts.append(
-                    f'<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure {label} into the viewer" data-pdb="/outputs/{pdb_name}" data-name="{label}">'
+                    f'<div class="{card_class}" role="button" tabindex="0" aria-label="Load structure {label} into the viewer" data-pdb="/outputs/{pdb_name}" data-name="{label}">'
+                    f'{badge_html}'
                     f'<img src="/viewer/{thumb}" alt="{label}" />'
-                    f'<span>{label}</span></div>'
+                    f'<span class="gallery-label">{label}</span>'
+                    f'<span class="gallery-time">🕒 {time_str}</span></div>'
                 )
             else:
                 gallery_parts.append(
-                    f'<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure {label} into the viewer" data-pdb="/outputs/{pdb_name}" data-name="{label}">'
-                    f'<div style="height:110px;display:grid;place-items:center;font-size:32px;opacity:0.3;">🧬</div>'
-                    f'<span>{label}</span></div>'
+                    f'<div class="{card_class}" role="button" tabindex="0" aria-label="Load structure {label} into the viewer" data-pdb="/outputs/{pdb_name}" data-name="{label}">'
+                    f'{badge_html}'
+                    f'<div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div>'
+                    f'<span class="gallery-label">{label}</span>'
+                    f'<span class="gallery-time">🕒 {time_str}</span></div>'
                 )
     gallery_html = "\n".join(gallery_parts) or '<div style="color:var(--muted);font-size:13px;">No PDB files yet. Run a pipeline to generate structures.</div>'
 

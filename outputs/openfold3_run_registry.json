@@ -38,40 +38,40 @@
   },
   "latest_run": {
     "deltas": {
-      "diversity_strength_delta": 0.06459999999999999,
-      "msa_neff_delta": 0.10548368794642826,
+      "diversity_strength_delta": 0.06390000000000007,
+      "msa_neff_delta": 0.10622608846816028,
       "neighbor_identity_delta": -0.010000000000000009,
-      "paired_neff_delta": 0.11946427165821127,
+      "paired_neff_delta": 0.12024251279307663,
       "temperature_delta": 0.009800000000000003
     },
-    "diversity_strength": 0.7104,
+    "diversity_strength": 0.7033,
     "heuristic_update_rule": {
       "diversity_strength": "0.7*previous + 0.3*current, clipped to [0.05, 1.0]",
       "neighbor_identity": "0.8*previous + 0.2*current, clipped to [0.5, 0.99]",
       "temperature": "average(current, previous)"
     },
     "msa_consensus": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
-    "msa_neff": 10.92725466443204,
+    "msa_neff": 10.922214130832225,
     "msa_top_header": "homolog_01",
     "neighbor_identity": 0.89,
     "paired_consensus": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
-    "paired_neff": 10.706898051196486,
+    "paired_neff": 10.701161771501447,
     "paired_top_key": "pair_02",
     "query": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
     "registry_deltas": {
-      "diversity_strength_delta": 0.06459999999999999,
-      "msa_neff_delta": 0.10548368794642826,
+      "diversity_strength_delta": 0.06390000000000007,
+      "msa_neff_delta": 0.10622608846816028,
       "neighbor_identity_delta": -0.010000000000000009,
-      "paired_neff_delta": 0.11946427165821127,
+      "paired_neff_delta": 0.12024251279307663,
       "temperature_delta": 0.009800000000000003
     },
     "requested_defaults": {
-      "diversity_strength": 0.7104,
+      "diversity_strength": 0.7033,
       "neighbor_identity": 0.89,
-      "temperature": 0.2059
+      "temperature": 0.2054
     },
-    "run_index": 34,
-    "temperature": 0.2059
+    "run_index": 36,
+    "temperature": 0.2054
   },
   "runs": [
     {
@@ -1035,6 +1035,80 @@
       },
       "run_index": 34,
       "temperature": 0.2059
+    },
+    {
+      "deltas": {
+        "diversity_strength_delta": -0.07100000000000006,
+        "msa_neff_delta": -0.11126662206797455,
+        "neighbor_identity_delta": 0.010000000000000009,
+        "paired_neff_delta": -0.12597879248811594,
+        "temperature_delta": -0.010300000000000004
+      },
+      "diversity_strength": 0.6394,
+      "heuristic_update_rule": {
+        "diversity_strength": "0.7*previous + 0.3*current, clipped to [0.05, 1.0]",
+        "neighbor_identity": "0.8*previous + 0.2*current, clipped to [0.5, 0.99]",
+        "temperature": "average(current, previous)"
+      },
+      "msa_consensus": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+      "msa_neff": 10.815988042364065,
+      "msa_top_header": "homolog_01",
+      "neighbor_identity": 0.9,
+      "paired_consensus": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+      "paired_neff": 10.58091925870837,
+      "paired_top_key": "pair_02",
+      "query": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+      "registry_deltas": {
+        "diversity_strength_delta": -0.07100000000000006,
+        "msa_neff_delta": -0.11126662206797455,
+        "neighbor_identity_delta": 0.010000000000000009,
+        "paired_neff_delta": -0.12597879248811594,
+        "temperature_delta": -0.010300000000000004
+      },
+      "requested_defaults": {
+        "diversity_strength": 0.6394,
+        "neighbor_identity": 0.9,
+        "temperature": 0.1956
+      },
+      "run_index": 35,
+      "temperature": 0.1956
+    },
+    {
+      "deltas": {
+        "diversity_strength_delta": 0.06390000000000007,
+        "msa_neff_delta": 0.10622608846816028,
+        "neighbor_identity_delta": -0.010000000000000009,
+        "paired_neff_delta": 0.12024251279307663,
+        "temperature_delta": 0.009800000000000003
+      },
+      "diversity_strength": 0.7033,
+      "heuristic_update_rule": {
+        "diversity_strength": "0.7*previous + 0.3*current, clipped to [0.05, 1.0]",
+        "neighbor_identity": "0.8*previous + 0.2*current, clipped to [0.5, 0.99]",
+        "temperature": "average(current, previous)"
+      },
+      "msa_consensus": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+      "msa_neff": 10.922214130832225,
+      "msa_top_header": "homolog_01",
+      "neighbor_identity": 0.89,
+      "paired_consensus": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+      "paired_neff": 10.701161771501447,
+      "paired_top_key": "pair_02",
+      "query": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
+      "registry_deltas": {
+        "diversity_strength_delta": 0.06390000000000007,
+        "msa_neff_delta": 0.10622608846816028,
+        "neighbor_identity_delta": -0.010000000000000009,
+        "paired_neff_delta": 0.12024251279307663,
+        "temperature_delta": 0.009800000000000003
+      },
+      "requested_defaults": {
+        "diversity_strength": 0.7033,
+        "neighbor_identity": 0.89,
+        "temperature": 0.2054
+      },
+      "run_index": 36,
+      "temperature": 0.2054
     }
   ],
   "version": 1

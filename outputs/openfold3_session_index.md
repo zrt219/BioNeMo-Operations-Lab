@@ -1,6 +1,6 @@
 # Local Protein Loop Session Index
 
-- mode: `helical`
+- mode: `mixed`
 - status: `MOCK / DEMO`
 - summary: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\protein_loop_run_summary.json`
 - review: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\openfold3_run_review.md`
@@ -12,10 +12,10 @@
 - next rule: `exploit-neff`
 
 ## Live Deltas
-- latest vs previous msa neff delta: `0.105484`
-- latest vs previous paired neff delta: `0.119464`
-- latest vs best msa neff delta: `-0.840339`
-- latest vs best paired neff delta: `-1.121516`
+- latest vs previous msa neff delta: `0.106226`
+- latest vs previous paired neff delta: `0.120243`
+- latest vs best msa neff delta: `-0.84538`
+- latest vs best paired neff delta: `-1.127252`
 
 ## Entry Points
 - `protein_loop.py` from the repo root

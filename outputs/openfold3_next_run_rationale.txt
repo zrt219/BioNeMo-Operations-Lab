@@ -1,7 +1,7 @@
 # MOCK / DEMO next-run rationale
 rule: exploit-neff
-latest_vs_previous_msa_neff_delta: 0.105484
-latest_vs_previous_paired_neff_delta: 0.119464
-latest_vs_best_msa_neff_delta: -0.840339
-latest_vs_best_paired_neff_delta: -1.121516
+latest_vs_previous_msa_neff_delta: 0.106226
+latest_vs_previous_paired_neff_delta: 0.120243
+latest_vs_best_msa_neff_delta: -0.84538
+latest_vs_best_paired_neff_delta: -1.127252
 interpretation: Positive neff deltas suggest broader local support; negative deltas suggest the current input narrowed the effective family. This is a deterministic demo comparison, not a biological truth claim.

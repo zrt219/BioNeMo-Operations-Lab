@@ -1,70 +1,70 @@
 {
   "api_endpoint": "https://health.api.nvidia.com/v1/biology/openfold/openfold2/predict-structure-from-msa-and-template",
-  "artifact_hash": "edc0d12de3f029d04b4ebe69f6454717bdd13e098847b3ad0097007d09775178",
+  "artifact_hash": "6b54f427410ee46dd387e8bc4ebcc527b711b9b73f6dc3d8148f46fa2f528aba",
   "artifacts": [
     {
-      "completed_at": "2026-07-18T15:43:43+00:00",
-      "created_at": "2026-07-18T15:43:04+00:00",
+      "completed_at": "2026-07-19T10:13:25+00:00",
+      "created_at": "2026-07-19T10:12:47+00:00",
       "display_name": "fold-malwmrllplla",
       "label": "REAL",
       "name": "msa_json",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_msa_search.json",
       "provenance": "JUST_RAN",
-      "run_id": "0bb858ae88987c12e1a5a5e7",
+      "run_id": "0d0a07bd25e938d721e04930",
       "runtime_kind": "REAL",
       "sha256": "9423b04b94a42898bb8eb285a928965032f921945c1ad7e78db9648971faeb08"
     },
     {
-      "completed_at": "2026-07-18T15:43:43+00:00",
-      "created_at": "2026-07-18T15:43:04+00:00",
+      "completed_at": "2026-07-19T10:13:25+00:00",
+      "created_at": "2026-07-19T10:12:47+00:00",
       "display_name": "fold-malwmrllplla",
       "label": "REAL",
       "name": "msa_a3m",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_msa_alignment.a3m",
       "provenance": "JUST_RAN",
-      "run_id": "0bb858ae88987c12e1a5a5e7",
+      "run_id": "0d0a07bd25e938d721e04930",
       "runtime_kind": "REAL",
       "sha256": "fa1864ca869e1398a8cf4906361ef18f306ba6e8566837c5695a401045923c4c"
     },
     {
-      "completed_at": "2026-07-18T15:43:43+00:00",
-      "created_at": "2026-07-18T15:43:04+00:00",
+      "completed_at": "2026-07-19T10:13:25+00:00",
+      "created_at": "2026-07-19T10:12:47+00:00",
       "display_name": "fold-malwmrllplla",
       "label": "REAL",
       "name": "fold_json",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_openfold2_response.json",
       "provenance": "JUST_RAN",
-      "run_id": "0bb858ae88987c12e1a5a5e7",
+      "run_id": "0d0a07bd25e938d721e04930",
       "runtime_kind": "REAL",
       "sha256": "6e00ca7625d07e84520e9f37ac8d8814117a3aa6126244f21c0555c46701f665"
     },
     {
-      "completed_at": "2026-07-18T15:43:43+00:00",
-      "created_at": "2026-07-18T15:43:04+00:00",
+      "completed_at": "2026-07-19T10:13:25+00:00",
+      "created_at": "2026-07-19T10:12:47+00:00",
       "display_name": "fold-malwmrllplla",
       "label": "REAL",
       "name": "fold_pdb",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_openfold2_structure.pdb",
       "provenance": "JUST_RAN",
-      "run_id": "0bb858ae88987c12e1a5a5e7",
+      "run_id": "0d0a07bd25e938d721e04930",
       "runtime_kind": "REAL",
       "sha256": "4aa018e2cbee43472d16c2f15f452900b0d2435a73b40d140f74ecaac29c3b47"
     },
     {
-      "completed_at": "2026-07-18T15:43:43+00:00",
-      "created_at": "2026-07-18T15:43:04+00:00",
+      "completed_at": "2026-07-19T10:13:25+00:00",
+      "created_at": "2026-07-19T10:12:47+00:00",
       "display_name": "fold-malwmrllplla",
       "label": "REAL",
       "name": "fold_scores",
       "path": "C:\\Users\\Zhane\\Documents\\New project\\zrt-bionemo\\outputs\\bionemo_openfold2_scores.json",
       "provenance": "JUST_RAN",
-      "run_id": "0bb858ae88987c12e1a5a5e7",
+      "run_id": "0d0a07bd25e938d721e04930",
       "runtime_kind": "REAL",
       "sha256": "7034d29188281456cc62ef0a2276d1cc9bb7f89f0a48f9f666b6bd4aa88eebd2"
     }
   ],
-  "completed_at": "2026-07-18T15:43:43+00:00",
-  "created_at": "2026-07-18T15:43:04+00:00",
+  "completed_at": "2026-07-19T10:13:25+00:00",
+  "created_at": "2026-07-19T10:12:47+00:00",
   "display_name": "fold-malwmrllplla",
   "execution_trace": [
     {
@@ -75,7 +75,7 @@
       },
       "message": "Run initialized.",
       "phase": "start",
-      "timestamp": "2026-07-18T15:43:04+00:00"
+      "timestamp": "2026-07-19T10:12:47+00:00"
     },
     {
       "detail": {
@@ -83,7 +83,7 @@
       },
       "message": "Hosted folding workflow started.",
       "phase": "workflow",
-      "timestamp": "2026-07-18T15:43:04+00:00"
+      "timestamp": "2026-07-19T10:12:47+00:00"
     },
     {
       "detail": {
@@ -91,7 +91,7 @@
       },
       "message": "MSA search request started.",
       "phase": "api_call",
-      "timestamp": "2026-07-18T15:43:04+00:00"
+      "timestamp": "2026-07-19T10:12:47+00:00"
     },
     {
       "detail": {
@@ -104,7 +104,7 @@
       },
       "message": "MSA search response received.",
       "phase": "api_response",
-      "timestamp": "2026-07-18T15:43:41+00:00"
+      "timestamp": "2026-07-19T10:13:23+00:00"
     },
     {
       "detail": {
@@ -112,7 +112,7 @@
       },
       "message": "OpenFold2 request started.",
       "phase": "api_call",
-      "timestamp": "2026-07-18T15:43:41+00:00"
+      "timestamp": "2026-07-19T10:13:23+00:00"
     },
     {
       "detail": {
@@ -126,7 +126,7 @@
       },
       "message": "OpenFold2 response received.",
       "phase": "api_response",
-      "timestamp": "2026-07-18T15:43:43+00:00"
+      "timestamp": "2026-07-19T10:13:25+00:00"
     },
     {
       "detail": {
@@ -134,7 +134,7 @@
       },
       "message": "Fold artifacts saved.",
       "phase": "artifacts",
-      "timestamp": "2026-07-18T15:43:43+00:00"
+      "timestamp": "2026-07-19T10:13:25+00:00"
     }
   ],
   "fold": {
@@ -1846,13 +1846,13 @@
   },
   "provider": "NVIDIA BioNeMo",
   "request_id": "f57cd9c1174020754007a96f",
-  "run_id": "0bb858ae88987c12e1a5a5e7",
+  "run_id": "0d0a07bd25e938d721e04930",
   "runtime": "hosted",
   "runtime_kind": "REAL",
   "runtime_reason": "user override",
   "selected_skill": "msa-search-nim -> openfold2-nim",
   "sequence": "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL",
   "status": "PASS",
-  "timestamp": "2026-07-18T15:43:04+00:00",
+  "timestamp": "2026-07-19T10:12:47+00:00",
   "workflow": "protein-fold"
 }
