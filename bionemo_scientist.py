@@ -31,11 +31,19 @@ LOG_PATH = ROOT / "ai-engineering" / "daily-engineering-log.md"
 SUMMARY_PATH = OUTPUTS / "bionemo_scientist_run_summary.json"
 REPORT_PATH = OUTPUTS / "bionemo_scientist_run_report.md"
 
-OPENFOLD3_HOSTED_URL = "https://health.api.nvidia.com/v1/biology/openfold/openfold3/predict"
+OPENFOLD3_HOSTED_URL = (
+    "https://health.api.nvidia.com/v1/biology/openfold/openfold3/predict"
+)
 OPENFOLD2_HOSTED_URL = "https://health.api.nvidia.com/v1/biology/openfold/openfold2/predict-structure-from-msa-and-template"
-MSA_SEARCH_HOSTED_URL = "https://health.api.nvidia.com/v1/biology/colabfold/msa-search/predict"
-RFDIFFUSION_HOSTED_URL = "https://health.api.nvidia.com/v1/biology/ipd/rfdiffusion/generate"
-PROTEINMPNN_HOSTED_URL = "https://health.api.nvidia.com/v1/biology/ipd/proteinmpnn/predict"
+MSA_SEARCH_HOSTED_URL = (
+    "https://health.api.nvidia.com/v1/biology/colabfold/msa-search/predict"
+)
+RFDIFFUSION_HOSTED_URL = (
+    "https://health.api.nvidia.com/v1/biology/ipd/rfdiffusion/generate"
+)
+PROTEINMPNN_HOSTED_URL = (
+    "https://health.api.nvidia.com/v1/biology/ipd/proteinmpnn/predict"
+)
 DUMMY_PDB = (
     "CRYST1    1.000    1.000    1.000  90.00  90.00  90.00 P 1           1\n"
     "ATOM      1  CA  ALA A   1       0.000   0.000   0.000  1.00  0.00           C\n"
@@ -60,7 +68,7 @@ def load_repo_env() -> None:
             continue
         key, value = line.split("=", 1)
         key = key.strip()
-        value = value.strip().strip("\"").strip("'")
+        value = value.strip().strip('"').strip("'")
         if key and key not in os.environ:
             os.environ[key] = value
 
@@ -116,13 +124,23 @@ def choose_workflow(goal: str, forced: str) -> str:
     if forced != "auto":
         return forced
     lowered = goal.lower()
-    if any(token in lowered for token in ("generate", "design", "de novo", "backbone", "sequence design")):
+    if any(
+        token in lowered
+        for token in ("generate", "design", "de novo", "backbone", "sequence design")
+    ):
         return "protein-design"
-    if any(token in lowered for token in ("dock", "ligand", "screen", "molecule", "drug")):
+    if any(
+        token in lowered for token in ("dock", "ligand", "screen", "molecule", "drug")
+    ):
         return "dock-screen"
-    if any(token in lowered for token in ("complex", "paired", "multi-chain", "msa", "template")):
+    if any(
+        token in lowered
+        for token in ("complex", "paired", "multi-chain", "msa", "template")
+    ):
         return "protein-complex"
-    if any(token in lowered for token in ("paper", "literature", "hypothesis", "research")):
+    if any(
+        token in lowered for token in ("paper", "literature", "hypothesis", "research")
+    ):
         return "research-loop"
     return "protein-fold"
 
@@ -165,7 +183,10 @@ def extract_fold_metrics(fold_result: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(fold_result, dict):
         return {}
     candidate = None
-    if isinstance(fold_result.get("structures_in_ranked_order"), list) and fold_result["structures_in_ranked_order"]:
+    if (
+        isinstance(fold_result.get("structures_in_ranked_order"), list)
+        and fold_result["structures_in_ranked_order"]
+    ):
         candidate = fold_result["structures_in_ranked_order"][0]
     elif isinstance(fold_result.get("outputs"), list) and fold_result["outputs"]:
         structures = fold_result["outputs"][0].get("structures_with_scores") or []
@@ -183,7 +204,11 @@ def extract_fold_metrics(fold_result: dict[str, Any]) -> dict[str, Any]:
     if mean_plddt is None:
         plddt_series = candidate.get("plddt")
         if isinstance(plddt_series, list) and plddt_series:
-            numeric = [float(value) for value in plddt_series if isinstance(value, (int, float))]
+            numeric = [
+                float(value)
+                for value in plddt_series
+                if isinstance(value, (int, float))
+            ]
             if numeric:
                 mean_plddt = sum(numeric) / len(numeric)
     rmsd = candidate.get("rmsd")
@@ -200,21 +225,27 @@ def extract_fold_metrics(fold_result: dict[str, Any]) -> dict[str, Any]:
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
 
 def write_text(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
-def resolve_display_name(display_name: str, goal: str, sequence: str, workflow: str) -> str:
+def resolve_display_name(
+    display_name: str, goal: str, sequence: str, workflow: str
+) -> str:
     candidate = display_name.strip()
     if candidate:
         return candidate
     return build_default_display_name(goal, sequence, workflow)
 
 
-def annotate_artifacts(artifacts: list[RunArtifact], run_meta: dict[str, Any]) -> list[dict[str, Any]]:
+def annotate_artifacts(
+    artifacts: list[RunArtifact], run_meta: dict[str, Any]
+) -> list[dict[str, Any]]:
     annotated: list[dict[str, Any]] = []
     for artifact in artifacts:
         item = asdict(artifact)
@@ -308,7 +339,9 @@ def call_hosted_proteinmpnn(backbone_pdb: str, request_id: str) -> dict[str, Any
     return response.json()
 
 
-def call_hosted_openfold3(sequence: str, msa_alignment: str, request_id: str) -> dict[str, Any]:
+def call_hosted_openfold3(
+    sequence: str, msa_alignment: str, request_id: str
+) -> dict[str, Any]:
     key = resolve_key()
     if not key:
         raise RuntimeError("hosted runtime requires NGC_API_KEY or NVIDIA_API_KEY")
@@ -356,7 +389,9 @@ def call_hosted_openfold3(sequence: str, msa_alignment: str, request_id: str) ->
     return response.json()
 
 
-def call_hosted_openfold2(sequence: str, msa_alignment: str, request_id: str) -> dict[str, Any]:
+def call_hosted_openfold2(
+    sequence: str, msa_alignment: str, request_id: str
+) -> dict[str, Any]:
     key = resolve_key()
     if not key:
         raise RuntimeError("hosted runtime requires NGC_API_KEY or NVIDIA_API_KEY")
@@ -399,7 +434,7 @@ def simulate_local_structure(sequence: str, request_id: str) -> dict[str, Any]:
     cif_path = OUTPUTS / "helical_bundle_folded.pdb"
     if not cif_path.exists():
         cif_path = OUTPUTS / "default_folded.pdb"
-    
+
     if cif_path.exists():
         structure = cif_path.read_text(encoding="utf-8")
     else:
@@ -441,7 +476,7 @@ def simulate_local_design(goal: str, request_id: str) -> dict[str, Any]:
     backbone_path = OUTPUTS / "helical_bundle_backbone.pdb"
     if not backbone_path.exists():
         backbone_path = OUTPUTS / "default_backbone.pdb"
-        
+
     if backbone_path.exists():
         backbone = backbone_path.read_text(encoding="utf-8")
     else:
@@ -468,7 +503,13 @@ def simulate_local_design(goal: str, request_id: str) -> dict[str, Any]:
     }
 
 
-def save_hosted_artifacts(sequence: str, msa_result: dict[str, Any], fold_result: dict[str, Any], request_id: str, run_meta: dict[str, Any]) -> list[RunArtifact]:
+def save_hosted_artifacts(
+    sequence: str,
+    msa_result: dict[str, Any],
+    fold_result: dict[str, Any],
+    request_id: str,
+    run_meta: dict[str, Any],
+) -> list[RunArtifact]:
     msa_alignments = msa_result["alignments"]
     msa_primary = msa_alignments["Uniref30_2302"]["a3m"]["alignment"]
     msa_all = {
@@ -487,7 +528,9 @@ def save_hosted_artifacts(sequence: str, msa_result: dict[str, Any], fold_result
     write_json(fold_json, fold_result)
     structure = fold_result["outputs"][0]["structures_with_scores"][0]["structure"]
     write_text(fold_cif, structure)
-    write_json(OUTPUTS / "bionemo_scientist_artifacts.json", {**msa_all, "run": run_meta})
+    write_json(
+        OUTPUTS / "bionemo_scientist_artifacts.json", {**msa_all, "run": run_meta}
+    )
     return [
         RunArtifact("msa_json", str(msa_json), "REAL"),
         RunArtifact("msa_a3m", str(msa_a3m), "REAL"),
@@ -496,7 +539,12 @@ def save_hosted_artifacts(sequence: str, msa_result: dict[str, Any], fold_result
     ]
 
 
-def save_hosted_failure_artifacts(msa_result: dict[str, Any], error: Exception, request_id: str, run_meta: dict[str, Any]) -> list[RunArtifact]:
+def save_hosted_failure_artifacts(
+    msa_result: dict[str, Any],
+    error: Exception,
+    request_id: str,
+    run_meta: dict[str, Any],
+) -> list[RunArtifact]:
     OUTPUTS.mkdir(parents=True, exist_ok=True)
     msa_json = OUTPUTS / "bionemo_msa_search.json"
     msa_a3m = OUTPUTS / "bionemo_msa_alignment.a3m"
@@ -531,7 +579,13 @@ def save_hosted_failure_artifacts(msa_result: dict[str, Any], error: Exception, 
     ]
 
 
-def save_hosted_openfold2_artifacts(sequence: str, msa_result: dict[str, Any], fold_result: dict[str, Any], request_id: str, run_meta: dict[str, Any]) -> list[RunArtifact]:
+def save_hosted_openfold2_artifacts(
+    sequence: str,
+    msa_result: dict[str, Any],
+    fold_result: dict[str, Any],
+    request_id: str,
+    run_meta: dict[str, Any],
+) -> list[RunArtifact]:
     msa_alignments = msa_result["alignments"]
     msa_primary = msa_alignments["Uniref30_2302"]["a3m"]["alignment"]
     output = fold_result["structures_in_ranked_order"][0]
@@ -551,7 +605,9 @@ def save_hosted_openfold2_artifacts(sequence: str, msa_result: dict[str, Any], f
     write_text(msa_a3m, msa_primary)
     write_json(fold_json, fold_result)
     write_text(fold_pdb, structure)
-    write_json(score_json, {"request_id": request_id, "sequence": sequence, "scores": score})
+    write_json(
+        score_json, {"request_id": request_id, "sequence": sequence, "scores": score}
+    )
     write_json(
         OUTPUTS / "bionemo_scientist_artifacts.json",
         {
@@ -571,7 +627,9 @@ def save_hosted_openfold2_artifacts(sequence: str, msa_result: dict[str, Any], f
     ]
 
 
-def save_demo_artifacts(sequence: str, request_id: str, run_meta: dict[str, Any]) -> list[RunArtifact]:
+def save_demo_artifacts(
+    sequence: str, request_id: str, run_meta: dict[str, Any]
+) -> list[RunArtifact]:
     demo = simulate_local_structure(sequence, request_id)
     OUTPUTS.mkdir(parents=True, exist_ok=True)
     msa_json = OUTPUTS / "bionemo_msa_search.json"
@@ -600,7 +658,13 @@ def save_demo_artifacts(sequence: str, request_id: str, run_meta: dict[str, Any]
     ]
 
 
-def save_hosted_design_artifacts(goal: str, design_result: dict[str, Any], mpnn_result: dict[str, Any], request_id: str, run_meta: dict[str, Any]) -> list[RunArtifact]:
+def save_hosted_design_artifacts(
+    goal: str,
+    design_result: dict[str, Any],
+    mpnn_result: dict[str, Any],
+    request_id: str,
+    run_meta: dict[str, Any],
+) -> list[RunArtifact]:
     OUTPUTS.mkdir(parents=True, exist_ok=True)
     design_json = OUTPUTS / "bionemo_rfdiffusion_response.json"
     design_pdb = OUTPUTS / "bionemo_rfdiffusion_backbone.pdb"
@@ -629,7 +693,9 @@ def save_hosted_design_artifacts(goal: str, design_result: dict[str, Any], mpnn_
     ]
 
 
-def save_demo_design_artifacts(goal: str, design_result: dict[str, Any], request_id: str, run_meta: dict[str, Any]) -> list[RunArtifact]:
+def save_demo_design_artifacts(
+    goal: str, design_result: dict[str, Any], request_id: str, run_meta: dict[str, Any]
+) -> list[RunArtifact]:
     OUTPUTS.mkdir(parents=True, exist_ok=True)
     design_json = OUTPUTS / "bionemo_rfdiffusion_response.json"
     design_pdb = OUTPUTS / "bionemo_rfdiffusion_backbone.pdb"
@@ -677,7 +743,9 @@ def write_report(path: Path, summary: dict[str, Any]) -> None:
         "## Artifacts",
     ]
     for artifact in summary["artifacts"]:
-        lines.append(f"- {artifact['name']}: `{artifact['path']}` ({artifact['label']})")
+        lines.append(
+            f"- {artifact['name']}: `{artifact['path']}` ({artifact['label']})"
+        )
     if "design" in summary:
         lines.extend(
             [
@@ -698,7 +766,9 @@ def write_report(path: Path, summary: dict[str, Any]) -> None:
             "",
             "## Fold / Design",
             "```json",
-            json.dumps(summary.get("fold", summary.get("design", {})), indent=2, sort_keys=True),
+            json.dumps(
+                summary.get("fold", summary.get("design", {})), indent=2, sort_keys=True
+            ),
             "```",
             "",
             "## Metric Sources",
@@ -733,14 +803,300 @@ def append_log(summary: dict[str, Any]) -> None:
             "",
         ]
     )
-    LOG_PATH.write_text(existing.rstrip() + ("\n\n" if existing.strip() else "") + entry, encoding="utf-8")
+    LOG_PATH.write_text(
+        existing.rstrip() + ("\n\n" if existing.strip() else "") + entry,
+        encoding="utf-8",
+    )
+
+
+def execute_hosted_protein_design(
+    goal: str, request_id: str, run_id: str, display_name: str, created_at: str
+) -> dict[str, Any]:
+    try:
+        print(">>> Initiating hosted protein-design workflow...")
+        print(">>> Requesting backbone design from RFDiffusion NIM...")
+        design_result = call_hosted_rfdiffusion(goal, request_id)
+        backbone_pdb = design_result["output_pdb"]
+        print(">>> RFDiffusion backbone generated successfully.")
+
+        print(">>> Invoking ProteinMPNN NIM for sequence co-design...")
+        mpnn_result = call_hosted_proteinmpnn(backbone_pdb, request_id)
+        designed_sequence = ""
+        if mpnn_result.get("mfasta"):
+            lines = [
+                line.strip()
+                for line in mpnn_result["mfasta"].splitlines()
+                if line.strip()
+            ]
+            sequence_lines = [line for line in lines if not line.startswith(">")]
+            designed_sequence = sequence_lines[0] if sequence_lines else ""
+        if not designed_sequence:
+            designed_sequence = default_sequence(goal)
+        print(
+            f">>> Target sequence generated: {designed_sequence[:10]}...{designed_sequence[-10:]}"
+        )
+
+        print(">>> Launching MSA homology search via ColabFold NIM...")
+        msa_result = call_hosted_msa_search(designed_sequence, request_id)
+        msa_alignment = msa_result["alignments"]["Uniref30_2302"]["a3m"]["alignment"]
+
+        print(">>> Folding target sequence via OpenFold2 NIM...")
+        fold_result = call_hosted_openfold2(
+            designed_sequence, msa_alignment, request_id
+        )
+        print(">>> Structural folding completed successfully!")
+
+        print(">>> Saving all designed protein artifacts locally...")
+        run_meta = {
+            "run_id": run_id,
+            "display_name": display_name,
+            "created_at": created_at,
+            "runtime_kind": "REAL",
+            "provenance": "JUST_RAN",
+        }
+        artifacts = save_hosted_design_artifacts(
+            goal, design_result, mpnn_result, request_id, run_meta
+        )
+        artifacts.extend(
+            save_hosted_openfold2_artifacts(
+                designed_sequence, msa_result, fold_result, request_id, run_meta
+            )
+        )
+
+        return {
+            "artifacts": artifacts,
+            "msa_result": msa_result,
+            "fold_result": fold_result,
+            "interpretation": (
+                "Hosted protein design completed successfully. RFDiffusion generated a backbone, "
+                "ProteinMPNN proposed sequences, and the selected sequence was folded with hosted BioNeMo."
+            ),
+            "status": "PASS",
+            "sequence": designed_sequence,
+            "design_payload": {
+                "backbone_design": design_result,
+                "sequence_design": mpnn_result,
+            },
+        }
+    except Exception as exc:
+        print(f">>> FATAL ERROR in hosted pipeline: {exc}")
+        design_result = {
+            "error": type(exc).__name__,
+            "message": str(exc),
+            "endpoint": RFDIFFUSION_HOSTED_URL,
+        }
+        mpnn_result = {
+            "error": type(exc).__name__,
+            "message": str(exc),
+            "endpoint": PROTEINMPNN_HOSTED_URL,
+        }
+        run_meta = {
+            "run_id": run_id,
+            "display_name": display_name,
+            "created_at": created_at,
+            "runtime_kind": "REAL",
+            "provenance": "JUST_RAN",
+        }
+        artifacts = save_hosted_failure_artifacts(
+            {"alignments": {"Uniref30_2302": {"a3m": {"alignment": ""}}}},
+            exc,
+            request_id,
+            run_meta,
+        )
+        return {
+            "artifacts": artifacts,
+            "msa_result": {"error": "design failed"},
+            "fold_result": {"error": type(exc).__name__, "message": str(exc)},
+            "interpretation": "Hosted protein design failed before completion. The error was captured for follow-up.",
+            "status": "PARTIAL",
+            "sequence": default_sequence(goal),
+            "design_payload": {
+                "backbone_design": design_result,
+                "sequence_design": mpnn_result,
+            },
+        }
+
+
+def execute_hosted_protein_fold(
+    sequence: str, request_id: str, run_id: str, display_name: str, created_at: str
+) -> dict[str, Any]:
+    try:
+        print(">>> Initiating hosted protein-folding workflow...")
+        print(">>> Launching MSA homology search via ColabFold NIM...")
+        msa_result = call_hosted_msa_search(sequence, request_id)
+        msa_alignment = msa_result["alignments"]["Uniref30_2302"]["a3m"]["alignment"]
+
+        print(">>> Folding sequence via OpenFold2 NIM...")
+        fold_result = call_hosted_openfold2(sequence, msa_alignment, request_id)
+        print(">>> Structural folding completed successfully!")
+
+        print(">>> Saving folded protein artifacts locally...")
+        run_meta = {
+            "run_id": run_id,
+            "display_name": display_name,
+            "created_at": created_at,
+            "runtime_kind": "REAL",
+            "provenance": "JUST_RAN",
+        }
+        artifacts = save_hosted_openfold2_artifacts(
+            sequence, msa_result, fold_result, request_id, run_meta
+        )
+        return {
+            "artifacts": artifacts,
+            "msa_result": msa_result,
+            "fold_result": fold_result,
+            "interpretation": (
+                "Hosted BioNeMo pipeline completed successfully. The MSA Search output was "
+                "fed into OpenFold2 and the resulting endpoint artifacts were saved locally."
+            ),
+            "status": "PASS",
+            "sequence": sequence,
+            "design_payload": None,
+        }
+    except Exception as exc:
+        print(f">>> FATAL ERROR in hosted folding: {exc}")
+        fold_result = {
+            "error": type(exc).__name__,
+            "message": str(exc),
+            "endpoint": OPENFOLD2_HOSTED_URL,
+        }
+        run_meta = {
+            "run_id": run_id,
+            "display_name": display_name,
+            "created_at": created_at,
+            "runtime_kind": "REAL",
+            "provenance": "JUST_RAN",
+        }
+        artifacts = save_hosted_failure_artifacts(
+            locals().get(
+                "msa_result",
+                {"alignments": {"Uniref30_2302": {"a3m": {"alignment": ""}}}},
+            ),
+            exc,
+            request_id,
+            run_meta,
+        )
+        return {
+            "artifacts": artifacts,
+            "msa_result": locals().get("msa_result", {"error": "msa failed"}),
+            "fold_result": fold_result,
+            "interpretation": (
+                "Hosted MSA Search completed, but the hosted OpenFold2 endpoint returned an "
+                "internal error. The error body was captured for follow-up."
+            ),
+            "status": "PARTIAL",
+            "sequence": sequence,
+            "design_payload": None,
+        }
+
+
+def execute_local_protein_design(
+    goal: str, request_id: str, run_id: str, display_name: str, created_at: str
+) -> dict[str, Any]:
+    print(">>> Initiating protein-design workflow local simulation")
+    time.sleep(0.8)
+    print(">>> Invoking RFDiffusion NIM for backbone generation...")
+    time.sleep(1.2)
+    design_demo = simulate_local_design(goal, request_id)
+    print(">>> RFDiffusion backbone successfully generated (saved to design_pdb)")
+    time.sleep(0.8)
+    print(">>> Invoking ProteinMPNN NIM for sequence co-design...")
+    time.sleep(1.2)
+    sequence = design_demo["designed_sequence"]
+    print(f">>> Selected candidate sequence: {sequence[:10]}...{sequence[-10:]}")
+    time.sleep(0.8)
+    print(">>> Launching MSA homology search via ColabFold NIM...")
+    time.sleep(1.2)
+    print(">>> Folding candidate sequence via OpenFold3/OpenFold2...")
+    time.sleep(1.5)
+    fold_demo = simulate_local_structure(sequence, request_id)
+    print(">>> Structural folding completed successfully!")
+    time.sleep(0.6)
+    print(">>> Writing local simulation artifacts...")
+    run_meta = {
+        "run_id": run_id,
+        "display_name": display_name,
+        "created_at": created_at,
+        "runtime_kind": "LOCAL",
+        "provenance": "DEMO",
+    }
+    artifacts = save_demo_design_artifacts(goal, design_demo, request_id, run_meta)
+    artifacts.extend(save_demo_artifacts(sequence, request_id, run_meta))
+    print(">>> Artifact manifest updated. Registering run outcomes.")
+
+    return {
+        "artifacts": artifacts,
+        "msa_result": fold_demo["msa"],
+        "fold_result": fold_demo["fold"],
+        "interpretation": (
+            "Local design demo completed deterministically. The lab generated a demo backbone, "
+            "designed a demo sequence, and folded it locally without calling hosted NVIDIA endpoints."
+        ),
+        "status": "DEMO",
+        "sequence": sequence,
+        "design_payload": {
+            "backbone_design": design_demo["design"],
+            "sequence_design": design_demo["sequence_design"],
+        },
+    }
+
+
+def execute_local_protein_fold(
+    sequence: str, request_id: str, run_id: str, display_name: str, created_at: str
+) -> dict[str, Any]:
+    print(">>> Initiating protein-folding workflow local simulation")
+    time.sleep(0.8)
+    print(">>> Launching MSA homology search via ColabFold NIM...")
+    time.sleep(1.2)
+    print(">>> Folding sequence via OpenFold3/OpenFold2...")
+    time.sleep(1.5)
+    demo = simulate_local_structure(sequence, request_id)
+    print(">>> Structural folding completed successfully!")
+    time.sleep(0.6)
+    print(">>> Writing local simulation artifacts...")
+    run_meta = {
+        "run_id": run_id,
+        "display_name": display_name,
+        "created_at": created_at,
+        "runtime_kind": "LOCAL",
+        "provenance": "DEMO",
+    }
+    artifacts = save_demo_artifacts(sequence, request_id, run_meta)
+    print(">>> Artifact manifest updated. Registering run outcomes.")
+
+    return {
+        "artifacts": artifacts,
+        "msa_result": demo["msa"],
+        "fold_result": demo["fold"],
+        "interpretation": (
+            "Local demo fallback completed. This path is deterministic but does not call the hosted NVIDIA endpoints."
+        ),
+        "status": "DEMO",
+        "sequence": sequence,
+        "design_payload": None,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run the BioNeMo AI scientist MVP.")
-    parser.add_argument("--goal", default="Fold a protein sequence and explain the confidence metrics.")
-    parser.add_argument("--workflow", choices=("auto", "protein-fold", "protein-complex", "protein-design", "dock-screen", "research-loop"), default="auto")
-    parser.add_argument("--runtime", choices=("auto", "local-demo", "hosted"), default="hosted")
+    parser.add_argument(
+        "--goal", default="Fold a protein sequence and explain the confidence metrics."
+    )
+    parser.add_argument(
+        "--workflow",
+        choices=(
+            "auto",
+            "protein-fold",
+            "protein-complex",
+            "protein-design",
+            "dock-screen",
+            "research-loop",
+        ),
+        default="auto",
+    )
+    parser.add_argument(
+        "--runtime", choices=("auto", "local-demo", "hosted"), default="hosted"
+    )
     parser.add_argument("--sequence", default="")
     parser.add_argument("--display-name", default="")
     args = parser.parse_args(argv)
@@ -749,22 +1105,28 @@ def main(argv: list[str] | None = None) -> int:
     runtime, runtime_reason = resolve_runtime(args.runtime)
     sequence = args.sequence.strip() or default_sequence(args.goal)
     request_id = deterministic_id(workflow, runtime, args.goal, sequence)
-    display_name = resolve_display_name(args.display_name, args.goal, sequence, workflow)
+    display_name = resolve_display_name(
+        args.display_name, args.goal, sequence, workflow
+    )
     run_id = deterministic_id("run", request_id, display_name, utc_now())
     created_at = utc_now()
     completed_at = None
     design_payload: dict[str, Any] | None = None
 
-    print(f">>> ===============================================")
+    print(">>> ===============================================")
     print(f">>> RUN MODE: {runtime.upper()} ({runtime_reason})")
-    print(f">>> ===============================================")
+    print(">>> ===============================================")
 
     if runtime == "hosted":
         if not resolve_key():
             print(">>> [FATAL CONFIG ERROR] NGC_API_KEY / NVIDIA_API_KEY not detected!")
-            print(">>> [HELP] To execute live NIM models, create a .env file with your key:")
+            print(
+                ">>> [HELP] To execute live NIM models, create a .env file with your key:"
+            )
             print(">>>        NGC_API_KEY=nvapi-xxxxxx...")
-            print(">>>        (Falling back to local-demo is recommended if no key is available)")
+            print(
+                ">>>        (Falling back to local-demo is recommended if no key is available)"
+            )
             return 1
 
     if workflow not in {"protein-fold", "protein-complex", "protein-design"}:
@@ -772,191 +1134,39 @@ def main(argv: list[str] | None = None) -> int:
         runtime_reason = f"{workflow} is not yet wired to a hosted pipeline"
 
     if runtime == "hosted" and workflow == "protein-design":
-        try:
-            print(">>> Initiating hosted protein-design workflow...")
-            print(">>> Requesting backbone design from RFDiffusion NIM...")
-            design_result = call_hosted_rfdiffusion(args.goal, request_id)
-            backbone_pdb = design_result["output_pdb"]
-            print(">>> RFDiffusion backbone generated successfully.")
-            
-            print(">>> Invoking ProteinMPNN NIM for sequence co-design...")
-            mpnn_result = call_hosted_proteinmpnn(backbone_pdb, request_id)
-            designed_sequence = ""
-            if mpnn_result.get("mfasta"):
-                lines = [line.strip() for line in mpnn_result["mfasta"].splitlines() if line.strip()]
-                sequence_lines = [line for line in lines if not line.startswith(">")]
-                designed_sequence = sequence_lines[0] if sequence_lines else ""
-            if not designed_sequence:
-                designed_sequence = default_sequence(args.goal)
-            print(f">>> Target sequence generated: {designed_sequence[:10]}...{designed_sequence[-10:]}")
-            
-            print(">>> Launching MSA homology search via ColabFold NIM...")
-            msa_result = call_hosted_msa_search(designed_sequence, request_id)
-            msa_alignment = msa_result["alignments"]["Uniref30_2302"]["a3m"]["alignment"]
-            
-            print(">>> Folding target sequence via OpenFold2 NIM...")
-            fold_result = call_hosted_openfold2(designed_sequence, msa_alignment, request_id)
-            print(">>> Structural folding completed successfully!")
-            
-            print(">>> Saving all designed protein artifacts locally...")
-            run_meta = {
-                "run_id": run_id,
-                "display_name": display_name,
-                "created_at": created_at,
-                "runtime_kind": "REAL",
-                "provenance": "JUST_RAN",
-            }
-            artifacts = save_hosted_design_artifacts(args.goal, design_result, mpnn_result, request_id, run_meta)
-            artifacts.extend(save_hosted_openfold2_artifacts(designed_sequence, msa_result, fold_result, request_id, run_meta))
-            design_payload = {
-                "backbone_design": design_result,
-                "sequence_design": mpnn_result,
-            }
-            interpretation = (
-                "Hosted protein design completed successfully. RFDiffusion generated a backbone, "
-                "ProteinMPNN proposed sequences, and the selected sequence was folded with hosted BioNeMo."
-            )
-            status = "PASS"
-            sequence = designed_sequence
-        except Exception as exc:
-            print(f">>> FATAL ERROR in hosted pipeline: {exc}")
-            design_result = {"error": type(exc).__name__, "message": str(exc), "endpoint": RFDIFFUSION_HOSTED_URL}
-            mpnn_result = {"error": type(exc).__name__, "message": str(exc), "endpoint": PROTEINMPNN_HOSTED_URL}
-            run_meta = {
-                "run_id": run_id,
-                "display_name": display_name,
-                "created_at": created_at,
-                "runtime_kind": "REAL",
-                "provenance": "JUST_RAN",
-            }
-            artifacts = save_hosted_failure_artifacts({"alignments": {"Uniref30_2302": {"a3m": {"alignment": ""}}}}, exc, request_id, run_meta)
-            interpretation = "Hosted protein design failed before completion. The error was captured for follow-up."
-            status = "PARTIAL"
-            msa_result = {"error": "design failed"}
-            fold_result = {"error": type(exc).__name__, "message": str(exc)}
-            design_payload = {
-                "backbone_design": design_result,
-                "sequence_design": mpnn_result,
-            }
+        res = execute_hosted_protein_design(
+            args.goal, request_id, run_id, display_name, created_at
+        )
     elif runtime == "hosted" and workflow in {"protein-fold", "protein-complex"}:
-        try:
-            print(">>> Initiating hosted protein-folding workflow...")
-            print(">>> Launching MSA homology search via ColabFold NIM...")
-            msa_result = call_hosted_msa_search(sequence, request_id)
-            msa_alignment = msa_result["alignments"]["Uniref30_2302"]["a3m"]["alignment"]
-            
-            print(">>> Folding sequence via OpenFold2 NIM...")
-            fold_result = call_hosted_openfold2(sequence, msa_alignment, request_id)
-            print(">>> Structural folding completed successfully!")
-            
-            print(">>> Saving folded protein artifacts locally...")
-            run_meta = {
-                "run_id": run_id,
-                "display_name": display_name,
-                "created_at": created_at,
-                "runtime_kind": "REAL",
-                "provenance": "JUST_RAN",
-            }
-            artifacts = save_hosted_openfold2_artifacts(sequence, msa_result, fold_result, request_id, run_meta)
-            interpretation = (
-                "Hosted BioNeMo pipeline completed successfully. The MSA Search output was "
-                "fed into OpenFold2 and the resulting endpoint artifacts were saved locally."
-            )
-            status = "PASS"
-        except Exception as exc:
-            print(f">>> FATAL ERROR in hosted folding: {exc}")
-            fold_result = {
-                "error": type(exc).__name__,
-                "message": str(exc),
-                "endpoint": OPENFOLD2_HOSTED_URL,
-            }
-            run_meta = {
-                "run_id": run_id,
-                "display_name": display_name,
-                "created_at": created_at,
-                "runtime_kind": "REAL",
-                "provenance": "JUST_RAN",
-            }
-            artifacts = save_hosted_failure_artifacts(msa_result, exc, request_id, run_meta)
-            interpretation = (
-                "Hosted MSA Search completed, but the hosted OpenFold2 endpoint returned an "
-                "internal error. The error body was captured for follow-up."
-            )
-            status = "PARTIAL"
+        res = execute_hosted_protein_fold(
+            sequence, request_id, run_id, display_name, created_at
+        )
     else:
         if workflow == "protein-design":
-            print(">>> Initiating protein-design workflow local simulation")
-            time.sleep(0.8)
-            print(">>> Invoking RFDiffusion NIM for backbone generation...")
-            time.sleep(1.2)
-            design_demo = simulate_local_design(args.goal, request_id)
-            print(">>> RFDiffusion backbone successfully generated (saved to design_pdb)")
-            time.sleep(0.8)
-            print(">>> Invoking ProteinMPNN NIM for sequence co-design...")
-            time.sleep(1.2)
-            sequence = design_demo["designed_sequence"]
-            print(f">>> Selected candidate sequence: {sequence[:10]}...{sequence[-10:]}")
-            time.sleep(0.8)
-            print(">>> Launching MSA homology search via ColabFold NIM...")
-            time.sleep(1.2)
-            print(">>> Folding candidate sequence via OpenFold3/OpenFold2...")
-            time.sleep(1.5)
-            fold_demo = simulate_local_structure(sequence, request_id)
-            print(">>> Structural folding completed successfully!")
-            time.sleep(0.6)
-            print(">>> Writing local simulation artifacts...")
-            run_meta = {
-                "run_id": run_id,
-                "display_name": display_name,
-                "created_at": created_at,
-                "runtime_kind": "LOCAL",
-                "provenance": "DEMO",
-            }
-            artifacts = save_demo_design_artifacts(args.goal, design_demo, request_id, run_meta)
-            artifacts.extend(save_demo_artifacts(sequence, request_id, run_meta))
-            print(">>> Artifact manifest updated. Registering run outcomes.")
-            msa_result = fold_demo["msa"]
-            fold_result = fold_demo["fold"]
-            design_payload = {
-                "backbone_design": design_demo["design"],
-                "sequence_design": design_demo["sequence_design"],
-            }
-            interpretation = (
-                "Local design demo completed deterministically. The lab generated a demo backbone, "
-                "designed a demo sequence, and folded it locally without calling hosted NVIDIA endpoints."
+            res = execute_local_protein_design(
+                args.goal, request_id, run_id, display_name, created_at
             )
-            status = "DEMO"
         else:
-            print(">>> Initiating protein-folding workflow local simulation")
-            time.sleep(0.8)
-            print(">>> Launching MSA homology search via ColabFold NIM...")
-            time.sleep(1.2)
-            print(">>> Folding sequence via OpenFold3/OpenFold2...")
-            time.sleep(1.5)
-            demo = simulate_local_structure(sequence, request_id)
-            print(">>> Structural folding completed successfully!")
-            time.sleep(0.6)
-            print(">>> Writing local simulation artifacts...")
-            run_meta = {
-                "run_id": run_id,
-                "display_name": display_name,
-                "created_at": created_at,
-                "runtime_kind": "LOCAL",
-                "provenance": "DEMO",
-            }
-            artifacts = save_demo_artifacts(sequence, request_id, run_meta)
-            print(">>> Artifact manifest updated. Registering run outcomes.")
-            msa_result = demo["msa"]
-            fold_result = demo["fold"]
-            interpretation = (
-                "Local demo fallback completed. This path is deterministic but does not call the hosted NVIDIA endpoints."
+            res = execute_local_protein_fold(
+                sequence, request_id, run_id, display_name, created_at
             )
-            status = "DEMO"
+
+    artifacts = res["artifacts"]
+    msa_result = res["msa_result"]
+    fold_result = res["fold_result"]
+    interpretation = res["interpretation"]
+    status = res["status"]
+    sequence = res["sequence"]
+    design_payload = res["design_payload"]
 
     selected_skill = (
         "rfdiffusion-nim -> proteinmpnn-nim -> msa-search-nim -> openfold2-nim"
         if workflow == "protein-design"
-        else ("msa-search-nim -> openfold2-nim" if workflow != "dock-screen" else "drug-discovery-pipeline")
+        else (
+            "msa-search-nim -> openfold2-nim"
+            if workflow != "dock-screen"
+            else "drug-discovery-pipeline"
+        )
     )
     completed_at = utc_now()
     summary = {
@@ -978,19 +1188,28 @@ def main(argv: list[str] | None = None) -> int:
             "sequence_length": "computed from input sequence",
             "estimated_molecular_weight": "computed from input sequence",
             "residue_composition": "computed from input sequence using heuristic residue buckets",
-            "confidence": "returned by NVIDIA OpenFold2" if runtime == "hosted" else "demo fallback",
-            "rmsd": "not computed by backend" if runtime == "hosted" else "demo fallback",
+            "confidence": "returned by NVIDIA OpenFold2"
+            if runtime == "hosted"
+            else "demo fallback",
+            "rmsd": "not computed by backend"
+            if runtime == "hosted"
+            else "demo fallback",
         },
         "selected_skill": selected_skill,
-        "artifacts": annotate_artifacts(artifacts, {
-            "run_id": run_id,
-            "display_name": display_name,
-            "created_at": created_at,
-            "completed_at": completed_at,
-            "runtime_kind": "REAL" if runtime == "hosted" else "LOCAL",
-            "provenance": "JUST_RAN" if runtime == "hosted" else "DEMO",
-        }),
-        "artifact_hash": hashlib.sha256((run_id + "|" + request_id + "|" + completed_at).encode("utf-8")).hexdigest(),
+        "artifacts": annotate_artifacts(
+            artifacts,
+            {
+                "run_id": run_id,
+                "display_name": display_name,
+                "created_at": created_at,
+                "completed_at": completed_at,
+                "runtime_kind": "REAL" if runtime == "hosted" else "LOCAL",
+                "provenance": "JUST_RAN" if runtime == "hosted" else "DEMO",
+            },
+        ),
+        "artifact_hash": hashlib.sha256(
+            (run_id + "|" + request_id + "|" + completed_at).encode("utf-8")
+        ).hexdigest(),
         "msa": msa_result,
         "fold": {**fold_result, **extract_fold_metrics(fold_result)},
         "interpretation": interpretation,
