@@ -846,10 +846,15 @@ def validate_omop_tables(
 def validate_omop_database(con: Any) -> tuple[OmopConstraintViolation, ...]:
     """Validate persisted OMOP tables using the same PHI-free violation shape."""
 
+    existing_tables = _database_tables(con)
     tables = {
         table: tuple(_select_all(con, table))
         for table in _TABLE_ORDER
-        if _table_exists(con, table)
+        if (
+            table in existing_tables
+            if existing_tables is not None
+            else _table_exists(con, table)
+        )
     }
     return validate_omop_tables(
         OmopCdmTables(
@@ -1181,9 +1186,14 @@ def _ordered_row(table: str, row: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _upsert_sql_tables(con: Any, tables: OmopCdmTables) -> None:
+    existing_tables = _database_tables(con)
     for table in _TABLE_ORDER:
         rows = tables.table(table)
         if not rows:
+            continue
+        if existing_tables is not None and table not in existing_tables:
+            continue
+        if existing_tables is None and not _table_exists(con, table):
             continue
         columns = _SCHEMA_COLUMNS[table]
         column_sql = ", ".join(_quote_identifier(column) for column in columns)
@@ -1235,6 +1245,21 @@ def _select_all(con: Any, table: str) -> list[dict[str, Any]]:
     column_sql = ", ".join(_quote_identifier(column) for column in columns)
     rows = con.execute(f"SELECT {column_sql} FROM {table}").fetchall()
     return [dict(zip(columns, row)) for row in rows]
+
+
+def _database_tables(con: Any) -> frozenset[str] | None:
+    # Only use fast path for supported in-memory or file-based DBs
+    # where sqlite_master is safe and does not poison transactions.
+    dialect = type(con).__module__.split(".")[0]
+    if dialect in {"sqlite3", "duckdb"}:
+        try:
+            rows = con.execute(
+                "SELECT name FROM sqlite_master WHERE type IN ('table', 'view')"
+            ).fetchall()
+            return frozenset(r[0] for r in rows)
+        except Exception:
+            return None
+    return None
 
 
 def _table_exists(con: Any, table: str) -> bool:
