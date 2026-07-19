@@ -116,3 +116,18 @@ def test_map_partitions_helper_requires_dataframe_target_columns():
 
     with pytest.raises(ValueError, match="target_columns is required"):
         map_partitions_deidentify(dask_frame)
+
+
+def test_clear_worker_pipeline_cache():
+    from openmed.integrations.dask_accessor import (
+        _PROCESS_BATCH_CACHE,
+        clear_worker_pipeline_cache,
+    )
+
+    _PROCESS_BATCH_CACHE["test_key"] = lambda x: x
+    assert "test_key" in _PROCESS_BATCH_CACHE
+
+    clear_worker_pipeline_cache()
+
+    assert len(_PROCESS_BATCH_CACHE) == 0
+    assert "test_key" not in _PROCESS_BATCH_CACHE
