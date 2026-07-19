@@ -29,6 +29,7 @@ dependencies = [
   "pysbd>=0.3.4,<0.4",
   "faker>=22.0",
   "pyyaml>=6.0",
+  "defusedxml>=0.7.1",
 ]
 
 authors = [
