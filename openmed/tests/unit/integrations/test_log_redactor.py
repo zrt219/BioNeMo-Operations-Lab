@@ -132,6 +132,47 @@ def test_embeddable_callable_batches_events_and_preserves_order(monkeypatch) -> 
     ]
 
 
+def test_ndjson_lines_yields_redacted_strings_and_preserves_order(
+    monkeypatch,
+) -> None:
+    calls: list[list[str]] = []
+
+    def fake_process_batch(texts: list[str], **kwargs: Any) -> SimpleNamespace:
+        calls.append(list(texts))
+        return _fake_batch_result(list(texts))
+
+    monkeypatch.setattr(log_redactor, "process_batch", fake_process_batch)
+    events = [
+        {"sequence": 1, "message": "Patient Jane Roe called 555-0100"},
+        {"sequence": 2, "message": "Heartbeat"},
+        {"sequence": 3, "message": "Escalated John Doe to triage"},
+    ]
+    # include a blank line to verify it gets skipped
+    lines = [json.dumps(event) for event in events[:2]] + ["  \n"] + [json.dumps(events[2])]
+
+    iterator = log_redactor.redact_ndjson_lines(
+        lines,
+        message_fields=("message",),
+        batch_size=2,
+        model_name="pii-model",
+        method="mask",
+        use_safety_sweep=False,
+    )
+
+    rows = [json.loads(line) for line in iterator]
+
+    assert len(rows) == 3
+    assert [row["sequence"] for row in rows] == [1, 2, 3]
+    assert rows[0]["message"] == "Patient [NAME] called [PHONE]"
+    assert rows[1]["message"] == "Heartbeat"
+    assert rows[2]["message"] == "Escalated [NAME] to triage"
+
+    assert calls == [
+        ["Patient Jane Roe called 555-0100", "Heartbeat"],
+        ["Escalated John Doe to triage"],
+    ]
+
+
 def test_cli_diagnostics_do_not_echo_malformed_raw_phi() -> None:
     stdin = io.StringIO('{"message":"Patient Jane Roe called"\n')
     stdout = io.StringIO()
