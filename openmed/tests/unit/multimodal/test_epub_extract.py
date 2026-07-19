@@ -227,3 +227,11 @@ def test_encrypted_epub_entries_raise(tmp_path: Path):
 
     with pytest.raises(UnsupportedDocumentError, match="Encrypted EPUB"):
         extract_epub(path)
+
+
+def test_epub_bad_zip_file_raises(tmp_path: Path):
+    path = tmp_path / "bad.epub"
+    path.write_bytes(b"This is not a zip file.")
+
+    with pytest.raises(UnsupportedDocumentError, match="EPUB must be a valid ZIP archive"):
+        extract_epub(path)
