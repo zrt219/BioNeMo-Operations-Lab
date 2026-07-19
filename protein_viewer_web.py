@@ -396,8 +396,7 @@ def detect_default_runtime() -> str:
     return "hosted" if any(os.getenv(name) for name in ("NGC_API_KEY", "NVIDIA_API_KEY")) else "relay"
 
 
-def run_scientist_job(goal: str, runtime: str, sequence: str, display_name: str) -> None:
-    run_id = uuid.uuid4().hex[:12]
+def _init_run_state(run_id: str, goal: str, runtime: str, sequence: str, display_name: str) -> None:
     with RUN_LOCK:
         RUN_STATE.update(
             {
@@ -423,6 +422,7 @@ def run_scientist_job(goal: str, runtime: str, sequence: str, display_name: str)
             }
         )
 
+def _run_intake_route_steps() -> None:
     steps = [
         ("intake", "Reading the goal and choosing the protein workflow."),
         ("route", "Selecting the BioNeMo capability path."),
@@ -431,104 +431,116 @@ def run_scientist_job(goal: str, runtime: str, sequence: str, display_name: str)
         ("finish", "Publishing the run summary to the lab panel."),
     ]
 
+    for step, message in steps[:2]:
+        with RUN_LOCK:
+            RUN_STATE["step"] = step
+            RUN_STATE["updated_at"] = now_ts()
+        push_event("step", message, {"step": step})
+        time.sleep(0.9)
+
+def _execute_cli_process(goal: str, runtime: str, sequence: str, display_name: str) -> tuple[int, list[str]]:
+    with RUN_LOCK:
+        RUN_STATE["step"] = "execute"
+    command = [sys.executable, "-u", "bionemo_scientist.py", "--runtime", runtime, "--goal", goal]
+    if sequence.strip():
+        command.extend(["--sequence", sequence.strip()])
+    if display_name.strip():
+        command.extend(["--display-name", display_name.strip()])
+    cmd_str = " ".join(command)
+    import re
+    cmd_str = re.sub(r'[A-Za-z]:\\[Uu]sers\\[^\\]+\\AppData\\Local\\Programs\\Python\\Python\d+\\python\.exe', 'python', cmd_str)
+    cmd_str = re.sub(r'[A-Za-z]:\\[Uu]sers\\[^\\]+', 'C:/Users/Guest', cmd_str)
+    cmd_str = re.sub(r'/Users/[^/]+', '/Users/guest', cmd_str)
+    push_event("run", "Launching the scientist process.", {"command": cmd_str})
+    proc = subprocess.Popen(
+        command,
+        cwd=str(ROOT),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        bufsize=1
+    )
+
+    stdout_lines = []
+    # Read lines in real-time as they are written by the subprocess
+    if proc.stdout is not None:
+        for line in proc.stdout:
+            stripped = line.rstrip("\r\n")
+            stdout_lines.append(stripped)
+            if stripped.startswith(">>>"):
+                # Live-stream clean status update to dashboard logs
+                push_event("log", stripped[3:].strip(), {"source": "cli"})
+
     try:
-        for step, message in steps[:2]:
-            with RUN_LOCK:
-                RUN_STATE["step"] = step
-                RUN_STATE["updated_at"] = now_ts()
-            push_event("step", message, {"step": step})
-            time.sleep(0.9)
+        returncode = proc.wait(timeout=120)
+    except subprocess.TimeoutExpired:
+        proc.terminate()
+        returncode = -1
+        push_event("error", "Scientist process timed out after 120 seconds.", {})
 
-        with RUN_LOCK:
-            RUN_STATE["step"] = "execute"
-        command = [sys.executable, "-u", "bionemo_scientist.py", "--runtime", runtime, "--goal", goal]
-        if sequence.strip():
-            command.extend(["--sequence", sequence.strip()])
-        if display_name.strip():
-            command.extend(["--display-name", display_name.strip()])
-        cmd_str = " ".join(command)
-        import re
-        cmd_str = re.sub(r'[A-Za-z]:\\[Uu]sers\\[^\\]+\\AppData\\Local\\Programs\\Python\\Python\d+\\python\.exe', 'python', cmd_str)
-        cmd_str = re.sub(r'[A-Za-z]:\\[Uu]sers\\[^\\]+', 'C:/Users/Guest', cmd_str)
-        cmd_str = re.sub(r'/Users/[^/]+', '/Users/guest', cmd_str)
-        push_event("run", "Launching the scientist process.", {"command": cmd_str})
-        proc = subprocess.Popen(
-            command,
-            cwd=str(ROOT),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            bufsize=1
-        )
-        
-        stdout_lines = []
-        # Read lines in real-time as they are written by the subprocess
-        if proc.stdout is not None:
-            for line in proc.stdout:
-                stripped = line.rstrip("\r\n")
-                stdout_lines.append(stripped)
-                if stripped.startswith(">>>"):
-                    # Live-stream clean status update to dashboard logs
-                    push_event("log", stripped[3:].strip(), {"source": "cli"})
+    push_event("process", "Scientist process completed.", {"returncode": returncode})
+    return returncode, stdout_lines
 
-        try:
-            returncode = proc.wait(timeout=120)
-        except subprocess.TimeoutExpired:
-            proc.terminate()
-            returncode = -1
-            push_event("error", "Scientist process timed out after 120 seconds.", {})
+def _finalize_run(returncode: int, runtime: str, sequence: str, stdout_lines: list[str]) -> None:
+    with RUN_LOCK:
+        RUN_STATE["step"] = "inspect"
+    time.sleep(0.7)
+    artifacts = latest_artifacts()
+    summary = read_json(SUMMARY_PATH)
+    push_event(
+        "done",
+        "Run complete. Latest artifacts are ready.",
+        {"artifact_count": len(artifacts), "status": "ready" if returncode == 0 else "error"},
+    )
+    with RUN_LOCK:
+        if summary.get("run_id"):
+            RUN_STATE["run_id"] = summary.get("run_id")
+        if summary.get("runtime"):
+            RUN_STATE["runtime"] = summary.get("runtime")
+        if summary.get("workflow"):
+            RUN_STATE["workflow"] = summary.get("workflow")
+    combined_trace = []
+    run_state_snapshot = snapshot_state()
+    combined_trace.extend(json.loads(json.dumps(run_state_snapshot.get("events", []))))
+    combined_trace.extend(summary.get("execution_trace", []))
+    write_manifest(
+        MANIFEST_PATH,
+        summary,
+        run_state_snapshot,
+        artifacts,
+        {
+            "verified": summary.get("runtime") == "hosted",
+            "source": "local relay -> NVIDIA" if summary.get("runtime") in {"hosted", "local-relay"} else "unavailable",
+            "runtime": summary.get("runtime", runtime),
+            "request_id": summary.get("request_id", ""),
+            "run_id": summary.get("run_id", ""),
+            "execution_trace": combined_trace,
+        },
+    )
+    with RUN_LOCK:
+        RUN_STATE["step"] = "finish"
+        RUN_STATE["status"] = "ready" if returncode == 0 else "error"
+        RUN_STATE["active"] = False
+        RUN_STATE["result"] = {
+            "returncode": returncode,
+            "runtime": runtime,
+            "sequence": sequence,
+            "stdout_tail": stdout_lines[-20:],
+            "stderr_tail": [],
+            "artifacts": artifacts,
+            "summary": summary,
+        }
 
-        push_event("process", "Scientist process completed.", {"returncode": returncode})
-        with RUN_LOCK:
-            RUN_STATE["step"] = "inspect"
-        time.sleep(0.7)
-        artifacts = latest_artifacts()
-        summary = read_json(SUMMARY_PATH)
-        push_event(
-            "done",
-            "Run complete. Latest artifacts are ready.",
-            {"artifact_count": len(artifacts), "status": "ready" if returncode == 0 else "error"},
-        )
-        with RUN_LOCK:
-            if summary.get("run_id"):
-                RUN_STATE["run_id"] = summary.get("run_id")
-            if summary.get("runtime"):
-                RUN_STATE["runtime"] = summary.get("runtime")
-            if summary.get("workflow"):
-                RUN_STATE["workflow"] = summary.get("workflow")
-        combined_trace = []
-        run_state_snapshot = snapshot_state()
-        combined_trace.extend(json.loads(json.dumps(run_state_snapshot.get("events", []))))
-        combined_trace.extend(summary.get("execution_trace", []))
-        write_manifest(
-            MANIFEST_PATH,
-            summary,
-            run_state_snapshot,
-            artifacts,
-            {
-                "verified": summary.get("runtime") == "hosted",
-                "source": "local relay -> NVIDIA" if summary.get("runtime") in {"hosted", "local-relay"} else "unavailable",
-                "runtime": summary.get("runtime", runtime),
-                "request_id": summary.get("request_id", ""),
-                "run_id": summary.get("run_id", ""),
-                "execution_trace": combined_trace,
-            },
-        )
-        with RUN_LOCK:
-            RUN_STATE["step"] = "finish"
-            RUN_STATE["status"] = "ready" if returncode == 0 else "error"
-            RUN_STATE["active"] = False
-            RUN_STATE["result"] = {
-                "returncode": returncode,
-                "runtime": runtime,
-                "sequence": sequence,
-                "stdout_tail": stdout_lines[-20:],
-                "stderr_tail": [],
-                "artifacts": artifacts,
-                "summary": summary,
-            }
+def run_scientist_job(goal: str, runtime: str, sequence: str, display_name: str) -> None:
+    run_id = uuid.uuid4().hex[:12]
+    _init_run_state(run_id, goal, runtime, sequence, display_name)
+
+    try:
+        _run_intake_route_steps()
+        returncode, stdout_lines = _execute_cli_process(goal, runtime, sequence, display_name)
+        _finalize_run(returncode, runtime, sequence, stdout_lines)
     except Exception as exc:
         with RUN_LOCK:
             RUN_STATE["status"] = "error"
