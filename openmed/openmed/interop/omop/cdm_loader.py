@@ -763,8 +763,11 @@ def write_omop_parquet(
 def create_omop_schema(con: Any) -> Any:
     """Create the minimal OMOP CDM table subset on a DB-API connection."""
 
-    for table in _TABLE_ORDER:
-        con.execute(_SQL_DDL[table])
+    script = ";\n".join(_SQL_DDL[table] for table in _TABLE_ORDER)
+    if hasattr(con, "executescript"):
+        con.executescript(script)
+    else:
+        con.execute(script)
     return con
 
 
