@@ -6,11 +6,13 @@ from pathlib import Path
 from typing import Any, Sequence
 
 import pytest
+from unittest.mock import patch, MagicMock
 
 from openmed.integrations.spark_streaming import (
     DEFAULT_BATCH_ID_COLUMN,
     SparkDeidentifyColumn,
     SparkDeidentifySink,
+    write_deidentified_stream,
     _coerce_columns,
     _redact_partition,
     _SparkPartitionConfig,
@@ -227,3 +229,38 @@ def test_structured_streaming_sink_redacts_rate_micro_batch_and_skips_replay(
     assert after_replay == before_replay
 
     spark.sql(f"DROP TABLE IF EXISTS {table}")
+
+
+@patch("openmed.integrations.spark_streaming.SparkDeidentifySink")
+def test_write_deidentified_stream(mock_sink_cls: Any) -> None:
+    mock_sink = mock_sink_cls.return_value
+    mock_sink.start.return_value = "query_result"
+
+    result = write_deidentified_stream(
+        streaming_df="mock_df",
+        target_table="my_table",
+        columns=["note"],
+        checkpoint_location="/path/to/checkpoint",
+        query_name="my_query",
+        output_mode="update",
+        trigger={"processingTime": "1 minute"},
+        options={"checkpointLocation": "/path/to/checkpoint"},
+        extra_sink_arg="extra_value"
+    )
+
+    mock_sink_cls.assert_called_once_with(
+        columns=["note"],
+        target_table="my_table",
+        checkpoint_location="/path/to/checkpoint",
+        extra_sink_arg="extra_value"
+    )
+
+    mock_sink.start.assert_called_once_with(
+        "mock_df",
+        query_name="my_query",
+        output_mode="update",
+        trigger={"processingTime": "1 minute"},
+        options={"checkpointLocation": "/path/to/checkpoint"}
+    )
+
+    assert result == "query_result"
