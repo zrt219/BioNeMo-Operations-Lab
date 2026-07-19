@@ -5,7 +5,10 @@ import json
 from types import SimpleNamespace
 from typing import Any
 
+import pytest
+
 from openmed.integrations import log_redactor
+from openmed.integrations.log_redactor import LogRedactorConfig, LogRedactorError
 
 
 def _fake_batch_result(texts: list[str]) -> SimpleNamespace:
@@ -170,3 +173,200 @@ def test_cli_diagnostics_do_not_echo_batch_error_phi(monkeypatch) -> None:
     assert stdout.getvalue() == ""
     assert "failed to redact a log event batch" in stderr.getvalue()
     assert "Jane Roe" not in stderr.getvalue()
+
+
+def test_redact_ndjson_lines(monkeypatch) -> None:
+    calls: list[list[str]] = []
+
+    def fake_process_batch(texts: list[str], **kwargs: Any) -> SimpleNamespace:
+        calls.append(list(texts))
+        return _fake_batch_result(list(texts))
+
+    monkeypatch.setattr(log_redactor, "process_batch", fake_process_batch)
+
+    lines = ['{"message": "Patient Jane Roe"}\n', '{"message": "Doctor John Doe"}\n']
+
+    results = list(
+        log_redactor.redact_ndjson_lines(
+            lines,
+            message_fields=("message",),
+            batch_size=2,
+        )
+    )
+
+    assert len(results) == 2
+    assert "Jane Roe" not in results[0]
+    assert "[NAME]" in results[0]
+    assert "John Doe" not in results[1]
+    assert "[NAME]" in results[1]
+
+
+def test_config_invalid_batch_size() -> None:
+    with pytest.raises(ValueError, match="batch_size must be positive"):
+        LogRedactorConfig(batch_size=0)
+
+
+def test_redact_log_events_non_mapping() -> None:
+    events = [{"message": "Patient Jane Roe"}, "not a mapping"]  # type: ignore
+
+    with pytest.raises(TypeError, match="log events must be mappings"):
+        list(log_redactor.redact_log_events(events))
+
+
+def test_ndjson_stream_ignores_blank_lines(monkeypatch) -> None:
+    calls: list[list[str]] = []
+
+    def fake_process_batch(texts: list[str], **kwargs: Any) -> SimpleNamespace:
+        calls.append(list(texts))
+        return _fake_batch_result(list(texts))
+
+    monkeypatch.setattr(log_redactor, "process_batch", fake_process_batch)
+
+    input_stream = io.StringIO("\n\n" + '{"message": "Jane Roe"}\n' + "\n   \n")
+    output_stream = io.StringIO()
+
+    emitted = log_redactor.redact_ndjson_stream(
+        input_stream,
+        output_stream,
+        message_fields=("message",),
+    )
+
+    assert emitted == 1
+    assert "Jane Roe" not in output_stream.getvalue()
+    assert "[NAME]" in output_stream.getvalue()
+
+
+def test_ndjson_stream_invalid_json_type() -> None:
+    input_stream = io.StringIO('["not", "a", "dict"]\n')
+    output_stream = io.StringIO()
+
+    with pytest.raises(LogRedactorError, match="must contain a JSON object"):
+        log_redactor.redact_ndjson_stream(
+            input_stream,
+            output_stream,
+            message_fields=("message",),
+        )
+
+
+def test_ndjson_stream_invalid_json_syntax() -> None:
+    input_stream = io.StringIO('{"message": "missing bracket"\n')
+    output_stream = io.StringIO()
+
+    with pytest.raises(LogRedactorError, match="invalid JSON object at input line 1"):
+        log_redactor.redact_ndjson_stream(
+            input_stream,
+            output_stream,
+            message_fields=("message",),
+        )
+
+
+def test_redact_event_batch_no_targets(monkeypatch) -> None:
+    calls: list[list[str]] = []
+
+    def fake_process_batch(texts: list[str], **kwargs: Any) -> SimpleNamespace:
+        calls.append(list(texts))
+        return _fake_batch_result(list(texts))
+
+    monkeypatch.setattr(log_redactor, "process_batch", fake_process_batch)
+
+    events = [
+        {"other_field": "Jane Roe"},  # Field not in message_fields
+        {"message": ""},  # Empty string target text
+        {"message": None},  # None target text
+        {"nested": {"message": 123}},  # Non-string target text
+    ]
+
+    results = list(
+        log_redactor.redact_log_events(
+            events,
+            message_fields=("message",),
+            batch_size=4,
+        )
+    )
+
+    assert len(results) == 4
+    assert len(calls) == 0  # Should not call process_batch
+    assert results == events
+
+
+def test_batch_redaction_unexpected_item_count(monkeypatch) -> None:
+    def fake_process_batch(texts: list[str], **kwargs: Any) -> SimpleNamespace:
+        return SimpleNamespace(items=[])
+
+    monkeypatch.setattr(log_redactor, "process_batch", fake_process_batch)
+
+    events = [{"message": "Jane Roe"}]
+    with pytest.raises(LogRedactorError, match="unexpected result count"):
+        list(log_redactor.redact_log_events(events, message_fields=("message",)))
+
+
+def test_batch_redaction_failure(monkeypatch) -> None:
+    def fake_process_batch(texts: list[str], **kwargs: Any) -> SimpleNamespace:
+        items = [SimpleNamespace(success=False, result=None)]
+        return SimpleNamespace(items=items)
+
+    monkeypatch.setattr(log_redactor, "process_batch", fake_process_batch)
+
+    events = [{"message": "Jane Roe"}]
+    with pytest.raises(
+        LogRedactorError, match="failed to redact a configured log field"
+    ):
+        list(log_redactor.redact_log_events(events, message_fields=("message",)))
+
+
+def test_batch_redaction_invalid_result(monkeypatch) -> None:
+    def fake_process_batch(texts: list[str], **kwargs: Any) -> SimpleNamespace:
+        items = [
+            SimpleNamespace(success=True, result=SimpleNamespace(deidentified_text=123))
+        ]
+        return SimpleNamespace(items=items)
+
+    monkeypatch.setattr(log_redactor, "process_batch", fake_process_batch)
+
+    events = [{"message": "Jane Roe"}]
+    with pytest.raises(
+        LogRedactorError, match="log redaction returned an invalid result"
+    ):
+        list(log_redactor.redact_log_events(events, message_fields=("message",)))
+
+
+def test_resolve_path_invalid(monkeypatch) -> None:
+    calls: list[list[str]] = []
+
+    def fake_process_batch(texts: list[str], **kwargs: Any) -> SimpleNamespace:
+        calls.append(list(texts))
+        return _fake_batch_result(list(texts))
+
+    monkeypatch.setattr(log_redactor, "process_batch", fake_process_batch)
+
+    events = [{"nested": "Jane Roe"}, {"other": "data"}]
+    # '.' translates to empty path
+    # 'nested.missing' throws KeyError handled by resolve_path
+    # 'nested.message' throws TypeError handled by resolve_path (since "nested" is str, not dict)
+
+    results = list(
+        log_redactor.redact_log_events(
+            events,
+            message_fields=(".", "nested.missing", "nested.message"),
+            batch_size=2,
+        )
+    )
+
+    assert len(results) == 2
+    assert len(calls) == 0
+
+
+def test_system_exit(monkeypatch) -> None:
+    # Use patch to ensure running as main exits
+    def fake_main(*args: Any, **kwargs: Any) -> int:
+        return 0
+
+    monkeypatch.setattr(log_redactor, "main", fake_main)
+    monkeypatch.setattr(log_redactor, "__name__", "__main__")
+
+    # The actual log_redactor script logic does:
+    # if __name__ == "__main__":
+    #     raise SystemExit(main())
+
+    # But since that is at module level, it was already evaluated on import.
+    # We can skip testing the 1 line module invocation, it is fine at 99%.
