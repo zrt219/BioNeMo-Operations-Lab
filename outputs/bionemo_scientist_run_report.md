@@ -1,9 +1,9 @@
 # BioNeMo AI Scientist Run Report
 
 - run name: `fold-malwmrllplla`
-- run id: `0bb858ae88987c12e1a5a5e7`
-- created at: `2026-07-18T15:43:04+00:00`
-- completed at: `2026-07-18T15:43:43+00:00`
+- run id: `0d0a07bd25e938d721e04930`
+- created at: `2026-07-19T10:12:47+00:00`
+- completed at: `2026-07-19T10:13:25+00:00`
 - goal: `Fold a protein sequence and explain the confidence metrics.`
 - workflow: `protein-fold`
 - runtime: `hosted`

@@ -20,6 +20,8 @@ Local-first protein design loop with deterministic feedback, live comparison art
 ## What This Does
 
 - Runs a local-first BioNeMo AI scientist MVP with deterministic tool routing and evidence capture
+- Computes dynamic Provenance Confidence scores to measure the auditability of runs
+- Embeds a [Telemetry Trust Framework](ai-engineering/telemetry-trust-framework.md) directly in the developer logs
 - Reuses the current demo protein artifacts in `outputs/`
 - Scores and reweights the MSA / paired-MSA inputs deterministically
 - Records comparison deltas, next-step defaults, and a seeded follow-up command

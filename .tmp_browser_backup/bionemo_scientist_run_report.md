@@ -1,7 +1,55 @@
+# BioNeMo AI Scientist Run Report
+
+- run name: `fold-malwmrllplla`
+- run id: `94c6e40f503d8ac8910c6753`
+- created at: `2026-07-18T13:26:12+00:00`
+- completed at: `2026-07-18T13:26:16+00:00`
+- goal: `Fold a protein sequence and explain the confidence metrics.`
+- workflow: `protein-fold`
+- runtime: `local-relay`
+- runtime kind: `LOCAL`
+- provider: `NVIDIA BioNeMo`
+- endpoint: `local-relay`
+- selected skill: `msa-search-nim -> openfold2-nim`
+- request id: `5c173b497f40c87378f0cf43`
+- sequence: `MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL`
+
+## Artifacts
+- msa_json: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_msa_search.json` (LOCAL_RELAY)
+- msa_a3m: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_msa_alignment.a3m` (LOCAL_RELAY)
+- fold_json: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold3_response.json` (LOCAL_RELAY)
+- fold_cif: `C:\Users\Zhane\Documents\New project\zrt-bionemo\outputs\bionemo_openfold3_structure.cif` (LOCAL_RELAY)
+
+## MSA Search
+```json
 {
+  "alignments": {
+    "Uniref30_2302": {
+      "a3m": {
+        "alignment": ">query\nMALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL\n",
+        "format": "a3m"
+      }
+    },
+    "colabfold_envdb_202108": {
+      "a3m": {
+        "alignment": ">query\nMALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL\n",
+        "format": "a3m"
+      }
+    }
+  },
+  "metrics": {
+    "mode": "relay"
+  }
+}
+```
+
+## Fold / Design
+```json
+{
+  "mean_plddt": 0.74,
   "outputs": [
     {
-      "input_id": "2be0ad8fe438145076d28861",
+      "input_id": "5c173b497f40c87378f0cf43",
       "runtime_metrics": {
         "mode": "relay"
       },
@@ -17,5 +65,25 @@
         }
       ]
     }
-  ]
+  ],
+  "ptm_score": 0.71
 }
+```
+
+## Metric Sources
+```json
+{
+  "confidence": "local relay telemetry",
+  "estimated_molecular_weight": "computed from input sequence",
+  "residue_composition": "computed from input sequence using heuristic residue buckets",
+  "rmsd": "local relay telemetry",
+  "sequence_length": "computed from input sequence"
+}
+```
+
+## Interpretation
+Local relay execution completed deterministically. The lab captured evidence for the NVIDIA-backed workflow path.
+
+## Caveats
+- Real hosted outputs are preserved as-is from NVIDIA endpoints.
+- Local relay mode is used only when evidence or credentials are unavailable.

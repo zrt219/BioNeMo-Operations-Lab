@@ -226,7 +226,7 @@ def annotate_artifacts(artifacts: list[RunArtifact], run_meta: dict[str, Any]) -
     return annotated
 
 
-def call_hosted_msa_search(sequence: str, request_id: str) -> dict[str, Any]:
+def call_hosted_msa_search(sequence: str, request_id: str, max_msa_sequences: int | None = None) -> dict[str, Any]:
     key = resolve_key()
     if not key:
         raise RuntimeError("hosted runtime requires NGC_API_KEY or NVIDIA_API_KEY")
@@ -236,7 +236,7 @@ def call_hosted_msa_search(sequence: str, request_id: str) -> dict[str, Any]:
         "databases": ["Uniref30_2302", "colabfold_envdb_202108"],
         "search_type": "colabfold",
         "iterations": 1,
-        "max_msa_sequences": 128,
+        "max_msa_sequences": max_msa_sequences if max_msa_sequences is not None else 128,
         "output_alignment_formats": ["a3m"],
     }
     response = requests.post(
@@ -356,7 +356,7 @@ def call_hosted_openfold3(sequence: str, msa_alignment: str, request_id: str) ->
     return response.json()
 
 
-def call_hosted_openfold2(sequence: str, msa_alignment: str, request_id: str) -> dict[str, Any]:
+def call_hosted_openfold2(sequence: str, msa_alignment: str, request_id: str, random_seed: int | None = None) -> dict[str, Any]:
     key = resolve_key()
     if not key:
         raise RuntimeError("hosted runtime requires NGC_API_KEY or NVIDIA_API_KEY")
@@ -375,6 +375,8 @@ def call_hosted_openfold2(sequence: str, msa_alignment: str, request_id: str) ->
         "relax_prediction": False,
         "use_templates": False,
     }
+    if random_seed is not None:
+        payload["random_seed"] = random_seed
     response = requests.post(
         OPENFOLD2_HOSTED_URL,
         headers={
@@ -743,11 +745,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--runtime", choices=("auto", "local-demo", "hosted"), default="hosted")
     parser.add_argument("--sequence", default="")
     parser.add_argument("--display-name", default="")
+    parser.add_argument("--random-seed", type=int, default=None)
+    parser.add_argument("--max-msa-sequences", type=int, default=None)
     args = parser.parse_args(argv)
 
     workflow = choose_workflow(args.goal, args.workflow)
     runtime, runtime_reason = resolve_runtime(args.runtime)
     sequence = args.sequence.strip() or default_sequence(args.goal)
+    if sequence:
+        import re
+        if len(sequence) > 1500:
+            raise ValueError(f"Sequence length is {len(sequence)}. Maximum supported length is 1500 amino acids.")
+        if not re.match(r'^[ACDEFGHIKLMNPQRSTVWY]+$', sequence.upper()):
+            raise ValueError("Invalid sequence. Only standard amino acid characters are allowed.")
+    
     request_id = deterministic_id(workflow, runtime, args.goal, sequence)
     display_name = resolve_display_name(args.display_name, args.goal, sequence, workflow)
     run_id = deterministic_id("run", request_id, display_name, utc_now())
@@ -791,11 +802,11 @@ def main(argv: list[str] | None = None) -> int:
             print(f">>> Target sequence generated: {designed_sequence[:10]}...{designed_sequence[-10:]}")
             
             print(">>> Launching MSA homology search via ColabFold NIM...")
-            msa_result = call_hosted_msa_search(designed_sequence, request_id)
+            msa_result = call_hosted_msa_search(designed_sequence, request_id, max_msa_sequences=args.max_msa_sequences)
             msa_alignment = msa_result["alignments"]["Uniref30_2302"]["a3m"]["alignment"]
             
             print(">>> Folding target sequence via OpenFold2 NIM...")
-            fold_result = call_hosted_openfold2(designed_sequence, msa_alignment, request_id)
+            fold_result = call_hosted_openfold2(designed_sequence, msa_alignment, request_id, random_seed=args.random_seed)
             print(">>> Structural folding completed successfully!")
             
             print(">>> Saving all designed protein artifacts locally...")
@@ -842,11 +853,11 @@ def main(argv: list[str] | None = None) -> int:
         try:
             print(">>> Initiating hosted protein-folding workflow...")
             print(">>> Launching MSA homology search via ColabFold NIM...")
-            msa_result = call_hosted_msa_search(sequence, request_id)
+            msa_result = call_hosted_msa_search(sequence, request_id, max_msa_sequences=args.max_msa_sequences)
             msa_alignment = msa_result["alignments"]["Uniref30_2302"]["a3m"]["alignment"]
             
             print(">>> Folding sequence via OpenFold2 NIM...")
-            fold_result = call_hosted_openfold2(sequence, msa_alignment, request_id)
+            fold_result = call_hosted_openfold2(sequence, msa_alignment, request_id, random_seed=args.random_seed)
             print(">>> Structural folding completed successfully!")
             
             print(">>> Saving folded protein artifacts locally...")

@@ -1,7 +1,7 @@
 {
-  "diversity_strength": 0.7104,
+  "diversity_strength": 0.7033,
   "model": "MOCK deterministic lineage-aware MSA weighting heuristic",
-  "msa_neff": 10.92725466443204,
+  "msa_neff": 10.922214130832225,
   "msa_rows": [
     {
       "column_information": 0.9267694169156581,
@@ -16,7 +16,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
       "support": 4.058868546482169,
-      "weight": 0.1500817760165945
+      "weight": 0.15027984737233785
     },
     {
       "column_information": 0.9174911614619914,
@@ -31,7 +31,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTVE",
       "support": 3.9700256902835656,
-      "weight": 0.09748464311270076
+      "weight": 0.09751082437464087
     },
     {
       "column_information": 0.9174911614619914,
@@ -46,7 +46,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTVE",
       "support": 3.9700256902835656,
-      "weight": 0.09748464311270076
+      "weight": 0.09751082437464087
     },
     {
       "column_information": 0.9174911614619914,
@@ -61,7 +61,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTAE",
       "support": 3.9692164924077264,
-      "weight": 0.0971022751712865
+      "weight": 0.0971274245356279
     },
     {
       "column_information": 0.9129275999261794,
@@ -76,7 +76,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPAIE",
       "support": 3.952228371237622,
-      "weight": 0.08941229018560587
+      "weight": 0.0894174870965038
     },
     {
       "column_information": 0.9129275999261794,
@@ -91,7 +91,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPKIE",
       "support": 3.952228371237622,
-      "weight": 0.08941229018560587
+      "weight": 0.0894174870965038
     },
     {
       "column_information": 0.8904641344349644,
@@ -106,7 +106,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPT--",
       "support": 3.9155133990944386,
-      "weight": 0.07480940155006023
+      "weight": 0.07478128259031293
     },
     {
       "column_information": 0.9103165402569894,
@@ -121,7 +121,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDKYDPTIE",
       "support": 3.904979922687758,
-      "weight": 0.07107853209004178
+      "weight": 0.07104296771476426
     },
     {
       "column_information": 0.9103165402569894,
@@ -136,7 +136,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVSEYDPTIE",
       "support": 3.8941691118769466,
-      "weight": 0.06744282483702141
+      "weight": 0.06740046446388735
     },
     {
       "column_information": 0.899742389888631,
@@ -151,7 +151,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHF-DEYDPTIE",
       "support": 3.8935989326730622,
-      "weight": 0.06725632021776151
+      "weight": 0.06721362389805065
     },
     {
       "column_information": 0.9103165402569894,
@@ -166,7 +166,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGAGKSALTIQLIQNHFVDEYDPTIE",
       "support": 3.8293042470120824,
-      "weight": 0.04921750176031046
+      "weight": 0.049148883241364814
     },
     {
       "column_information": 0.9103165402569894,
@@ -181,11 +181,11 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLVQNHFVDEYDPTIE",
       "support": 3.8293042470120824,
-      "weight": 0.04921750176031046
+      "weight": 0.049148883241364814
     }
   ],
   "neighbor_identity": 0.89,
-  "paired_neff": 10.706898051196486,
+  "paired_neff": 10.701161771501447,
   "paired_rows": [
     {
       "column_information": 0.9267694169156581,
@@ -200,7 +200,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
       "support": 4.058868546482169,
-      "weight": 0.13858221292149084
+      "weight": 0.13873421967048516
     },
     {
       "column_information": 0.9267694169156581,
@@ -215,7 +215,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
       "support": 4.058868546482169,
-      "weight": 0.13858221292149084
+      "weight": 0.13873421967048516
     },
     {
       "column_information": 0.9174911614619914,
@@ -230,7 +230,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTVE",
       "support": 3.9700706623884816,
-      "weight": 0.09003483958392994
+      "weight": 0.09003902153207907
     },
     {
       "column_information": 0.9174911614619914,
@@ -245,7 +245,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTVE",
       "support": 3.9700706623884816,
-      "weight": 0.09003483958392994
+      "weight": 0.09003902153207907
     },
     {
       "column_information": 0.9174911614619914,
@@ -260,7 +260,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTAE",
       "support": 3.9692614645126425,
-      "weight": 0.08968169230690222
+      "weight": 0.08968499984698232
     },
     {
       "column_information": 0.9129275999261794,
@@ -275,7 +275,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPAIE",
       "support": 3.952273343342538,
-      "weight": 0.08257937811175099
+      "weight": 0.0825658392046197
     },
     {
       "column_information": 0.9129275999261794,
@@ -290,7 +290,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPKIE",
       "support": 3.952273343342538,
-      "weight": 0.08257937811175099
+      "weight": 0.0825658392046197
     },
     {
       "column_information": 0.8904641344349644,
@@ -305,7 +305,7 @@
       "redundancy": 1.0,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPT--",
       "support": 3.9155133990944386,
-      "weight": 0.0690773569536747
+      "weight": 0.06903602224468845
     },
     {
       "column_information": 0.9103165402569894,
@@ -320,7 +320,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDKYDPTIE",
       "support": 3.905024894792674,
-      "weight": 0.0656466909068917
+      "weight": 0.06559927414003058
     },
     {
       "column_information": 0.9103165402569894,
@@ -335,7 +335,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVSEYDPTIE",
       "support": 3.894214083981862,
-      "weight": 0.062288825412924756
+      "weight": 0.062235879042720085
     },
     {
       "column_information": 0.9103165402569894,
@@ -350,7 +350,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGAGKSALTIQLIQNHFVDEYDPTIE",
       "support": 3.829349219116998,
-      "weight": 0.04545628659263155
+      "weight": 0.04538283195560539
     },
     {
       "column_information": 0.9103165402569894,
@@ -365,7 +365,7 @@
       "redundancy": 0.972972972972973,
       "sequence": "MTEYKLVVVGAGGVGKSALTIQLVQNHFVDEYDPTIE",
       "support": 3.829349219116998,
-      "weight": 0.04545628659263155
+      "weight": 0.04538283195560539
     }
   ],
   "query": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIE",
@@ -397,5 +397,5 @@
     "pair_04",
     "pair_03"
   ],
-  "temperature": 0.2059
+  "temperature": 0.2054
 }

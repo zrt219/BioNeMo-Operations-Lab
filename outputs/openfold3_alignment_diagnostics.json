@@ -7,13 +7,13 @@
   },
   "interpretation": "Scores describe deterministic alignment heuristics only. They are not evolutionary distances, structure confidence, or evidence of inheritance.",
   "msa": {
-    "effective_sequence_count": 10.92725466443204,
+    "effective_sequence_count": 10.922214130832225,
     "input_rows": 12,
     "mean_column_information": 0.9267694169156581,
     "selected_rows": 12
   },
   "paired_msa": {
-    "effective_sequence_count": 10.706898051196486,
+    "effective_sequence_count": 10.701161771501447,
     "input_rows": 12,
     "mean_column_information": 0.9267694169156581,
     "selected_rows": 12
