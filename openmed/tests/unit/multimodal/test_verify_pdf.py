@@ -364,3 +364,10 @@ def test_real_pdfplumber_end_to_end(tmp_path):
     # A "redacted" file identical to the original means nothing was applied.
     unchanged_report = verify_redacted_pdf(original, original, regions)
     assert not unchanged_report.passed
+
+def test_coerce_bbox_missing_key():
+    from openmed.multimodal.verify_pdf import _coerce_bbox
+
+    # Missing 'bottom'
+    bbox = {"x0": 0.0, "top": 10.0, "x1": 5.0}
+    assert _coerce_bbox(bbox) is None
