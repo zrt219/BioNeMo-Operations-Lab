@@ -98,10 +98,6 @@ def build_default_display_name(goal: str, sequence: str, workflow: str) -> str:
     return f"{focus}-{token}"
 
 
-def env_present(*names: str) -> bool:
-    return any(os.getenv(name) for name in names)
-
-
 def resolve_runtime(preferred: str) -> tuple[str, str]:
     if preferred != "auto":
         return preferred, "user override"
