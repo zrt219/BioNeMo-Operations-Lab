@@ -77,8 +77,28 @@ def count_vocab_entries(vocab_path: Path) -> int:
         pass
 
     import pickle
+
+    class RestrictedUnpickler(pickle.Unpickler):
+        SAFE_CLASSES = {
+            ("kermt.data.torchvocab", "MolVocab"),
+            ("kermt.data.torchvocab", "SMILESVocab"),
+            ("kermt.data.torchvocab", "Vocab"),
+            ("re", "_compile"),
+            ("re", "compile"),
+            ("re", "Pattern"),
+            ("collections", "OrderedDict"),
+            ("collections", "defaultdict"),
+            ("builtins", "set"),
+            ("builtins", "frozenset"),
+        }
+
+        def find_class(self, module: str, name: str) -> Any:
+            if (module, name) in self.SAFE_CLASSES:
+                return super().find_class(module, name)
+            raise pickle.UnpicklingError(f"Global '{module}.{name}' is forbidden")
+
     with vocab_path.open("rb") as f:
-        data = pickle.load(f)
+        data = RestrictedUnpickler(f).load()
     if hasattr(data, "stoi"):
         return len(data.stoi)
     if hasattr(data, "__len__"):
