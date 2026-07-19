@@ -226,6 +226,25 @@ def annotate_artifacts(artifacts: list[RunArtifact], run_meta: dict[str, Any]) -
     return annotated
 
 
+def _post_hosted(url: str, key: str, payload: dict[str, Any], timeout: int = 900) -> dict[str, Any]:
+    response = requests.post(
+        url,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {key}",
+        },
+        json=payload,
+        timeout=timeout,
+    )
+    if response.status_code >= 400:
+        raise requests.HTTPError(
+            f"{response.status_code} Server Error: {response.text[:500]}",
+            response=response,
+        )
+    response.raise_for_status()
+    return response.json()
+
+
 def call_hosted_msa_search(sequence: str, request_id: str) -> dict[str, Any]:
     key = resolve_key()
     if not key:
@@ -239,17 +258,7 @@ def call_hosted_msa_search(sequence: str, request_id: str) -> dict[str, Any]:
         "max_msa_sequences": 128,
         "output_alignment_formats": ["a3m"],
     }
-    response = requests.post(
-        MSA_SEARCH_HOSTED_URL,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {key}",
-        },
-        json=payload,
-        timeout=600,
-    )
-    response.raise_for_status()
-    return response.json()
+    return _post_hosted(MSA_SEARCH_HOSTED_URL, key, payload, timeout=600)
 
 
 def call_hosted_rfdiffusion(goal: str, request_id: str) -> dict[str, Any]:
@@ -261,22 +270,7 @@ def call_hosted_rfdiffusion(goal: str, request_id: str) -> dict[str, Any]:
         "contigs": "80-120",
         "diffusion_steps": 50,
     }
-    response = requests.post(
-        RFDIFFUSION_HOSTED_URL,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {key}",
-        },
-        json=payload,
-        timeout=900,
-    )
-    if response.status_code >= 400:
-        raise requests.HTTPError(
-            f"{response.status_code} Server Error: {response.text[:500]}",
-            response=response,
-        )
-    response.raise_for_status()
-    return response.json()
+    return _post_hosted(RFDIFFUSION_HOSTED_URL, key, payload, timeout=900)
 
 
 def call_hosted_proteinmpnn(backbone_pdb: str, request_id: str) -> dict[str, Any]:
@@ -290,22 +284,7 @@ def call_hosted_proteinmpnn(backbone_pdb: str, request_id: str) -> dict[str, Any
         "use_soluble_model": False,
         "ca_only": False,
     }
-    response = requests.post(
-        PROTEINMPNN_HOSTED_URL,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {key}",
-        },
-        json=payload,
-        timeout=900,
-    )
-    if response.status_code >= 400:
-        raise requests.HTTPError(
-            f"{response.status_code} Server Error: {response.text[:500]}",
-            response=response,
-        )
-    response.raise_for_status()
-    return response.json()
+    return _post_hosted(PROTEINMPNN_HOSTED_URL, key, payload, timeout=900)
 
 
 def call_hosted_openfold3(sequence: str, msa_alignment: str, request_id: str) -> dict[str, Any]:
@@ -338,22 +317,7 @@ def call_hosted_openfold3(sequence: str, msa_alignment: str, request_id: str) ->
             }
         ],
     }
-    response = requests.post(
-        OPENFOLD3_HOSTED_URL,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {key}",
-        },
-        json=payload,
-        timeout=900,
-    )
-    if response.status_code >= 400:
-        raise requests.HTTPError(
-            f"{response.status_code} Server Error: {response.text[:500]}",
-            response=response,
-        )
-    response.raise_for_status()
-    return response.json()
+    return _post_hosted(OPENFOLD3_HOSTED_URL, key, payload, timeout=900)
 
 
 def call_hosted_openfold2(sequence: str, msa_alignment: str, request_id: str) -> dict[str, Any]:
@@ -375,22 +339,7 @@ def call_hosted_openfold2(sequence: str, msa_alignment: str, request_id: str) ->
         "relax_prediction": False,
         "use_templates": False,
     }
-    response = requests.post(
-        OPENFOLD2_HOSTED_URL,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {key}",
-        },
-        json=payload,
-        timeout=900,
-    )
-    if response.status_code >= 400:
-        raise requests.HTTPError(
-            f"{response.status_code} Server Error: {response.text[:500]}",
-            response=response,
-        )
-    response.raise_for_status()
-    return response.json()
+    return _post_hosted(OPENFOLD2_HOSTED_URL, key, payload, timeout=900)
 
 
 def simulate_local_structure(sequence: str, request_id: str) -> dict[str, Any]:
