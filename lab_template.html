@@ -1428,12 +1428,13 @@
               <div class="hero-card">
                 <div class="hero-mark">?</div>
                 <h3>Execution Summary</h3>
-                <strong id="overviewVerdict">VERIFIED NVIDIA EXECUTION</strong>
-                <div class="hero-sub" id="overviewVerdictText">Hosted NVIDIA OpenFold2 completed through a live runtime with manifest-backed provenance.</div>
+                <strong id="overviewVerdict">${trust_verdict}</strong>
+                <div class="hero-sub" id="overviewVerdictText">${trust_explanation}</div>
+                <div class="hero-sub" style="color:var(--danger); margin-top:8px;">${trust_limitation}</div>
                 <div class="compact-summary">
                   <span class="trust-badge trust-runtime" id="overviewRuntimeBadge">Hosted NVIDIA OpenFold2</span>
                   <span class="trust-badge trust-latest" id="overviewCompletedBadge">Completed 1 minute ago</span>
-                  <span class="trust-badge trust-local" id="overviewEvidenceBadge">Evidence 22 / 22</span>
+                  <span class="trust-badge trust-local" id="overviewEvidenceBadge">Evidence: ${trust_evidence_count} checks</span>
                 </div>
                 <div class="status-chip-row" style="margin-top:14px;">
                   <a class="badge badge-link badge-glow" href="#trustPanel" data-shell-tab-jump="trust">View Verification</a>
@@ -1444,8 +1445,8 @@
               <div class="hero-vitals">
                 <div class="hero-mini"><span class="label">Run ID</span><span class="value" id="overviewRunId">Pending</span><span class="source">Current verified execution identifier.</span></div>
                 <div class="hero-mini"><span class="label">Request ID</span><span class="value" id="overviewRequestId">Pending</span><span class="source">Request tracked from the hosted run.</span></div>
-                <div class="hero-mini"><span class="label">Evidence</span><span class="value">22 / 22</span><span class="source">All required evidence fields captured.</span></div>
-                <div class="hero-mini"><span class="label">Trust Score</span><span class="value" id="overviewTrustScoreValue">100%</span><span class="source">Computed from runtime evidence.</span></div>
+                <div class="hero-mini"><span class="label">Evidence</span><span class="value" id="overviewEvidenceVitals">${trust_evidence_count} checks</span><span class="source">All required evidence fields captured.</span></div>
+                <div class="hero-mini"><span class="label">Trust Score</span><span class="value" id="overviewTrustScoreValue">${trust_score}/100</span><span class="source">Computed from runtime evidence.</span></div>
                 <div class="hero-mini" style="grid-column:1 / -1;">
                   <a class="overview-action" href="#trustPanel" data-shell-tab-jump="trust">View Full Verification ?</a>
                 </div>
@@ -1576,12 +1577,25 @@ RMSD: N/A</pre>
       <section class="dashboard-card anim-in tab-panel" data-shell-tab="trust" id="trustPanel" hidden>
         <div class="section-title"><div><h3>Trust &amp; Provenance</h3><strong>Evidence summary and traceability</strong></div></div>
         <div class="history-list">
-          <div class="history-row"><strong>Evidence Summary</strong><span id="trustVerdictSummary">EVIDENCE INCOMPLETE</span><span id="trustScoreValue">100%</span><span id="trustEvidenceCount">22 / 22</span></div>
+          <div class="history-row"><strong>Evidence Summary</strong><span id="trustVerdictSummary">${trust_verdict}</span><span id="trustScoreValue">${trust_score}/100</span><span id="trustEvidenceCount">${trust_evidence_count} checks</span></div>
           <div class="history-row"><strong>Provider / Runtime</strong><span id="trustProvider">NVIDIA BioNeMo</span><span id="trustLiveExecution">Executed Live</span><span id="trustEndpoint">NVIDIA Hosted</span></div>
           <div class="history-row"><strong>Identifiers</strong><span id="trustRunId">unknown</span><span id="trustRequestId">unknown</span><span id="trustArtifactHash">unknown</span></div>
-          <div class="history-row"><strong>Hashes</strong><span id="trustSignature">SHA-256 Verified</span><span id="trustWorkflowIntegrity">100%</span><span id="trustInputProvenance">Protein Sequence</span></div>
+          <div class="history-row"><strong>Hashes</strong><span id="trustSignature">Artifact SHA-256 Digest</span><span id="trustWorkflowIntegrity">100%</span><span id="trustInputProvenance">Protein Sequence</span></div>
           <div class="history-row"><strong>Trace / Manifest</strong><span id="trustRunTruth">Evidence</span><span id="trustEvidence">22 evidence fields</span><span>Audit Trail</span></div>
         </div>
+      </section>
+
+
+      <section class="dashboard-card anim-in">
+        <details class="trust-raw">
+          <summary style="cursor: pointer; font-weight: 600; padding: 10px 0; color: var(--accent);">Audit Record — Click to Inspect</summary>
+          <div style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+            <h4>Execution Record</h4>
+            <pre id="auditExecutionRecord" style="font-size: 11px; white-space: pre-wrap;">${run_state_json}</pre>
+            <h4 style="margin-top: 10px;">Raw Evidence JSON</h4>
+            <pre id="auditRawEvidence" style="font-size: 11px; white-space: pre-wrap;">${trust_json}</pre>
+          </div>
+        </details>
       </section>
 
       <section class="dashboard-card anim-in tab-panel" data-shell-tab="artifacts" hidden>
@@ -2014,10 +2028,25 @@ Notebook handoff</pre></div>
         var evidence = trust.evidence || {};
         var missing = trust.missing || [];
         var trustScore = Number.isFinite(trust.score) ? trust.score : 0;
-        var trustVerdictClass = trust.verified ? 'verified' : (trustScore >= 50 ? 'partial' : 'evidence');
-        var trustVerdictIcon = trust.verified ? '?' : (trustScore >= 50 ? '!' : '?');
+
+        var trustVerdictClass = 'evidence';
+        var trustVerdictIcon = '?';
+        if (trust.verdict === 'LIVE NVIDIA-HOSTED EXECUTION VERIFIED') {
+            trustVerdictClass = 'verified';
+            trustVerdictIcon = '✔';
+        } else if (trust.verdict === 'NVIDIA EXECUTION — PARTIAL PROVENANCE') {
+            trustVerdictClass = 'partial';
+            trustVerdictIcon = '!';
+        } else if (trust.verdict === 'EXECUTION VERIFICATION FAILED') {
+            trustVerdictClass = 'failed';
+            trustVerdictIcon = '❌';
+        } else {
+            trustVerdictClass = 'evidence'; // local
+            trustVerdictIcon = 'ℹ';
+        }
         var trustVerdictTitle = trust.verdict || 'EVIDENCE INCOMPLETE';
         var trustVerdictText = trust.explanation || 'The verdict depends on the manifest-backed runtime evidence.';
+
         var trustSummaryText = trust.verdict || 'EVIDENCE INCOMPLETE';
         var trustSummarySource = trust.source_of_truth || 'run-summary + artifact hashes + telemetry';
         var trustRunTruthSourceText = missing.length ? ('Missing: ' + missing.join(', ')) : 'All required evidence fields are present.';
@@ -2057,8 +2086,11 @@ Notebook handoff</pre></div>
         if (liveEl) liveEl.textContent = trust.verified ? 'Executed Live' : 'Evidence Missing';
         var liveSourceEl = document.getElementById('trustLiveExecutionSource');
         if (liveSourceEl) liveSourceEl.textContent = 'Timestamp evidence comes from the completed run record.';
+
+        document.getElementById('overviewEvidenceVitals').textContent = checks.passed + ' passed · ' + checks.warning + ' warning · ' + checks.failed + ' failed';
+
         var countEl = document.getElementById('trustEvidenceCount');
-        if (countEl) countEl.textContent = Object.keys(evidence).length + ' evidence fields';
+        if (countEl) countEl.textContent = checks.passed + ' passed · ' + checks.warning + ' warning · ' + checks.failed + ' failed';
         var countSourceEl = document.getElementById('trustEvidenceCountSource');
         if (countSourceEl) countSourceEl.textContent = missing.length ? ('Missing fields: ' + missing.join(', ')) : 'Required fields are present in the manifest.';
         var auditEl = document.getElementById('trustAuditReady');
@@ -2097,7 +2129,9 @@ Notebook handoff</pre></div>
         if (artifactHashEl) artifactHashEl.textContent = summary.artifact_hash || 'unknown';
         var artifactHashSourceEl = document.getElementById('trustArtifactHashSource');
         if (artifactHashSourceEl) artifactHashSourceEl.textContent = trustArtifactHashSourceText;
-        document.getElementById('trustScoreValue').textContent = trustScore + '%';
+
+        document.getElementById('trustScoreValue').textContent = trustScore + '/100';
+
         document.getElementById('trustScoreFill').style.width = trustScore + '%';
         document.getElementById('trustScoreNote').textContent = trustScoreNoteText;
         document.getElementById('trustRunTruth').textContent = trust.verdict || 'EVIDENCE INCOMPLETE';
