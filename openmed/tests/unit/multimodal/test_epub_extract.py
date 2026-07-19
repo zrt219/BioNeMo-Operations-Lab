@@ -227,3 +227,11 @@ def test_encrypted_epub_entries_raise(tmp_path: Path):
 
     with pytest.raises(UnsupportedDocumentError, match="Encrypted EPUB"):
         extract_epub(path)
+
+def test_epub_missing_required_file_raises_unsupported(tmp_path: Path):
+    path = tmp_path / "missing_container.epub"
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr("mimetype", "application/epub+zip")
+
+    with pytest.raises(UnsupportedDocumentError, match="EPUB archive is missing META-INF/container.xml"):
+        extract_epub(path)
