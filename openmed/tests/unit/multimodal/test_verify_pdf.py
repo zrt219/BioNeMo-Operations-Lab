@@ -364,3 +364,28 @@ def test_real_pdfplumber_end_to_end(tmp_path):
     # A "redacted" file identical to the original means nothing was applied.
     unchanged_report = verify_redacted_pdf(original, original, regions)
     assert not unchanged_report.passed
+
+def test_missing_file_for_rasterizer_raises_error(monkeypatch):
+    import openmed.multimodal.verify_pdf as verify_pdf
+
+    class FakePage:
+        page_number = 1
+        bbox = (0, 0, 100, 100)
+        def extract_words(self, *args, **kwargs): return []
+        def extract_text(self, *args, **kwargs): return ""
+        @property
+        def rects(self): return []
+        @property
+        def curves(self): return []
+
+    def fake_read_pdf_layout(path):
+        return {1: FakePage()}
+
+    monkeypatch.setattr(verify_pdf, "_read_pdf_layout", fake_read_pdf_layout)
+
+    with pytest.raises(FileNotFoundError, match="Could not read a PDF for visual verification of"):
+        verify_redacted_pdf(
+            "original_nonexistent.pdf",
+            "redacted_nonexistent.pdf",
+            [{"page": 0, "bbox": (0, 0, 10, 10)}]
+        )
