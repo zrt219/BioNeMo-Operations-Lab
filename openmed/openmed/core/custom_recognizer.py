@@ -368,6 +368,7 @@ def _parse_rules(
 ) -> tuple[_CompiledRule, ...]:
     entries = _expand_entries(values, require_label=require_label)
     rules = []
+    _compiled: dict[tuple[str, int], re.Pattern[str]] = {}
     for index, (entry, default_label) in enumerate(entries):
         raw_value, label, entry_case_sensitive, confidence, rule_id = _parse_entry(
             entry,
@@ -379,12 +380,15 @@ def _parse_rules(
         )
         pattern = re.escape(raw_value) if kind.endswith("_term") else raw_value
         flags = 0 if entry_case_sensitive else re.IGNORECASE
+        cache_key = (pattern, flags)
+        if cache_key not in _compiled:
+            _compiled[cache_key] = re.compile(pattern, flags)
         rules.append(
             _CompiledRule(
                 kind=kind,
                 label=label,
                 rule_id=rule_id,
-                pattern=re.compile(pattern, flags),
+                pattern=_compiled[cache_key],
                 confidence=confidence,
             )
         )
