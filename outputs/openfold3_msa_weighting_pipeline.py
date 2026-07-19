@@ -544,6 +544,49 @@ def build_registry_entry(
     }
 
 
+def _calculate_deltas(latest: dict, comparison: dict) -> dict:
+    def diff(field: str) -> float:
+        return round(latest.get(field, 0.0) - comparison.get(field, 0.0), 6)
+
+    return {
+        "temperature_delta": diff("temperature"),
+        "neighbor_identity_delta": diff("neighbor_identity"),
+        "diversity_strength_delta": diff("diversity_strength"),
+        "msa_neff_delta": diff("msa_neff"),
+        "paired_neff_delta": diff("paired_neff"),
+    }
+
+
+def _calculate_next_defaults(latest_run: dict, best_run: dict, latest_vs_previous: dict) -> dict:
+    current_temp = latest_run.get("temperature", 0.35)
+    current_neighbor = latest_run.get("neighbor_identity", 0.95)
+    current_diversity = latest_run.get("diversity_strength", 0.45)
+    msa_delta = latest_vs_previous.get("msa_neff_delta", 0.0)
+    paired_delta = latest_vs_previous.get("paired_neff_delta", 0.0)
+    strength_signal = msa_delta + paired_delta
+
+    if strength_signal > 0:
+        return {
+            "temperature": round(max(0.15, current_temp * 0.95), 4),
+            "neighbor_identity": round(min(0.99, current_neighbor + 0.01), 4),
+            "diversity_strength": round(max(0.05, current_diversity * 0.9), 4),
+            "rule": "exploit-neff",
+        }
+    if strength_signal < 0:
+        return {
+            "temperature": round(min(0.8, current_temp * 1.05), 4),
+            "neighbor_identity": round(max(0.5, current_neighbor - 0.01), 4),
+            "diversity_strength": round(min(1.0, current_diversity * 1.1), 4),
+            "rule": "expand-diversity",
+        }
+    return {
+        "temperature": round(max(0.15, min(0.8, (current_temp + best_run.get("temperature", current_temp)) / 2.0)), 4),
+        "neighbor_identity": round(max(0.5, min(0.99, (current_neighbor + best_run.get("neighbor_identity", current_neighbor)) / 2.0)), 4),
+        "diversity_strength": round(max(0.05, min(1.0, (current_diversity + best_run.get("diversity_strength", current_diversity)) / 2.0)), 4),
+        "rule": "blend-best-and-latest",
+    }
+
+
 def build_comparison_report(
     latest_run: dict,
     previous_run: dict | None,
@@ -555,54 +598,11 @@ def build_comparison_report(
     if best_run is None:
         best_run = latest_run
 
-    def diff(field: str) -> float:
-        return round(latest_run.get(field, 0.0) - previous_run.get(field, 0.0), 6)
+    latest_vs_previous = _calculate_deltas(latest_run, previous_run)
+    latest_vs_previous["msa_top_header"] = latest_run.get("msa_top_header")
+    latest_vs_previous["paired_top_key"] = latest_run.get("paired_top_key")
 
-    latest_vs_previous = {
-        "temperature_delta": diff("temperature"),
-        "neighbor_identity_delta": diff("neighbor_identity"),
-        "diversity_strength_delta": diff("diversity_strength"),
-        "msa_neff_delta": diff("msa_neff"),
-        "paired_neff_delta": diff("paired_neff"),
-        "msa_top_header": latest_run.get("msa_top_header"),
-        "paired_top_key": latest_run.get("paired_top_key"),
-    }
-    latest_vs_best = {
-        "temperature_delta": round(latest_run.get("temperature", 0.0) - best_run.get("temperature", 0.0), 6),
-        "neighbor_identity_delta": round(latest_run.get("neighbor_identity", 0.0) - best_run.get("neighbor_identity", 0.0), 6),
-        "diversity_strength_delta": round(latest_run.get("diversity_strength", 0.0) - best_run.get("diversity_strength", 0.0), 6),
-        "msa_neff_delta": round(latest_run.get("msa_neff", 0.0) - best_run.get("msa_neff", 0.0), 6),
-        "paired_neff_delta": round(latest_run.get("paired_neff", 0.0) - best_run.get("paired_neff", 0.0), 6),
-    }
-
-    def next_defaults() -> dict:
-        current_temp = latest_run.get("temperature", 0.35)
-        current_neighbor = latest_run.get("neighbor_identity", 0.95)
-        current_diversity = latest_run.get("diversity_strength", 0.45)
-        msa_delta = latest_vs_previous["msa_neff_delta"]
-        paired_delta = latest_vs_previous["paired_neff_delta"]
-        strength_signal = msa_delta + paired_delta
-
-        if strength_signal > 0:
-            return {
-                "temperature": round(max(0.15, current_temp * 0.95), 4),
-                "neighbor_identity": round(min(0.99, current_neighbor + 0.01), 4),
-                "diversity_strength": round(max(0.05, current_diversity * 0.9), 4),
-                "rule": "exploit-neff",
-            }
-        if strength_signal < 0:
-            return {
-                "temperature": round(min(0.8, current_temp * 1.05), 4),
-                "neighbor_identity": round(max(0.5, current_neighbor - 0.01), 4),
-                "diversity_strength": round(min(1.0, current_diversity * 1.1), 4),
-                "rule": "expand-diversity",
-            }
-        return {
-            "temperature": round(max(0.15, min(0.8, (current_temp + best_run.get("temperature", current_temp)) / 2.0)), 4),
-            "neighbor_identity": round(max(0.5, min(0.99, (current_neighbor + best_run.get("neighbor_identity", current_neighbor)) / 2.0)), 4),
-            "diversity_strength": round(max(0.05, min(1.0, (current_diversity + best_run.get("diversity_strength", current_diversity)) / 2.0)), 4),
-            "rule": "blend-best-and-latest",
-        }
+    latest_vs_best = _calculate_deltas(latest_run, best_run)
 
     report = {
         "status": "MOCK / DEMO",
@@ -617,7 +617,7 @@ def build_comparison_report(
             "msa_top_header": best_run.get("msa_top_header"),
             "paired_top_key": best_run.get("paired_top_key"),
         },
-        "next_heuristic_defaults": next_defaults(),
+        "next_heuristic_defaults": _calculate_next_defaults(latest_run, best_run, latest_vs_previous),
         "heuristic_update_rule": latest_run.get("heuristic_update_rule", {}),
         "interpretation": (
             "Positive neff deltas suggest broader local support; negative deltas suggest "
