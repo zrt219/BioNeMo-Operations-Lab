@@ -227,3 +227,235 @@ def test_structured_streaming_sink_redacts_rate_micro_batch_and_skips_replay(
     assert after_replay == before_replay
 
     spark.sql(f"DROP TABLE IF EXISTS {table}")
+
+def test_deidentify_write_stream_builder() -> None:
+    from unittest.mock import MagicMock
+    from openmed.integrations.spark_streaming import deidentify_write_stream, SparkDeidentifyStreamBuilder
+
+    mock_df = MagicMock()
+    builder = deidentify_write_stream(mock_df).columns(["note"]).target_table("my_table")
+
+    assert isinstance(builder, SparkDeidentifyStreamBuilder)
+    assert builder._streaming_df is mock_df
+
+    # Test fluent methods
+    builder = (
+        builder.columns(["note"])
+        .target_table("my_table")
+        .checkpoint("/tmp/checkpoint")
+        .model_name("my_model")
+        .batch_size(10)
+        .batch_id_column("my_batch_id")
+        .format("delta")
+        .write_option("mergeSchema", "true")
+        .partition_by("date")
+        .skip_existing_batches(False)
+        .deidentifier_factory(None)
+        .writer(None)
+        .deidentify_option("use_safety_sweep", False)
+        .query_name("my_query")
+        .output_mode("update")
+        .trigger(processingTime="1 minute")
+        .stream_option("maxFilesPerTrigger", 10)
+    )
+
+    assert builder._columns == ("note",)
+    assert builder._target_table == "my_table"
+    assert builder._checkpoint_location == "/tmp/checkpoint"
+    assert builder._model_name == "my_model"
+    assert builder._batch_size == 10
+    assert builder._batch_id_column == "my_batch_id"
+    assert builder._output_format == "delta"
+    assert builder._write_options == {"mergeSchema": "true"}
+    assert builder._partition_by == ("date",)
+    assert builder._skip_existing_batches is False
+    assert builder._deidentifier_factory is None
+    assert builder._writer is None
+    assert builder._deidentify_kwargs == {"use_safety_sweep": False}
+    assert builder._query_name == "my_query"
+    assert builder._output_mode == "update"
+    assert builder._trigger == {"processingTime": "1 minute"}
+    assert builder._stream_options == {"maxFilesPerTrigger": 10}
+
+    # Test sink() method
+    sink = builder.sink()
+    assert sink.target_table == "my_table"
+    assert sink.checkpoint_location == "/tmp/checkpoint"
+
+def test_write_deidentified_stream(monkeypatch: Any) -> None:
+    from unittest.mock import MagicMock
+    from openmed.integrations.spark_streaming import write_deidentified_stream
+
+    mock_start = MagicMock(return_value="query")
+    monkeypatch.setattr("openmed.integrations.spark_streaming.SparkDeidentifySink.start", mock_start)
+
+    mock_df = MagicMock()
+    query = write_deidentified_stream(
+        streaming_df=mock_df,
+        target_table="my_table",
+        columns=["note"],
+        checkpoint_location="/tmp/checkpoint",
+        query_name="my_query",
+        output_mode="update",
+        trigger={"processingTime": "1 minute"},
+        options={"maxFilesPerTrigger": 10},
+        model_name="my_model",
+        batch_size=10,
+    )
+
+    assert query == "query"
+    mock_start.assert_called_once_with(
+        mock_df,
+        query_name="my_query",
+        output_mode="update",
+        trigger={"processingTime": "1 minute"},
+        options={"maxFilesPerTrigger": 10},
+    )
+
+
+def test_deidentify_write_stream_builder_start(monkeypatch: Any) -> None:
+    from unittest.mock import MagicMock
+    from openmed.integrations.spark_streaming import deidentify_write_stream
+
+    mock_start = MagicMock(return_value="query")
+    monkeypatch.setattr("openmed.integrations.spark_streaming.SparkDeidentifySink.start", mock_start)
+
+    mock_df = MagicMock()
+    builder = deidentify_write_stream(mock_df).columns(["note"]).target_table("my_table")
+    query = (
+        builder.columns(["note"])
+        .target_table("my_table")
+        .checkpoint("/tmp/checkpoint")
+        .query_name("my_query")
+        .output_mode("update")
+        .trigger(processingTime="1 minute")
+        .stream_option("maxFilesPerTrigger", 10)
+        .start()
+    )
+
+    assert query == "query"
+    mock_start.assert_called_once_with(
+        mock_df,
+        query_name="my_query",
+        output_mode="update",
+        trigger={"processingTime": "1 minute"},
+        options={"maxFilesPerTrigger": 10},
+    )
+
+def test_deidentify_write_stream_builder_columns_list() -> None:
+    from openmed.integrations.spark_streaming import deidentify_write_stream
+    from unittest.mock import MagicMock
+    mock_df = MagicMock()
+    builder = deidentify_write_stream(mock_df).columns(["note"]).target_table("my_table")
+
+    # Test setting columns to a sequence of strings that is not wrapped in another sequence
+    builder.columns(["note", "comment"])
+    assert builder._columns == ("note", "comment")
+
+
+def test_deidentify_write_stream_builder_columns_nested_sequence() -> None:
+    from openmed.integrations.spark_streaming import deidentify_write_stream, SparkDeidentifyColumn
+    from unittest.mock import MagicMock
+    mock_df = MagicMock()
+    builder = deidentify_write_stream(mock_df).columns(["note"]).target_table("my_table")
+
+    # Test setting columns to a sequence that should trigger the inner block
+    # According to `spark_streaming.py:347` self._columns = tuple(columns[0])
+    # happens when len == 1, isinstance(columns[0], Sequence) and not isinstance(...)
+    builder.columns(["note"])
+    assert builder._columns == ("note",)
+
+
+def test_deidentify_write_stream_builder_columns_multiple() -> None:
+    from openmed.integrations.spark_streaming import deidentify_write_stream
+    from unittest.mock import MagicMock
+    mock_df = MagicMock()
+    builder = deidentify_write_stream(mock_df).columns(["note"]).target_table("my_table")
+
+    # Test setting columns with a single string, which will fall to the else branch
+    builder.columns("note")
+    assert builder._columns == ("note",)
+
+
+def test_write_deidentified_stream_no_optional(monkeypatch: Any) -> None:
+    from unittest.mock import MagicMock
+    from openmed.integrations.spark_streaming import write_deidentified_stream
+
+    mock_start = MagicMock(return_value="query_minimal")
+    monkeypatch.setattr("openmed.integrations.spark_streaming.SparkDeidentifySink.start", mock_start)
+
+    mock_df = MagicMock()
+    query = write_deidentified_stream(
+        streaming_df=mock_df,
+        target_table="my_table",
+        columns=["note"],
+        checkpoint_location="/tmp/checkpoint",
+    )
+
+    assert query == "query_minimal"
+    mock_start.assert_called_once_with(
+        mock_df,
+        query_name=None,
+        output_mode="append",
+        trigger=None,
+        options=None,
+    )
+
+def test_deidentify_write_stream_builder_start_empty(monkeypatch: Any) -> None:
+    from unittest.mock import MagicMock
+    from openmed.integrations.spark_streaming import deidentify_write_stream
+
+    mock_start = MagicMock(return_value="query_empty")
+    monkeypatch.setattr("openmed.integrations.spark_streaming.SparkDeidentifySink.start", mock_start)
+
+    mock_df = MagicMock()
+    builder = deidentify_write_stream(mock_df).columns(["note"]).target_table("my_table")
+    query = builder.start()
+
+    assert query == "query_empty"
+    mock_start.assert_called_once_with(
+        mock_df,
+        query_name=None,
+        output_mode="append",
+        trigger=None,
+        options={},
+    )
+
+def test_deidentify_write_stream_builder_start_with_all_options(monkeypatch: Any) -> None:
+    from unittest.mock import MagicMock
+    from openmed.integrations.spark_streaming import deidentify_write_stream
+
+    mock_start = MagicMock(return_value="query_all")
+    monkeypatch.setattr("openmed.integrations.spark_streaming.SparkDeidentifySink.start", mock_start)
+
+    mock_df = MagicMock()
+    builder = deidentify_write_stream(mock_df)
+    query = (
+        builder.columns(["note"])
+        .target_table("my_table")
+        .checkpoint("/tmp/checkpoint")
+        .model_name("my_model")
+        .batch_size(10)
+        .batch_id_column("my_batch_id")
+        .format("delta")
+        .write_option("mergeSchema", "true")
+        .partition_by("date")
+        .skip_existing_batches(False)
+        .deidentifier_factory(None)
+        .writer(None)
+        .deidentify_option("use_safety_sweep", False)
+        .query_name("my_query")
+        .output_mode("update")
+        .trigger(processingTime="1 minute")
+        .stream_option("maxFilesPerTrigger", 10)
+        .start()
+    )
+
+    assert query == "query_all"
+    mock_start.assert_called_once_with(
+        mock_df,
+        query_name="my_query",
+        output_mode="update",
+        trigger={"processingTime": "1 minute"},
+        options={"maxFilesPerTrigger": 10},
+    )
