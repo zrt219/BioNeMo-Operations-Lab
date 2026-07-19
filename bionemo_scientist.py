@@ -50,6 +50,16 @@ class RunArtifact:
     label: str
 
 
+def write_artifact(name: str, filename: str, content: Any, label: str, is_json: bool = False) -> RunArtifact:
+    OUTPUTS.mkdir(parents=True, exist_ok=True)
+    file_path = OUTPUTS / filename
+    if is_json:
+        write_json(file_path, content)
+    else:
+        write_text(file_path, content)
+    return RunArtifact(name, str(file_path), label)
+
+
 def load_repo_env() -> None:
     env_path = ROOT / ".env"
     if not env_path.exists():
@@ -477,43 +487,26 @@ def save_hosted_artifacts(sequence: str, msa_result: dict[str, Any], fold_result
         "msa_result": msa_result,
         "fold_result": fold_result,
     }
-    OUTPUTS.mkdir(parents=True, exist_ok=True)
-    msa_json = OUTPUTS / "bionemo_msa_search.json"
-    msa_a3m = OUTPUTS / "bionemo_msa_alignment.a3m"
-    fold_json = OUTPUTS / "bionemo_openfold3_response.json"
-    fold_cif = OUTPUTS / "bionemo_openfold3_structure.cif"
-    write_json(msa_json, msa_result)
-    write_text(msa_a3m, msa_primary)
-    write_json(fold_json, fold_result)
     structure = fold_result["outputs"][0]["structures_with_scores"][0]["structure"]
-    write_text(fold_cif, structure)
+    OUTPUTS.mkdir(parents=True, exist_ok=True)
     write_json(OUTPUTS / "bionemo_scientist_artifacts.json", {**msa_all, "run": run_meta})
     return [
-        RunArtifact("msa_json", str(msa_json), "REAL"),
-        RunArtifact("msa_a3m", str(msa_a3m), "REAL"),
-        RunArtifact("fold_json", str(fold_json), "REAL"),
-        RunArtifact("fold_cif", str(fold_cif), "REAL"),
+        write_artifact("msa_json", "bionemo_msa_search.json", msa_result, "REAL", is_json=True),
+        write_artifact("msa_a3m", "bionemo_msa_alignment.a3m", msa_primary, "REAL"),
+        write_artifact("fold_json", "bionemo_openfold3_response.json", fold_result, "REAL", is_json=True),
+        write_artifact("fold_cif", "bionemo_openfold3_structure.cif", structure, "REAL"),
     ]
 
 
 def save_hosted_failure_artifacts(msa_result: dict[str, Any], error: Exception, request_id: str, run_meta: dict[str, Any]) -> list[RunArtifact]:
     OUTPUTS.mkdir(parents=True, exist_ok=True)
-    msa_json = OUTPUTS / "bionemo_msa_search.json"
-    msa_a3m = OUTPUTS / "bionemo_msa_alignment.a3m"
-    error_path = OUTPUTS / "bionemo_openfold3_error.txt"
-    write_json(msa_json, msa_result)
-    write_text(msa_a3m, msa_result["alignments"]["Uniref30_2302"]["a3m"]["alignment"])
-    write_text(
-        error_path,
-        "\n".join(
-            [
-                f"request_id: {request_id}",
-                f"error_type: {type(error).__name__}",
-                f"error: {error}",
-            ]
-        )
-        + "\n",
-    )
+    error_content = "\n".join(
+        [
+            f"request_id: {request_id}",
+            f"error_type: {type(error).__name__}",
+            f"error: {error}",
+        ]
+    ) + "\n"
     write_json(
         OUTPUTS / "bionemo_scientist_artifacts.json",
         {
@@ -525,9 +518,9 @@ def save_hosted_failure_artifacts(msa_result: dict[str, Any], error: Exception, 
         },
     )
     return [
-        RunArtifact("msa_json", str(msa_json), "REAL"),
-        RunArtifact("msa_a3m", str(msa_a3m), "REAL"),
-        RunArtifact("fold_error", str(error_path), "FAILED"),
+        write_artifact("msa_json", "bionemo_msa_search.json", msa_result, "REAL", is_json=True),
+        write_artifact("msa_a3m", "bionemo_msa_alignment.a3m", msa_result["alignments"]["Uniref30_2302"]["a3m"]["alignment"], "REAL"),
+        write_artifact("fold_error", "bionemo_openfold3_error.txt", error_content, "FAILED"),
     ]
 
 
@@ -542,16 +535,6 @@ def save_hosted_openfold2_artifacts(sequence: str, msa_result: dict[str, Any], f
         "pTM": output.get("ptm_score"),
     }
     OUTPUTS.mkdir(parents=True, exist_ok=True)
-    msa_json = OUTPUTS / "bionemo_msa_search.json"
-    msa_a3m = OUTPUTS / "bionemo_msa_alignment.a3m"
-    fold_json = OUTPUTS / "bionemo_openfold2_response.json"
-    fold_pdb = OUTPUTS / "bionemo_openfold2_structure.pdb"
-    score_json = OUTPUTS / "bionemo_openfold2_scores.json"
-    write_json(msa_json, msa_result)
-    write_text(msa_a3m, msa_primary)
-    write_json(fold_json, fold_result)
-    write_text(fold_pdb, structure)
-    write_json(score_json, {"request_id": request_id, "sequence": sequence, "scores": score})
     write_json(
         OUTPUTS / "bionemo_scientist_artifacts.json",
         {
@@ -563,25 +546,17 @@ def save_hosted_openfold2_artifacts(sequence: str, msa_result: dict[str, Any], f
         },
     )
     return [
-        RunArtifact("msa_json", str(msa_json), "REAL"),
-        RunArtifact("msa_a3m", str(msa_a3m), "REAL"),
-        RunArtifact("fold_json", str(fold_json), "REAL"),
-        RunArtifact("fold_pdb", str(fold_pdb), "REAL"),
-        RunArtifact("fold_scores", str(score_json), "REAL"),
+        write_artifact("msa_json", "bionemo_msa_search.json", msa_result, "REAL", is_json=True),
+        write_artifact("msa_a3m", "bionemo_msa_alignment.a3m", msa_primary, "REAL"),
+        write_artifact("fold_json", "bionemo_openfold2_response.json", fold_result, "REAL", is_json=True),
+        write_artifact("fold_pdb", "bionemo_openfold2_structure.pdb", structure, "REAL"),
+        write_artifact("fold_scores", "bionemo_openfold2_scores.json", {"request_id": request_id, "sequence": sequence, "scores": score}, "REAL", is_json=True),
     ]
 
 
 def save_demo_artifacts(sequence: str, request_id: str, run_meta: dict[str, Any]) -> list[RunArtifact]:
     demo = simulate_local_structure(sequence, request_id)
     OUTPUTS.mkdir(parents=True, exist_ok=True)
-    msa_json = OUTPUTS / "bionemo_msa_search.json"
-    msa_a3m = OUTPUTS / "bionemo_msa_alignment.a3m"
-    fold_json = OUTPUTS / "bionemo_openfold3_response.json"
-    fold_cif = OUTPUTS / "bionemo_openfold3_structure.cif"
-    write_json(msa_json, demo["msa"])
-    write_text(msa_a3m, demo["msa_a3m"])
-    write_json(fold_json, demo["fold"])
-    write_text(fold_cif, demo["structure_cif"])
     write_json(
         OUTPUTS / "bionemo_scientist_artifacts.json",
         {
@@ -593,23 +568,15 @@ def save_demo_artifacts(sequence: str, request_id: str, run_meta: dict[str, Any]
         },
     )
     return [
-        RunArtifact("msa_json", str(msa_json), "DEMO"),
-        RunArtifact("msa_a3m", str(msa_a3m), "DEMO"),
-        RunArtifact("fold_json", str(fold_json), "DEMO"),
-        RunArtifact("fold_cif", str(fold_cif), "DEMO"),
+        write_artifact("msa_json", "bionemo_msa_search.json", demo["msa"], "DEMO", is_json=True),
+        write_artifact("msa_a3m", "bionemo_msa_alignment.a3m", demo["msa_a3m"], "DEMO"),
+        write_artifact("fold_json", "bionemo_openfold3_response.json", demo["fold"], "DEMO", is_json=True),
+        write_artifact("fold_cif", "bionemo_openfold3_structure.cif", demo["structure_cif"], "DEMO"),
     ]
 
 
 def save_hosted_design_artifacts(goal: str, design_result: dict[str, Any], mpnn_result: dict[str, Any], request_id: str, run_meta: dict[str, Any]) -> list[RunArtifact]:
     OUTPUTS.mkdir(parents=True, exist_ok=True)
-    design_json = OUTPUTS / "bionemo_rfdiffusion_response.json"
-    design_pdb = OUTPUTS / "bionemo_rfdiffusion_backbone.pdb"
-    mpnn_json = OUTPUTS / "bionemo_proteinmpnn_response.json"
-    mpnn_fasta = OUTPUTS / "bionemo_proteinmpnn_sequences.fa"
-    write_json(design_json, design_result)
-    write_text(design_pdb, design_result["output_pdb"])
-    write_json(mpnn_json, mpnn_result)
-    write_text(mpnn_fasta, mpnn_result["mfasta"])
     write_json(
         OUTPUTS / "bionemo_scientist_artifacts.json",
         {
@@ -622,23 +589,15 @@ def save_hosted_design_artifacts(goal: str, design_result: dict[str, Any], mpnn_
         },
     )
     return [
-        RunArtifact("design_json", str(design_json), "REAL"),
-        RunArtifact("design_pdb", str(design_pdb), "REAL"),
-        RunArtifact("mpnn_json", str(mpnn_json), "REAL"),
-        RunArtifact("mpnn_fasta", str(mpnn_fasta), "REAL"),
+        write_artifact("design_json", "bionemo_rfdiffusion_response.json", design_result, "REAL", is_json=True),
+        write_artifact("design_pdb", "bionemo_rfdiffusion_backbone.pdb", design_result["output_pdb"], "REAL"),
+        write_artifact("mpnn_json", "bionemo_proteinmpnn_response.json", mpnn_result, "REAL", is_json=True),
+        write_artifact("mpnn_fasta", "bionemo_proteinmpnn_sequences.fa", mpnn_result["mfasta"], "REAL"),
     ]
 
 
 def save_demo_design_artifacts(goal: str, design_result: dict[str, Any], request_id: str, run_meta: dict[str, Any]) -> list[RunArtifact]:
     OUTPUTS.mkdir(parents=True, exist_ok=True)
-    design_json = OUTPUTS / "bionemo_rfdiffusion_response.json"
-    design_pdb = OUTPUTS / "bionemo_rfdiffusion_backbone.pdb"
-    mpnn_json = OUTPUTS / "bionemo_proteinmpnn_response.json"
-    mpnn_fasta = OUTPUTS / "bionemo_proteinmpnn_sequences.fa"
-    write_json(design_json, design_result["design"])
-    write_text(design_pdb, design_result["designed_backbone_pdb"])
-    write_json(mpnn_json, design_result["sequence_design"])
-    write_text(mpnn_fasta, design_result["sequence_design"]["mfasta"])
     write_json(
         OUTPUTS / "bionemo_scientist_artifacts.json",
         {
@@ -651,10 +610,10 @@ def save_demo_design_artifacts(goal: str, design_result: dict[str, Any], request
         },
     )
     return [
-        RunArtifact("design_json", str(design_json), "DEMO"),
-        RunArtifact("design_pdb", str(design_pdb), "DEMO"),
-        RunArtifact("mpnn_json", str(mpnn_json), "DEMO"),
-        RunArtifact("mpnn_fasta", str(mpnn_fasta), "DEMO"),
+        write_artifact("design_json", "bionemo_rfdiffusion_response.json", design_result["design"], "DEMO", is_json=True),
+        write_artifact("design_pdb", "bionemo_rfdiffusion_backbone.pdb", design_result["designed_backbone_pdb"], "DEMO"),
+        write_artifact("mpnn_json", "bionemo_proteinmpnn_response.json", design_result["sequence_design"], "DEMO", is_json=True),
+        write_artifact("mpnn_fasta", "bionemo_proteinmpnn_sequences.fa", design_result["sequence_design"]["mfasta"], "DEMO"),
     ]
 
 
