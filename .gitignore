@@ -3,6 +3,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.db
+data/
 .agents/
 **/.git_backup/
 **/node_modules/

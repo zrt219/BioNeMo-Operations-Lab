@@ -1,9 +1,9 @@
 {
   "outputs": [
     {
-      "input_id": "2be0ad8fe438145076d28861",
+      "input_id": "75742a703474c22619e6a94c",
       "runtime_metrics": {
-        "mode": "relay"
+        "mode": "demo"
       },
       "structures_with_scores": [
         {

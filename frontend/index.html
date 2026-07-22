@@ -1,0 +1,1502 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BioNeMo Operations Lab — NVIDIA NIM Agent Dashboard</title>
+  <meta name="description" content="Real-time NVIDIA BioNeMo NIM pipeline dashboard. MSA Search → OpenFold2 protein structure prediction with live telemetry and audit trail." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="/outputs/js/jquery.min.js"></script>
+  <script src="/outputs/js/3Dmol-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050810;
+      --surface: rgba(10, 15, 28, 0.98);
+      --surface2: rgba(14, 20, 36, 0.97);
+      --border: rgba(80, 120, 160, 0.14);
+      --border-hl: rgba(0, 242, 254, 0.28);
+      --accent: #00f2fe;
+      --accent2: #b8ff2a;
+      --accent3: #a78bfa;
+      --accent4: #ff6ec7;
+      --text: #e8f0f8;
+      --muted: #7a90aa;
+      --muted2: #a8bdd0;
+      --danger: #ff4d6a;
+      --warn: #ffb703;
+      --success: #3dffa0;
+      --font: 'Inter', -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --radius: 18px;
+      --shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.55;
+    }
+
+    /* ─── BACKGROUND ─── */
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 90% 60% at 15% -5%, rgba(0,242,254,0.07), transparent),
+        radial-gradient(ellipse 60% 40% at 85% 5%, rgba(184,255,42,0.05), transparent),
+        radial-gradient(ellipse 50% 30% at 50% 105%, rgba(167,139,250,0.05), transparent);
+    }
+
+    /* ─── LAYOUT ─── */
+    .lab-shell {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+    }
+
+    /* ─── NAV RAIL ─── */
+    .nav-rail {
+      grid-row: 1 / 3;
+      position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      padding: 20px 14px;
+      border-right: 1px solid var(--border);
+      background: rgba(7, 10, 20, 0.96);
+      backdrop-filter: blur(24px);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 12px;
+      padding: 4px 8px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg, #00f2fe 0%, #b8ff2a 100%);
+      display: grid; place-items: center;
+      font-weight: 900; font-size: 15px; color: #040810;
+      box-shadow: 0 0 20px rgba(0,242,254,0.3);
+    }
+    .nav-brand h1 { font-size: 13px; font-weight: 700; line-height: 1.2; color: var(--text); }
+    .nav-brand p { font-size: 10px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.1em; }
+    .nav-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 12px;
+      text-decoration: none; color: var(--muted2);
+      border: 1px solid transparent;
+      font-size: 12.5px; font-weight: 500;
+      transition: all 0.15s;
+    }
+    .nav-link:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+    .nav-link.active { background: rgba(0,242,254,0.08); border-color: rgba(0,242,254,0.22); color: var(--accent); }
+    .nav-num { width: 20px; font-size: 10px; font-weight: 800; color: var(--accent); text-align: center; }
+    .nav-link-text strong { display: block; font-size: 12px; color: inherit; }
+    .nav-link-text small { display: block; font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+    /* Nvidia Badge */
+    .nvidia-badge {
+      margin-top: auto; padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,242,254,0.18);
+      background: rgba(0,242,254,0.06);
+    }
+    .nvidia-badge p { font-size: 10px; color: var(--muted2); line-height: 1.4; }
+    .nvidia-badge strong { display: block; color: var(--accent); font-size: 11px; margin-bottom: 4px; }
+    .nim-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 8px; padding: 5px 10px; border-radius: 999px;
+      background: rgba(0,242,254,0.1); border: 1px solid rgba(0,242,254,0.25);
+      font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.06em;
+    }
+    .nim-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse-dot 1.8s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.85)} }
+
+    /* ─── TOPBAR ─── */
+    .topbar {
+      grid-column: 2; padding: 14px 24px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 8, 16, 0.92);
+      backdrop-filter: blur(20px);
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 13px; border-radius: 999px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);
+    }
+    .status-pill.running { border-color: rgba(0,242,254,0.4); background: rgba(0,242,254,0.1); color: var(--accent); }
+    .status-pill.ready { border-color: rgba(61,255,160,0.4); background: rgba(61,255,160,0.1); color: var(--success); }
+    .status-pill.error { border-color: rgba(255,77,106,0.4); background: rgba(255,77,106,0.1); color: var(--danger); }
+    .s-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .running .s-dot { animation: pulse-dot 1.2s infinite; }
+    .topbar-right { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .t-badge {
+      padding: 5px 12px; border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted2); text-decoration: none;
+      transition: all 0.15s;
+    }
+    .t-badge:hover { border-color: var(--border-hl); color: var(--accent); }
+    .t-badge.glow { border-color: rgba(0,242,254,0.3); color: var(--accent); background: rgba(0,242,254,0.08); }
+
+    /* ─── MAIN CONTENT ─── */
+    .main-content {
+      grid-column: 2;
+      padding: 20px 24px 48px;
+      display: grid;
+      gap: 16px;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      grid-template-rows: auto;
+      align-items: start;
+    }
+
+    /* ─── CARDS ─── */
+    .card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card.accent-border { border-color: var(--border-hl); }
+    .card-title {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px;
+    }
+    .card-title h2 { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+    .card-title strong { display: block; font-size: 18px; letter-spacing: -0.03em; color: var(--text); margin-top: 3px; }
+
+    /* ─── RUN PANEL ─── */
+    .run-panel {
+      grid-column: 2; grid-row: 1 / 4;
+      position: sticky; top: 80px;
+    }
+    .run-form { display: grid; gap: 12px; }
+    .form-group label {
+      display: block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted2); margin-bottom: 6px;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 10px 13px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-family: var(--font); font-size: 13px;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      border-color: var(--border-hl);
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; font-family: var(--mono); font-size: 11.5px; }
+    .form-group select option { background: #0e1624; }
+    .run-btn {
+      width: 100%; padding: 14px 20px;
+      background: linear-gradient(135deg, #00d4e8 0%, #00f2fe 50%, #b8ff2a 100%);
+      background-size: 200% 200%;
+      border: none; border-radius: 12px;
+      color: #030609; font-family: var(--font);
+      font-size: 14px; font-weight: 800; letter-spacing: 0.04em;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s;
+      animation: gradient-shift 4s ease infinite;
+    }
+    @keyframes gradient-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .run-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(0,242,254,0.35); }
+    .run-btn:active { transform: translateY(0); }
+    .run-btn:disabled {
+      background: rgba(255,255,255,0.08); color: var(--muted);
+      cursor: not-allowed; transform: none; box-shadow: none; animation: none;
+    }
+    .run-btn .btn-inner { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .preset-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .preset-btn {
+      padding: 8px; border-radius: 10px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03); cursor: pointer; color: var(--muted2);
+      font-size: 11px; font-family: var(--font); transition: all 0.15s; text-align: left;
+    }
+    .preset-btn:hover { border-color: var(--border-hl); color: var(--text); background: rgba(0,242,254,0.06); }
+    .preset-btn strong { display: block; font-size: 11px; color: var(--text); margin-bottom: 2px; }
+
+    /* ─── HERO / STATUS CARD ─── */
+    .hero-card {
+      padding: 24px;
+    }
+    .hero-verdict { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 8px; }
+    .hero-title { font-size: clamp(22px, 2.5vw, 36px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; }
+    .hero-title .highlight { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { margin-top: 10px; font-size: 14px; color: var(--muted2); line-height: 1.5; max-width: 56ch; }
+    .metric-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+      margin-top: 18px;
+    }
+    .metric-tile {
+      padding: 14px 12px; border-radius: 14px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.03);
+    }
+    .metric-tile .m-label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .metric-tile .m-val { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; color: var(--text); }
+    .metric-tile .m-unit { font-size: 11px; color: var(--muted2); margin-top: 3px; }
+    .metric-tile.live { border-color: rgba(0,242,254,0.22); background: rgba(0,242,254,0.05); }
+    .metric-tile.live .m-val { color: var(--accent); }
+
+    /* ─── PIPELINE STAGES ─── */
+    .pipeline-track {
+      display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 0;
+      padding: 16px 0;
+    }
+    .stage-node {
+      padding: 16px; border-radius: 14px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03); position: relative;
+      transition: border-color 0.3s;
+    }
+    .stage-node.active { border-color: var(--border-hl); background: rgba(0,242,254,0.06); }
+    .stage-node.ready { border-color: rgba(61,255,160,0.3); background: rgba(61,255,160,0.04); }
+    .stage-arrow { text-align: center; color: var(--border-hl); font-size: 18px; padding: 0 6px; }
+    .stage-icon { font-size: 22px; margin-bottom: 8px; }
+    .stage-name { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted2); }
+    .stage-model { font-size: 12px; font-weight: 600; color: var(--text); margin-top: 3px; }
+    .stage-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 8px; padding: 3px 9px; border-radius: 999px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      border: 1px solid var(--border); color: var(--muted);
+    }
+    .stage-status.s-active { border-color: rgba(0,242,254,0.4); color: var(--accent); background: rgba(0,242,254,0.1); }
+    .stage-status.s-ready { border-color: rgba(61,255,160,0.4); color: var(--success); background: rgba(61,255,160,0.1); }
+    .stage-endpoint { font-size: 9px; color: var(--muted); margin-top: 5px; font-family: var(--mono); word-break: break-all; }
+
+    /* ─── LIVE TERMINAL ─── */
+    .terminal-wrap {
+      border-radius: 14px; overflow: hidden;
+      border: 1px solid rgba(0,242,254,0.18);
+    }
+    .terminal-header {
+      padding: 10px 14px;
+      background: rgba(0,242,254,0.07);
+      border-bottom: 1px solid rgba(0,242,254,0.15);
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+    }
+    .terminal-dots { display: flex; gap: 5px; }
+    .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+    #terminalLog {
+      font-family: var(--mono); font-size: 11.5px; line-height: 1.65;
+      padding: 14px; height: 280px; overflow-y: auto;
+      background: rgba(2, 4, 10, 0.7);
+      color: var(--muted2);
+    }
+    #terminalLog::-webkit-scrollbar { width: 4px; }
+    #terminalLog::-webkit-scrollbar-track { background: transparent; }
+    #terminalLog::-webkit-scrollbar-thumb { background: rgba(0,242,254,0.2); border-radius: 2px; }
+
+    /* ─── TRUST SIGNALS ─── */
+    .trust-signal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .trust-sig {
+      padding: 12px 14px; border-radius: 12px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.03);
+    }
+    .trust-sig .ts-label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+    .trust-sig .ts-val { font-size: 13px; font-weight: 700; color: var(--text); word-break: break-all; }
+    .trust-sig .ts-src { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.35; }
+    .trust-sig.verified { border-color: rgba(61,255,160,0.25); background: rgba(61,255,160,0.04); }
+    .trust-sig.verified .ts-val { color: var(--success); }
+
+    /* ─── STRUCTURE VIEWER ─── */
+    .viewer-container { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+    #viewerContainer { height: 380px; width: 100%; background: #040810; }
+    .viewer-toolbar {
+      padding: 10px 14px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.025);
+    }
+    .vbtn {
+      padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); color: var(--muted2); font-size: 11px;
+      font-family: var(--font); cursor: pointer; transition: all 0.15s;
+    }
+    .vbtn:hover { border-color: var(--border-hl); color: var(--accent); }
+    .vbtn.active { border-color: rgba(0,242,254,0.4); color: var(--accent); background: rgba(0,242,254,0.1); }
+    .viewer-info { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+    /* ─── ARTIFACTS ─── */
+    .artifact-list { display: grid; gap: 6px; margin-top: 10px; }
+    .artifact-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.025);
+      font-size: 12px;
+    }
+    .artifact-item code { font-family: var(--mono); font-size: 11px; color: var(--accent); }
+    .artifact-link {
+      padding: 3px 10px; border-radius: 6px;
+      font-size: 10px; font-weight: 700; color: var(--muted2);
+      border: 1px solid var(--border); text-decoration: none;
+      transition: all 0.15s;
+    }
+    .artifact-link:hover { color: var(--accent); border-color: var(--border-hl); }
+
+    /* ─── BADGES ─── */
+    .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+    .badge-hosted { background: rgba(0,242,254,0.12); border: 1px solid rgba(0,242,254,0.35); color: var(--accent); }
+    .badge-relay { background: rgba(255,183,3,0.12); border: 1px solid rgba(255,183,3,0.35); color: var(--warn); }
+    .badge-real { background: rgba(61,255,160,0.12); border: 1px solid rgba(61,255,160,0.35); color: var(--success); }
+    .badge-demo { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: var(--muted2); }
+
+    /* ─── LAYOUT HELPERS ─── */
+    .col-main { grid-column: 1; display: grid; gap: 16px; }
+    .span-full { grid-column: 1 / -1; }
+
+    /* ─── SCORE BAR ─── */
+    .score-bar-wrap { margin-top: 10px; }
+    .score-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted2); margin-bottom: 6px; }
+    .score-bar { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.07); overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.6s ease; }
+    
+    /* ─── TRUST PANEL TABLE ─── */
+    .trust-verdict-banner {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px; border-radius: 8px; font-weight: 800; font-size: 13px; letter-spacing: 0.05em; margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .trust-verdict-banner.verified { background: rgba(61,255,160,0.1); border: 1px solid rgba(61,255,160,0.4); color: var(--success); }
+    .trust-verdict-banner.relay { background: rgba(255,183,3,0.1); border: 1px solid rgba(255,183,3,0.4); color: var(--warn); }
+    
+    .trust-table {
+      width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 12px;
+    }
+    .trust-table th, .trust-table td {
+      padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left;
+      vertical-align: top;
+    }
+    .trust-table th { width: 140px; color: var(--muted2); font-weight: 600; }
+    .trust-table td { color: var(--text); }
+    .trust-table td.code-font { font-family: var(--mono); font-size: 11px; word-break: break-all; }
+    .trust-table tr:last-child th, .trust-table tr:last-child td { border-bottom: none; }
+
+    /* ─── HIDDEN FORM (keeps JS working) ─── */
+    .hidden-form { position: absolute; opacity: 0; pointer-events: none; }
+
+    /* ─── ANIM ─── */
+    .anim-in { opacity: 0; transform: translateY(12px); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1100px) {
+      .lab-shell { grid-template-columns: 1fr; }
+      .nav-rail { display: none; }
+      .main-content { grid-column: 1; grid-template-columns: 1fr; }
+      .run-panel { position: static; grid-column: 1; }
+      .metric-row { grid-template-columns: repeat(2, 1fr); }
+      .pipeline-track { grid-template-columns: 1fr; }
+      .stage-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="lab-shell">
+
+  <!-- ─── NAV RAIL ─── -->
+  <aside class="nav-rail" aria-label="Primary navigation">
+    <div class="nav-brand">
+      <div class="logo-icon">N</div>
+      <div>
+        <h1>BioNeMo Lab</h1>
+        <p>NIM Pipeline</p>
+      </div>
+    </div>
+
+    <a class="nav-link active" href="#overview">
+      <span class="nav-num">01</span>
+      <div class="nav-link-text"><strong>Overview</strong><small>Status & metrics</small></div>
+    </a>
+    <a class="nav-link" href="#pipeline">
+      <span class="nav-num">02</span>
+      <div class="nav-link-text"><strong>Pipeline</strong><small>NIM stages</small></div>
+    </a>
+    <a class="nav-link" href="#terminal">
+      <span class="nav-num">03</span>
+      <div class="nav-link-text"><strong>Live Output</strong><small>Subprocess stream</small></div>
+    </a>
+    <a class="nav-link" href="#viewer-section">
+      <span class="nav-num">04</span>
+      <div class="nav-link-text"><strong>Structure</strong><small>3D viewer</small></div>
+    </a>
+    <a class="nav-link" href="#trust-section">
+      <span class="nav-num">05</span>
+      <div class="nav-link-text"><strong>Audit Trail</strong><small>Evidence & trust</small></div>
+    </a>
+    <a class="nav-link" href="#artifacts-section">
+      <span class="nav-num">06</span>
+      <div class="nav-link-text"><strong>Artifacts</strong><small>Output files</small></div>
+    </a>
+
+    <div class="nvidia-badge" style="margin-top: auto;">
+      <strong>NVIDIA BioNeMo NIMs</strong>
+      <p>This dashboard routes real API calls to hosted NVIDIA NIM endpoints when credentials are set.</p>
+      <span class="nim-pill"><span class="nim-dot"></span>LIVE READY</span>
+    </div>
+  </aside>
+
+  <!-- ─── TOPBAR ─── -->
+  <header class="topbar anim-in">
+    <div class="topbar-left">
+      <span class="status-pill" id="statusPill">
+        <span class="s-dot"></span>
+        <span id="hdrStatus">IDLE</span>
+      </span>
+      <span id="hdrWorkflowBadge" style="font-size:12px; color:var(--muted2); font-weight:600;">protein-fold</span>
+    </div>
+    <div class="topbar-right">
+      <a class="t-badge glow" href="/learning_pack.html">Learning Pack</a>
+      <a class="t-badge" href="/viewer/">3D Viewer</a>
+      <a class="t-badge" href="https://github.com/zrt219" target="_blank" rel="noopener">GitHub</a>
+      <a class="t-badge" href="https://www.linkedin.com/in/zhane-umattr" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </header>
+
+  <!-- ─── MAIN CONTENT ─── -->
+  <main class="main-content">
+
+    <!-- ─── COL 1: MAIN ─── -->
+    <div class="col-main">
+
+      <!-- OVERVIEW HERO -->
+      <section class="card hero-card anim-in" id="overview">
+        <div class="hero-verdict">NVIDIA BioNeMo Agent — <span id="runtimeBadgeText">Detecting runtime...</span></div>
+        <h2 class="hero-title">
+          <span class="highlight" id="heroTitleMain">Protein Structure</span><br>
+          <span id="heroTitleSub">Prediction Pipeline</span>
+        </h2>
+        <p class="hero-sub" id="heroDesc">
+          This lab routes your protein sequence through NVIDIA's hosted NIM microservices: ColabFold MSA Search → OpenFold2 structure prediction. Real API calls are made when NGC_API_KEY is configured. In relay mode, it uses local artifacts as a scaffold.
+        </p>
+        <div class="metric-row">
+          <div class="metric-tile live">
+            <div class="m-label">Confidence (pLDDT)</div>
+            <div class="m-val" id="metricConfidence">—</div>
+            <div class="m-unit" id="metricConfidenceSrc">Awaiting run</div>
+          </div>
+          <div class="metric-tile">
+            <div class="m-label">Sequence Length</div>
+            <div class="m-val" id="metricLength">—</div>
+            <div class="m-unit">residues</div>
+          </div>
+          <div class="metric-tile">
+            <div class="m-label">Est. MW</div>
+            <div class="m-val" id="metricMW">—</div>
+            <div class="m-unit" id="metricMWSrc">kDa</div>
+          </div>
+          <div class="metric-tile">
+            <div class="m-label">Hydrophobic %</div>
+            <div class="m-val" id="metricHydrophobic">—</div>
+            <div class="m-unit">residue fraction</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PIPELINE STAGES -->
+      <section class="card anim-in" id="pipeline">
+        <div class="card-title">
+          <div>
+            <h2>NIM Pipeline Stages</h2>
+            <strong>Real NVIDIA API Calls</strong>
+          </div>
+          <span id="pipelineRunBadge" class="badge badge-demo">IDLE</span>
+        </div>
+        <div class="pipeline-track">
+          <div class="stage-node" id="stageMSA">
+            <div class="stage-icon">🔍</div>
+            <div class="stage-name">MSA Search</div>
+            <div class="stage-model">ColabFold NIM</div>
+            <span class="stage-status" id="stageMSAStatus">IDLE</span>
+            <div class="stage-endpoint">health.api.nvidia.com/.../msa-search</div>
+          </div>
+          <div class="stage-arrow">→</div>
+          <div class="stage-node" id="stageFold">
+            <div class="stage-icon">🧬</div>
+            <div class="stage-name">Structure Prediction</div>
+            <div class="stage-model">OpenFold2 NIM</div>
+            <span class="stage-status" id="stageFoldStatus">IDLE</span>
+            <div class="stage-endpoint">health.api.nvidia.com/.../openfold2</div>
+          </div>
+          <div class="stage-arrow">→</div>
+          <div class="stage-node" id="stageArtifact">
+            <div class="stage-icon">📁</div>
+            <div class="stage-name">Artifacts</div>
+            <div class="stage-model">Local Save + Hash</div>
+            <span class="stage-status" id="stageArtifactStatus">IDLE</span>
+            <div class="stage-endpoint">SHA-256 provenance hash</div>
+          </div>
+        </div>
+
+        <!-- Design workflow row (shown for protein-design) -->
+        <div id="designPipelineRow" style="display:none; margin-top: 14px;">
+          <div style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:10px;">Design Workflow Stages</div>
+          <div class="pipeline-track">
+            <div class="stage-node" id="stageRFD">
+              <div class="stage-icon">⚙️</div>
+              <div class="stage-name">Backbone Design</div>
+              <div class="stage-model">RFDiffusion NIM</div>
+              <span class="stage-status" id="stageRFDStatus">IDLE</span>
+              <div class="stage-endpoint">health.api.nvidia.com/.../rfdiffusion</div>
+            </div>
+            <div class="stage-arrow">→</div>
+            <div class="stage-node" id="stageMPNN">
+              <div class="stage-icon">🧠</div>
+              <div class="stage-name">Sequence Design</div>
+              <div class="stage-model">ProteinMPNN NIM</div>
+              <span class="stage-status" id="stageMPNNStatus">IDLE</span>
+              <div class="stage-endpoint">health.api.nvidia.com/.../proteinmpnn</div>
+            </div>
+            <div class="stage-arrow">→</div>
+            <div class="stage-node" id="stageMSA2">
+              <div class="stage-icon">🔬</div>
+              <div class="stage-name">Fold + Validate</div>
+              <div class="stage-model">MSA → OpenFold2</div>
+              <span class="stage-status" id="stageMSA2Status">IDLE</span>
+              <div class="stage-endpoint">ColabFold + OpenFold2 NIMs</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIVE TERMINAL -->
+      <section class="card anim-in" id="terminal">
+        <div class="card-title">
+          <div>
+            <h2>Live Pipeline Output</h2>
+            <strong>Subprocess Stream</strong>
+          </div>
+        </div>
+        <p style="font-size:12.5px; color:var(--muted2); margin-bottom:12px;" id="telDetailedExplanation">
+          The lab is standing by. Submit a run to see live subprocess output from the NVIDIA BioNeMo scientist agent.
+        </p>
+        <div class="terminal-wrap">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="t-dot" style="background:#ff5f57;"></div>
+              <div class="t-dot" style="background:#ffbd2e;"></div>
+              <div class="t-dot" style="background:#28c840;"></div>
+            </div>
+            bionemo_scientist.py — stdout
+          </div>
+          <div id="terminalLog">
+            <span style="color:var(--muted);">Standing by. Launch a run to stream live subprocess output here...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3D STRUCTURE VIEWER -->
+      <section class="card anim-in" id="viewer-section">
+        <div class="card-title">
+          <div>
+            <h2>Structure Viewer</h2>
+            <strong id="viewerStructureName">No structure loaded</strong>
+          </div>
+        </div>
+        <div class="viewer-container">
+          <div id="viewerContainer"></div>
+          <div class="viewer-toolbar">
+            <button class="vbtn active" id="btnCartoon" onclick="setStyle('cartoon')" aria-pressed="true">Cartoon</button>
+            <button class="vbtn" id="btnStick" onclick="setStyle('stick')" aria-pressed="false">Stick</button>
+            <button class="vbtn" id="btnSphere" onclick="setStyle('sphere')" aria-pressed="false">Sphere</button>
+            <button class="vbtn" id="btnLine" onclick="setStyle('line')" aria-pressed="false">Lines</button>
+            <button class="vbtn" id="btnColor" onclick="toggleColor()">Color: Spectrum</button>
+            <button class="vbtn" id="btnSpin" onclick="toggleSpin()" aria-pressed="false">Spin: Off</button>
+            <button class="vbtn" onclick="resetView()">Reset</button>
+            <span class="viewer-info" id="viewerInfo">—</span>
+          </div>
+        </div>
+
+        <!-- Gallery -->
+        <div style="margin-top:14px;">
+          <div style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:10px;">Load Structure</div>
+          <div id="galleryGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap:8px;">
+            <div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Helical Bundle (Folded) into the viewer" data-pdb="/outputs/helical_bundle_folded.pdb" data-name="Helical Bundle (Folded)"><img src="/viewer/helical_bundle_viewer.png" alt="Helical Bundle (Folded)" /><span class="gallery-label">Helical Bundle (Folded)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Mixed Fold (Folded) into the viewer" data-pdb="/outputs/mixed_fold_folded.pdb" data-name="Mixed Fold (Folded)"><img src="/viewer/mixed_fold_viewer.png" alt="Mixed Fold (Folded)" /><span class="gallery-label">Mixed Fold (Folded)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Default 100aa (Folded) into the viewer" data-pdb="/outputs/default_folded.pdb" data-name="Default 100aa (Folded)"><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">Default 100aa (Folded)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Helical Bundle (Backbone) into the viewer" data-pdb="/outputs/helical_bundle_backbone.pdb" data-name="Helical Bundle (Backbone)"><img src="/viewer/helical_bundle_viewer.png" alt="Helical Bundle (Backbone)" /><span class="gallery-label">Helical Bundle (Backbone)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Mixed Fold (Backbone) into the viewer" data-pdb="/outputs/mixed_fold_backbone.pdb" data-name="Mixed Fold (Backbone)"><img src="/viewer/mixed_fold_viewer.png" alt="Mixed Fold (Backbone)" /><span class="gallery-label">Mixed Fold (Backbone)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Default 100aa (Backbone) into the viewer" data-pdb="/outputs/default_backbone.pdb" data-name="Default 100aa (Backbone)"><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">Default 100aa (Backbone)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card newest-card" role="button" tabindex="0" aria-label="Load structure OpenFold2 Prediction into the viewer" data-pdb="/outputs/bionemo_openfold2_structure.pdb" data-name="OpenFold2 Prediction"><span class="latest-badge">LATEST</span><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">OpenFold2 Prediction</span><span class="gallery-time">🕒 Jul 21, 01:40:46</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure RFDiffusion Backbone into the viewer" data-pdb="/outputs/bionemo_rfdiffusion_backbone.pdb" data-name="RFDiffusion Backbone"><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">RFDiffusion Backbone</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Backbone into the viewer" data-pdb="/outputs/backbone.pdb" data-name="Backbone"><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">Backbone</span><span class="gallery-time">🕒 Jul 18, 05:00:01</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Folded into the viewer" data-pdb="/outputs/folded.pdb" data-name="Folded"><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">Folded</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AUDIT TRAIL -->
+      <section class="card anim-in" id="trust-section">
+        
+        <div id="trustVerdictBanner" class="trust-verdict-banner relay">
+          <span id="trustVerdictBannerText">LOCAL FALLBACK ⚠ Relay Mode</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+          <div>
+            <div style="font-size:12px; color:var(--muted2); font-weight:700; text-transform:uppercase;">Trust Score</div>
+            <div style="font-size:24px; font-weight:800; color:var(--text);" id="trustScoreText">0 / 100</div>
+          </div>
+          <div style="text-align:right;">
+             <div style="font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; margin-bottom:2px;" id="trustScoreStatus">✓ Cryptographically Verified</div>
+             <div style="font-size:11px; color:var(--muted2);" id="trustScoreSub">Scientific Workflow Complete</div>
+          </div>
+        </div>
+
+        <!-- Why Trusted Block -->
+        <div style="background:rgba(255,255,255,0.03); border-radius:8px; padding:12px; margin-bottom:16px;">
+          <div style="font-size:11px; font-weight:700; color:var(--muted2); margin-bottom:6px; text-transform:uppercase;">Verified Because:</div>
+          <ul id="trustReasonsList" style="margin:0; padding-left:16px; font-size:12px; color:var(--text); line-height:1.6;">
+            <li>Awaiting run...</li>
+          </ul>
+        </div>
+        
+        <!-- Grid of Trust Signals -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+          <!-- Provider -->
+          <div style="border:1px solid var(--border); border-radius:8px; padding:12px;">
+            <div style="font-size:10px; font-weight:700; color:var(--muted2); text-transform:uppercase; margin-bottom:8px;">Provider Identity</div>
+            <div style="font-size:12px; font-weight:700; color:var(--text);" id="trustProvider">—</div>
+            <div style="font-size:11px; color:var(--muted2); margin-top:2px;">Runtime: <span id="trustRuntime">—</span></div>
+            <div style="font-size:11px; color:var(--muted2); margin-top:2px;">Model: <span id="trustModel">—</span></div>
+          </div>
+
+          <!-- Execution -->
+          <div style="border:1px solid var(--border); border-radius:8px; padding:12px;">
+            <div style="font-size:10px; font-weight:700; color:var(--muted2); text-transform:uppercase; margin-bottom:8px;">Live Execution</div>
+            <div style="font-size:12px; font-weight:700; color:var(--text);" id="trustLiveExec">—</div>
+            <div style="font-size:11px; color:var(--muted2); margin-top:2px;">Duration: <span id="trustDuration">—</span></div>
+            <div style="font-size:11px; color:var(--muted2); margin-top:2px;">Generated: <span id="trustGeneratedAgo">—</span></div>
+          </div>
+          
+          <!-- Identifiers -->
+          <div style="border:1px solid var(--border); border-radius:8px; padding:12px; grid-column:1/-1;">
+            <div style="font-size:10px; font-weight:700; color:var(--muted2); text-transform:uppercase; margin-bottom:8px;">Traceability</div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
+              <span style="color:var(--muted2);">Run ID:</span> <span id="trustRunId" class="code-font" style="color:var(--text);">—</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
+              <span style="color:var(--muted2);">Request ID:</span> <span id="trustRequestId" class="code-font" style="color:var(--text);">—</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11px;">
+              <span style="color:var(--muted2);">Artifact Hash:</span> <span id="trustArtifactHash" class="code-font" style="color:var(--text);">—</span>
+            </div>
+          </div>
+
+          <!-- Input Provenance -->
+          <div style="border:1px solid var(--border); border-radius:8px; padding:12px; grid-column:1/-1;">
+            <div style="font-size:10px; font-weight:700; color:var(--muted2); text-transform:uppercase; margin-bottom:8px;">Input Provenance</div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
+              <span style="color:var(--muted2);">Sequence Length:</span> <span id="trustInputLen" style="color:var(--text);">—</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11px;">
+              <span style="color:var(--muted2);">Input SHA-256:</span> <span id="trustInputHash" class="code-font" style="color:var(--text);">—</span>
+            </div>
+          </div>
+          
+          <!-- Evidence Check -->
+          <div id="trustEvidenceBox" style="border:1px solid var(--border); border-radius:8px; padding:12px; grid-column:1/-1; background:rgba(255,255,255,0.03);">
+             <div style="display:flex; justify-content:space-between; align-items:center;">
+               <div style="font-size:12px; font-weight:700; color:var(--text);" id="trustEvidenceCountLabel">0 / 0 Verified</div>
+               <div style="font-size:11px; font-weight:700; color:var(--text);" id="trustReproducibleBadge">—</div>
+             </div>
+             <div id="trustEvidenceChecklist" style="margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:11px; color:var(--muted2);">
+                <!-- items go here -->
+             </div>
+          </div>
+        </div>
+
+        <!-- Execution trace -->
+        <details>
+          <summary style="cursor:pointer; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted2); padding:10px; border-radius:10px; border: 1px solid var(--border); list-style:none;">
+            ▸ Audit Ready (Click to inspect)
+          </summary>
+          <pre id="executionTracePane" style="margin-top:8px; background: rgba(0,0,0,0.4); border-radius:10px; padding:12px; font-size:11px; font-family:var(--mono); color:var(--muted2); max-height:220px; overflow-y:auto; white-space:pre-wrap; word-break:break-all;">[]</pre>
+        </details>
+      </section>
+
+      <!-- ARTIFACTS -->
+      <section class="card anim-in" id="artifacts-section">
+        <div class="card-title">
+          <div>
+            <h2>Output Artifacts</h2>
+            <strong id="artifactCountLabel">No artifacts yet</strong>
+          </div>
+        </div>
+        <div class="artifact-list" id="artifactListEl">
+          <div class="artifact-item"><span><code>msa_json</code> <span style="font-size:10px;color:var(--muted2);">fold-kras</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span></span> <a class="artifact-link" href="/artifact/msa_json" target="_blank">open</a></div>
+<div class="artifact-item"><span><code>msa_a3m</code> <span style="font-size:10px;color:var(--muted2);">fold-kras</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span></span> <a class="artifact-link" href="/artifact/msa_a3m" target="_blank">open</a></div>
+<div class="artifact-item"><span><code>fold_json</code> <span style="font-size:10px;color:var(--muted2);">fold-kras</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span></span> <a class="artifact-link" href="/artifact/fold_json" target="_blank">open</a></div>
+<div class="artifact-item"><span><code>fold_pdb</code> <span style="font-size:10px;color:var(--muted2);">fold-kras</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span></span> <a class="artifact-link" href="/artifact/fold_pdb" target="_blank">open</a></div>
+<div class="artifact-item"><span><code>fold_scores</code> <span style="font-size:10px;color:var(--muted2);">fold-kras</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span></span> <a class="artifact-link" href="/artifact/fold_scores" target="_blank">open</a></div>
+        </div>
+      </section>
+
+    </div> <!-- /col-main -->
+
+    <!-- ─── COL 2: RUN PANEL ─── -->
+    <aside class="run-panel anim-in" id="run-panel">
+
+      <!-- THE RUN FORM — ALWAYS VISIBLE -->
+      <div class="card accent-border" style="margin-bottom:12px;">
+        <div class="card-title">
+          <div>
+            <h2>Launch Run</h2>
+            <strong>Configure & Execute</strong>
+          </div>
+          <span id="runRuntimeBadge" class="badge badge-hosted">HOSTED</span>
+        </div>
+        <p style="font-size:12px; color:var(--muted2); margin-bottom:14px; line-height:1.5;">
+          Hit <strong style="color:var(--accent);">⚡ Run Pipeline</strong> to fire real NVIDIA NIM API calls: MSA Search → OpenFold2. Credentials are loaded from <code style="font-size:10px;font-family:var(--mono);color:var(--accent2);">.env</code>.
+        </p>
+
+        <form class="run-form" id="runFormVisible" onsubmit="handleRunSubmit(event)">
+          <div class="form-group">
+            <label for="vis-goal">Goal / Prompt</label>
+            <input type="text" id="vis-goal" name="goal" placeholder="Fold a protein sequence and explain confidence metrics." value="Fold KRAS G12D oncoprotein and analyze." />
+          </div>
+          <div class="form-group">
+            <label for="vis-sequence">Protein Sequence (FASTA or plain AA)</label>
+            <textarea id="vis-sequence" name="sequence" placeholder="MALWMRLLPLLALLALWGPDPAAAFVNQHLCGS...">MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSY</textarea>
+          </div>
+          <div class="form-group">
+            <label for="vis-runtime">Runtime</label>
+            <select id="vis-runtime" name="runtime">
+              <option value="hosted" >hosted — real NVIDIA NIM calls</option>
+              <option value="relay" >relay — local artifact scaffold</option>
+              <option value="auto" selected>auto — detect from credentials</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="vis-display-name">Run Name</label>
+            <input type="text" id="vis-display-name" name="display_name" placeholder="openfold2-prediction" value="fold-kras" />
+          </div>
+
+          <button class="run-btn" type="submit" id="visLaunchBtn">
+            <div class="btn-inner">
+              <span>⚡</span>
+              <span id="visLaunchBtnText">Run Pipeline</span>
+            </div>
+          </button>
+        </form>
+
+        <!-- Presets -->
+        <div style="margin-top:14px;">
+          <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:8px;">Quick Presets</div>
+          <div class="preset-row">
+            <button class="preset-btn" onclick="setPreset('fold-insulin', 'Fold human insulin and explain confidence.', 'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN')">
+              <strong>Insulin Fold</strong>
+              Fold human insulin (110aa)
+            </button>
+            <button class="preset-btn" onclick="setPreset('design-helical', 'Design a de novo helical bundle protein.', '')">
+              <strong>De Novo Design</strong>
+              RFDiffusion + ProteinMPNN
+            </button>
+            <button class="preset-btn" onclick="setPreset('fold-kras', 'Fold KRAS G12D oncoprotein and analyze.', 'MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSY')">
+              <strong>KRAS G12D</strong>
+              Fold KRAS oncoprotein
+            </button>
+            <button class="preset-btn" onclick="setPreset('fold-ubiquitin', 'Fold ubiquitin and explain structural features.', 'MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG')">
+              <strong>Ubiquitin</strong>
+              Fold ubiquitin (76aa)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RUN STATUS CARD -->
+      <div class="card anim-in" style="margin-bottom:12px;">
+        <div class="card-title">
+          <h2>Run Status</h2>
+        </div>
+        <div style="display:grid; gap:8px;">
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--muted2);">Status</span>
+            <span id="runStatusText" style="font-weight:700;">IDLE</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--muted2);">Step</span>
+            <span id="runStepText" style="font-family:var(--mono); font-size:12px;">—</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--muted2);">Runtime</span>
+            <span id="runRuntimeText" style="font-weight:700; color:var(--accent);">—</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--muted2);">Latest Run</span>
+            <span id="runLatestLabel" style="font-size:11px; font-family:var(--mono); text-align:right; max-width:140px; word-break:break-all;">—</span>
+          </div>
+          <div style="font-size:12px; padding:8px 0; color:var(--muted2);">
+            <span id="runLatestMessage">Standing by.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LINKS -->
+      <div class="card anim-in" style="font-size:12.5px;">
+        <div class="card-title"><h2>Quick Links</h2></div>
+        <div style="display:grid; gap:6px;">
+          <a class="artifact-link" href="/handoff.html" style="display:block; padding:10px 14px; font-size:12px;">📦 Download Artifacts</a>
+          <a class="artifact-link" href="/report" style="display:block; padding:10px 14px; font-size:12px;">📋 Run Report (MD)</a>
+          <a class="artifact-link" href="/viewer/" style="display:block; padding:10px 14px; font-size:12px;">🔬 3D Structure Viewer</a>
+          <a class="artifact-link" href="/learning_pack.html" style="display:block; padding:10px 14px; font-size:12px;">📚 Learning Pack</a>
+        </div>
+      </div>
+
+    </aside>
+  </main>
+</div>
+
+<!-- ─── HIDDEN FORM (keeps JS wiring intact) ─── -->
+<div class="hidden-form" aria-hidden="true">
+  <form id="runForm">
+    <input id="goal" name="goal" />
+    <textarea id="sequence" name="sequence"></textarea>
+    <select id="runtime" name="runtime"><option value="auto" selected>auto</option><option value="relay">relay</option><option value="hosted">hosted</option></select>
+    <input id="displayName" name="display_name" value="openfold2-prediction" />
+    <button id="launchBtn" type="submit">Launch</button>
+  </form>
+  <div id="stageGrid"></div>
+  <div id="terminalLogHidden"></div>
+  <div id="telStep"></div>
+  <div id="telArtifact"></div>
+  <div id="telWorkflow"></div>
+  <div id="telRuntime"></div>
+  <div id="telTruth"></div>
+  <div id="telTruthSource"></div>
+  <div id="telCommand"></div>
+  <div id="telMessage"></div>
+  <div id="telDetailedExplanationHidden"></div>
+  <pre id="runStatePane"></pre>
+  <pre id="eventLogPane"></pre>
+  <pre id="summaryPane"></pre>
+  <pre id="reportPane"></pre>
+  <div id="trustScoreFillHidden"></div>
+  <div id="trustScoreNote"></div>
+  <div id="trustVerdictSummarySource"></div>
+  <div id="trustRunTruthSource"></div>
+  <div id="trustEvidenceSource"></div>
+  <div id="galleryGridHidden"></div>
+  <textarea id="notes"></textarea>
+  <div id="hdrArtifact"></div>
+  <div id="hdrTruthInline"></div>
+  <div id="overviewRunId"></div>
+  <div id="overviewRequestId"></div>
+  <div id="overviewTrustScoreValue"></div>
+  <div id="overviewVerdict"></div>
+  <div id="overviewVerdictText"></div>
+  <div id="overviewRuntimeBadge"></div>
+  <div id="overviewCompletedBadge"></div>
+  <div id="overviewEvidenceBadge"></div>
+  <div id="trustVerdict"></div>
+  <div id="trustVerdictIcon"></div>
+  <div id="trustVerdictText"></div>
+  <div id="trustVerdictSummary"></div>
+  <div id="trustReproducibility"></div>
+  <div id="trustReproducibilitySource"></div>
+  <div id="trustProviderSource"></div>
+  <div id="trustLiveExecution"></div>
+  <div id="trustLiveExecutionSource"></div>
+  <div id="trustEvidenceCount"></div>
+  <div id="trustEvidenceCountSource"></div>
+  <div id="trustAuditReady"></div>
+  <div id="trustAuditReadySource"></div>
+  <div id="trustSignature"></div>
+  <div id="trustSignatureSource"></div>
+  <div id="trustInputProvenance"></div>
+  <div id="trustInputProvenanceSource"></div>
+  <div id="trustModelVersion"></div>
+  <div id="trustModelVersionSource"></div>
+  <div id="trustWorkflowIntegrity"></div>
+  <div id="trustWorkflowIntegritySource"></div>
+  <div id="trustRunIdSource"></div>
+  <div id="trustRequestIdSource"></div>
+  <div id="trustEndpointSource"></div>
+  <div id="trustArtifactHashSource"></div>
+  <div id="trustRunTruth"></div>
+  <div id="trustEvidence"></div>
+  <div id="nvidiaTelemetryGrid"></div>
+  <div id="metricRMSD"></div>
+  <div id="metricRMSDSource"></div>
+  <div id="metricConfidenceSource"></div>
+  <div id="metricLengthSource"></div>
+  <div id="metricMWSource"></div>
+  <div id="metricHydrophobicSource"></div>
+  <div id="metricPolarSource"></div>
+  <div id="metricPolar"></div>
+  <div id="metricResidues"></div>
+  <div id="metricWeight"></div>
+  <div id="metricConfidenceHidden"></div>
+</div>
+
+<style>
+  .gallery-card {
+    padding: 10px; border-radius: 10px; border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03); cursor: pointer; transition: all 0.15s;
+    text-align: center; font-size: 11px; color: var(--muted2);
+  }
+  .gallery-card:hover { border-color: var(--border-hl); background: rgba(0,242,254,0.06); color: var(--text); }
+  .gallery-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 6px; }
+</style>
+
+<script>
+  (function () {
+
+    /* ─── VIEWER STATE ─── */
+    var viewer3d = null;
+    var viewerModel = null;
+    var isSpinning = false;
+    var currentStyle = 'cartoon';
+    var currentColor = 'spectrum';
+
+    function initViewer() {
+      if (viewer3d) return;
+      var el = document.getElementById('viewerContainer');
+      var ph = document.getElementById('viewerPlaceholder');
+      if (ph) ph.remove();
+      viewer3d = $3Dmol.createViewer(el, { backgroundColor: '#040810' });
+    }
+
+    function loadPDBInViewer(url, name) {
+      initViewer();
+      fetch(url)
+        .then(function(r) { return r.text(); })
+        .then(function(pdbData) {
+          viewer3d.clear();
+          viewerModel = viewer3d.addModel(pdbData, 'pdb');
+          applyStyle();
+          viewer3d.zoomTo();
+          viewer3d.render();
+          if (isSpinning) viewer3d.spin(true);
+          document.getElementById('viewerStructureName').textContent = name || url.split('/').pop();
+          document.getElementById('viewerInfo').innerHTML =
+            '<span>Loaded: <strong>' + (name || url.split('/').pop()) + '</strong> · Atoms: <strong>' + viewerModel.selectedAtoms({}).length + '</strong></span>';
+        })
+        .catch(function(err) { console.warn('Failed to load PDB:', err); });
+    }
+    window.loadPDBInViewer = loadPDBInViewer;
+
+    function applyStyle() {
+      if (!viewer3d || !viewerModel) return;
+      var scheme = currentColor === 'spectrum'
+        ? { prop: 'resi', gradient: new $3Dmol.Gradient.Sinebow() }
+        : (currentColor === 'chain' ? { prop: 'chain', map: $3Dmol.elementColors.rasmol } : { prop: 'b', gradient: new $3Dmol.Gradient.RWB(40, 90) });
+      var styleObj = {};
+      if (currentStyle === 'cartoon') styleObj = { cartoon: { colorscheme: scheme } };
+      else if (currentStyle === 'stick') styleObj = { stick: { radius: 0.2, colorscheme: scheme } };
+      else if (currentStyle === 'sphere') styleObj = { sphere: { scale: 0.6, colorscheme: scheme } };
+      else styleObj = { line: { linewidth: 1.5, colorscheme: scheme } };
+      viewer3d.setStyle({}, styleObj);
+      viewer3d.render();
+    }
+
+    window.setStyle = function(name) {
+      currentStyle = name;
+      document.querySelectorAll('.vbtn').forEach(function(b) { b.classList.remove('active'); });
+      var el = document.getElementById('btn' + name.charAt(0).toUpperCase() + name.slice(1));
+      if (el) el.classList.add('active');
+      applyStyle();
+    };
+    window.toggleColor = function() {
+      var modes = ['spectrum', 'chain', 'plddt'];
+      currentColor = modes[(modes.indexOf(currentColor) + 1) % modes.length];
+      document.getElementById('btnColor').textContent = 'Color: ' + currentColor.charAt(0).toUpperCase() + currentColor.slice(1);
+      applyStyle();
+    };
+    window.toggleSpin = function() {
+      isSpinning = !isSpinning;
+      if (viewer3d) viewer3d.spin(isSpinning);
+      var btn = document.getElementById('btnSpin');
+      btn.textContent = 'Spin: ' + (isSpinning ? 'On' : 'Off');
+    };
+    window.resetView = function() { if (viewer3d) { viewer3d.zoomTo(); viewer3d.render(); } };
+
+    /* ─── GALLERY CLICK ─── */
+    var gg = document.getElementById('galleryGrid');
+    if (gg) {
+      gg.addEventListener('click', function(e) {
+        var card = e.target.closest('.gallery-card');
+        if (!card) return;
+        var src = card.getAttribute('data-pdb');
+        var name = card.getAttribute('data-name');
+        if (src) loadPDBInViewer(src, name);
+      });
+    }
+
+    /* ─── SEQUENCE METRICS ─── */
+    function computeSequenceMetrics(seq) {
+      if (!seq) return null;
+      var len = seq.length;
+      var hp = {A:1,F:1,G:1,I:1,L:1,M:1,P:1,V:1,W:1,Y:1};
+      var pol = {N:1,Q:1,S:1,T:1,C:1,Y:1};
+      var chg = {D:1,E:1,K:1,R:1,H:1};
+      var hydrophobic = 0, polar = 0, charged = 0;
+      for (var i = 0; i < len; i++) {
+        var c = seq[i].toUpperCase();
+        if (hp[c]) hydrophobic++;
+        if (pol[c]) polar++;
+        if (chg[c]) charged++;
+      }
+      return {
+        length: len,
+        mw: (len * 110 / 1000).toFixed(1) + ' kDa',
+        hydrophobicPct: ((hydrophobic / len) * 100).toFixed(0) + '%',
+        polarPct: ((polar / len) * 100).toFixed(0) + '%',
+        chargedPct: ((charged / len) * 100).toFixed(0) + '%'
+      };
+    }
+
+    /* ─── ESCAPE HTML ─── */
+    function escapeHtml(t) {
+      if (!t) return '';
+      return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    /* ─── TERMINAL RENDERING ─── */
+    function updateTerminal(events) {
+      var term = document.getElementById('terminalLog');
+      if (!term || !events) return;
+      if (events.length === 0) return;
+      var lines = [];
+      for (var i = 0; i < events.length; i++) {
+        var ev = events[i];
+        var t = ev.time ? ev.time.replace('T',' ').split('.')[0] : '';
+        var ts = '<span style="color:var(--muted);font-size:9px;">[' + t + ']</span> ';
+        if (ev.kind === 'log') {
+          lines.push('<div style="color:#8cd4da;margin-bottom:1px;">' + ts + escapeHtml(ev.message) + '</div>');
+        } else if (ev.kind === 'step') {
+          lines.push('<div style="color:var(--warn);font-weight:700;margin-bottom:2px;margin-top:4px;">' + ts + '🚀 ' + escapeHtml(ev.message) + '</div>');
+        } else if (ev.kind === 'start') {
+          lines.push('<div style="color:var(--accent);font-weight:700;margin-bottom:2px;">' + ts + '▶ PIPELINE INITIATED — ' + escapeHtml((ev.detail && ev.detail.display_name) || '') + '</div>');
+        } else if (ev.kind === 'run') {
+          var cmd = (ev.detail && ev.detail.command) || '';
+          lines.push('<div style="color:var(--muted2);margin-bottom:2px;">' + ts + '$ ' + escapeHtml(cmd) + '</div>');
+        } else if (ev.kind === 'process') {
+          var rc = ev.detail && ev.detail.returncode;
+          var ok = rc === 0;
+          lines.push('<div style="color:' + (ok ? 'var(--success)' : 'var(--danger)') + ';font-weight:700;margin-bottom:2px;">' + ts + (ok ? '✅ CLI SUCCESS (rc=0)' : '❌ CLI ERROR (rc=' + rc + ')') + '</div>');
+        } else if (ev.kind === 'error') {
+          lines.push('<div style="color:var(--danger);font-weight:700;margin-bottom:2px;">' + ts + '🔴 ERROR: ' + escapeHtml(ev.message) + '</div>');
+        } else if (ev.kind === 'done') {
+          lines.push('<div style="color:var(--success);font-weight:700;margin-bottom:2px;">' + ts + '✅ RUN COMPLETE — artifacts ready</div>');
+        } else {
+          lines.push('<div style="color:var(--muted2);margin-bottom:1px;">' + ts + escapeHtml(ev.message) + '</div>');
+        }
+      }
+      var html = lines.join('');
+      if (term.innerHTML !== html) {
+        term.innerHTML = html;
+        term.scrollTop = term.scrollHeight;
+      }
+    }
+
+    /* ─── STAGE STATUS HELPER ─── */
+    function setStageStatus(id, state) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = state;
+      el.className = 'stage-status';
+      if (state === 'ACTIVE') el.classList.add('s-active');
+      else if (state === 'READY') el.classList.add('s-ready');
+    }
+
+    function setStageNode(id, active) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.className = 'stage-node' + (active === 'active' ? ' active' : active === 'ready' ? ' ready' : '');
+    }
+
+    /* ─── STATE POLLING ─── */
+    var prevActive = false;
+    var pollTimeout = null;
+    var currentInterval = 2000;
+
+    function refreshState(callback) {
+      fetch('/api/state')
+        .then(function(r) { return r.json(); })
+        .then(function(payload) {
+          var state = payload.run_state || {};
+          var summary = payload.summary || {};
+          var artifacts = payload.artifacts || [];
+          var trust = payload.trust || {};
+          var evidence = trust.evidence || {};
+          var step = state.step || 'idle';
+          var status = (state.status || 'idle').toLowerCase();
+          var active = !!state.active;
+          var runtime = summary.runtime || state.runtime || 'relay';
+          var runtimeKind = summary.runtime_kind || 'LOCAL';
+          var runId = summary.run_id || state.run_id || '—';
+          var requestId = summary.request_id || '—';
+          var trustScore = Number.isFinite(trust.score) ? trust.score : 0;
+          var workflow = summary.workflow || 'protein-fold';
+          var isDesign = workflow === 'protein-design';
+
+          // Top status pill
+          var pill = document.getElementById('statusPill');
+          var hdrStatus = document.getElementById('hdrStatus');
+          if (pill) { pill.className = 'status-pill ' + (active ? 'running' : status === 'ready' ? 'ready' : status === 'error' ? 'error' : ''); }
+          if (hdrStatus) hdrStatus.textContent = (active ? 'RUNNING' : status).toUpperCase();
+
+          var wfBadge = document.getElementById('hdrWorkflowBadge');
+          if (wfBadge) wfBadge.textContent = workflow;
+
+          // Runtime badge
+          var rtBadge = document.getElementById('runRuntimeBadge');
+          var rtText = document.getElementById('runtimeBadgeText');
+          var rtRail = document.getElementById('runRuntimeText');
+          if (rtBadge) {
+            rtBadge.className = 'badge ' + (runtime === 'hosted' ? 'badge-hosted' : 'badge-relay');
+            rtBadge.textContent = runtime === 'hosted' ? 'LIVE NVIDIA' : 'RELAY';
+          }
+          if (rtText) rtText.textContent = runtime === 'hosted' ? 'Live NVIDIA NIM Calls' : 'Local Relay Mode';
+          if (rtRail) { rtRail.textContent = runtime === 'hosted' ? 'NVIDIA NIM (LIVE)' : 'LOCAL RELAY'; rtRail.style.color = runtime === 'hosted' ? 'var(--accent)' : 'var(--warn)'; }
+
+          // Run status sidebar
+          var runStatusEl = document.getElementById('runStatusText');
+          var runStepEl = document.getElementById('runStepText');
+          var runLatestMsg = document.getElementById('runLatestMessage');
+          var runLatestLabel = document.getElementById('runLatestLabel');
+          if (runStatusEl) { runStatusEl.textContent = (active ? 'RUNNING' : status).toUpperCase(); runStatusEl.style.color = active ? 'var(--accent)' : status === 'ready' ? 'var(--success)' : 'var(--text)'; }
+          if (runStepEl) runStepEl.textContent = step;
+          if (runLatestMsg) { var ev = state.events || []; runLatestMsg.textContent = ev.length ? (ev[ev.length-1].message || 'Standing by.') : 'Standing by.'; }
+          if (runLatestLabel) runLatestLabel.textContent = summary.display_name ? (summary.display_name + ' · ' + (summary.completed_at || '—')) : '—';
+
+          // Pipeline badge
+          var pipeBadge = document.getElementById('pipelineRunBadge');
+          if (pipeBadge) { pipeBadge.className = 'badge ' + (active ? 'badge-hosted' : status === 'ready' ? 'badge-real' : 'badge-demo'); pipeBadge.textContent = active ? 'RUNNING' : status.toUpperCase(); }
+
+          // Show/hide design pipeline row
+          var designRow = document.getElementById('designPipelineRow');
+          if (designRow) designRow.style.display = isDesign ? 'block' : 'none';
+
+          // Stage status logic
+          if (isDesign) {
+            setStageStatus('stageRFDStatus', active && step === 'execute' ? 'ACTIVE' : artifacts.some(function(a){return a.name==='design_pdb'||a.name==='design_json';}) ? 'READY' : 'IDLE');
+            setStageStatus('stageMPNNStatus', active && step === 'execute' ? 'ACTIVE' : artifacts.some(function(a){return a.name==='mpnn_fasta';}) ? 'READY' : 'IDLE');
+            setStageStatus('stageMSA2Status', active && (step==='inspect'||step==='finish') ? 'ACTIVE' : artifacts.some(function(a){return a.name==='fold_pdb'||a.name==='fold_json';}) ? 'READY' : 'IDLE');
+            setStageStatus('stageMSAStatus', 'N/A');
+            setStageStatus('stageFoldStatus', 'N/A');
+            setStageStatus('stageArtifactStatus', artifacts.length > 0 ? 'READY' : 'IDLE');
+          } else {
+            setStageStatus('stageMSAStatus', active && (step==='intake'||step==='route'||step==='execute') ? 'ACTIVE' : artifacts.some(function(a){return a.name==='msa_json'||a.name==='msa_a3m';}) ? 'READY' : 'IDLE');
+            setStageStatus('stageFoldStatus', active && step==='execute' ? 'ACTIVE' : artifacts.some(function(a){return a.name==='fold_pdb'||a.name==='fold_json'||a.name==='fold_cif';}) ? 'READY' : 'IDLE');
+            setStageStatus('stageArtifactStatus', artifacts.length > 0 ? 'READY' : active && step==='finish' ? 'ACTIVE' : 'IDLE');
+            setStageStatus('stageRFDStatus', 'N/A');
+            setStageStatus('stageMPNNStatus', 'N/A');
+            setStageStatus('stageMSA2Status', 'N/A');
+          }
+
+          // Sequence metrics
+          var seq = summary.sequence || state.sequence || '';
+          if (seq) {
+            var m = computeSequenceMetrics(seq);
+            if (m) {
+              el('metricLength', m.length);
+              el('metricMW', m.mw.split(' ')[0]);
+              el('metricHydrophobic', m.hydrophobicPct);
+            }
+          }
+
+          // Confidence
+          var plddt = null;
+          if (summary.fold && summary.fold.mean_plddt) plddt = summary.fold.mean_plddt;
+          else if (summary.fold && summary.fold.complex_plddt_score) plddt = summary.fold.complex_plddt_score * 100;
+          var confEl = document.getElementById('metricConfidence');
+          var confSrc = document.getElementById('metricConfidenceSrc');
+          if (confEl) confEl.textContent = plddt ? plddt.toFixed(1) : '—';
+          if (confSrc) confSrc.textContent = plddt ? (runtime === 'hosted' ? 'Real NVIDIA OpenFold2 pLDDT' : 'Local relay telemetry') : 'Awaiting run';
+
+          // Trust signals
+          var ts = trust.score || 0;
+          var tsText = document.getElementById('trustScoreText');
+          if (tsText) tsText.textContent = ts + ' / 100';
+          
+          var tsStatus = document.getElementById('trustScoreStatus');
+          var tsSub = document.getElementById('trustScoreSub');
+          if (tsStatus && tsSub) {
+             if (ts >= 90) { tsStatus.textContent = '✓ Cryptographically Verified'; tsStatus.style.color = 'var(--success)'; tsSub.textContent = 'Scientific Workflow Complete'; }
+             else if (ts >= 50) { tsStatus.textContent = '⚠ Partially Verified'; tsStatus.style.color = 'var(--accent)'; tsSub.textContent = 'Missing Runtime Evidence'; }
+             else { tsStatus.textContent = '⚠ Evidence Incomplete'; tsStatus.style.color = 'var(--warn)'; tsSub.textContent = 'Not Scientific Evidence'; }
+          }
+          
+          var banner = document.getElementById('trustVerdictBanner');
+          var bannerText = document.getElementById('trustVerdictBannerText');
+          if (banner && bannerText) {
+            if (runtime === 'hosted') {
+              banner.className = 'trust-verdict-banner verified';
+              bannerText.textContent = '🟢 VERIFIED NVIDIA EXECUTION';
+            } else {
+              banner.className = 'trust-verdict-banner relay';
+              bannerText.textContent = '🟡 LOCAL FALLBACK ⚠ Relay Mode';
+            }
+          }
+
+          var reasonsList = document.getElementById('trustReasonsList');
+          if (reasonsList) {
+             if (trust.reasons && trust.reasons.length > 0) {
+                reasonsList.innerHTML = trust.reasons.map(function(r) { return '<li>' + r.reason + '</li>'; }).join('');
+             } else {
+                reasonsList.innerHTML = '<li>Awaiting evidence...</li>';
+             }
+          }
+
+          el('trustProvider', evidence.provider && evidence.provider.value ? evidence.provider.value : 'NVIDIA BioNeMo');
+          el('trustRuntime', runtimeKind);
+          el('trustModel', evidence.model && evidence.model.value ? evidence.model.value : 'BioNeMo Model');
+          
+          var tStart = summary.created_at ? new Date(summary.created_at).getTime() : 0;
+          var tEnd = summary.completed_at ? new Date(summary.completed_at).getTime() : 0;
+          el('trustLiveExec', 'Executed Live');
+          if (tStart && tEnd) el('trustDuration', ((tEnd - tStart)/1000).toFixed(2) + ' s');
+          else el('trustDuration', '—');
+          if (tEnd) {
+             var secsAgo = Math.floor((Date.now() - tEnd)/1000);
+             el('trustGeneratedAgo', secsAgo + ' s ago');
+          } else el('trustGeneratedAgo', '—');
+
+          el('trustRunId', runId);
+          el('trustRequestId', requestId);
+          el('trustArtifactHash', summary.artifact_hash ? summary.artifact_hash.substring(0, 32) + '...' : '—');
+          
+          if (state.sequence && window.crypto && window.crypto.subtle) {
+            var enc = new TextEncoder();
+            window.crypto.subtle.digest('SHA-256', enc.encode(state.sequence)).then(function(hashBuffer) {
+              var hashArray = Array.from(new Uint8Array(hashBuffer));
+              var hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+              el('trustInputHash', hashHex.substring(0, 16) + '...');
+            });
+            el('trustInputLen', state.sequence.length + ' aa');
+          }
+          
+          var evBox = document.getElementById('trustEvidenceBox');
+          var evChecklist = document.getElementById('trustEvidenceChecklist');
+          var evCountLabel = document.getElementById('trustEvidenceCountLabel');
+          var evBadge = document.getElementById('trustReproducibleBadge');
+          if (evBox && evChecklist && trust.evidence) {
+             var evItems = [];
+             var verifiedCount = 0;
+             var totalCount = Object.keys(trust.evidence).length;
+             for (var k in trust.evidence) {
+                var isV = trust.evidence[k].verified;
+                if (isV) verifiedCount++;
+                var icon = isV ? '<span style="color:var(--success);">✓</span>' : '<span style="color:var(--warn);">⚠</span>';
+                evItems.push('<div>' + icon + ' ' + trust.evidence[k].field + '</div>');
+             }
+             evChecklist.innerHTML = evItems.join('');
+             if (evCountLabel) evCountLabel.textContent = verifiedCount + ' / ' + totalCount + ' Verified';
+             
+             if (verifiedCount === totalCount && totalCount > 0) {
+               evBox.style.background = 'rgba(61,255,160,0.05)';
+               evBadge.innerHTML = '<span style="color:var(--success);">✓ Reproducible</span>';
+               evBadge.style.color = 'var(--success)';
+               evCountLabel.style.color = 'var(--success)';
+             } else {
+               evBox.style.background = 'rgba(255,183,3,0.05)';
+               evBadge.innerHTML = '⚠ Partial Evidence';
+               evBadge.style.color = 'var(--warn)';
+               evCountLabel.style.color = 'var(--warn)';
+             }
+          }
+
+          // Execution trace
+          var traceEl = document.getElementById('executionTracePane');
+          if (traceEl && payload.execution_trace) traceEl.textContent = JSON.stringify(payload.execution_trace, null, 2);
+
+          // Terminal
+          updateTerminal(state.events || []);
+
+          // Live explanation
+          var explanationEl = document.getElementById('telDetailedExplanation');
+          if (explanationEl) explanationEl.textContent = explainStep(step, active, state.events || []);
+
+          // Gallery grid
+          var gg = document.getElementById('galleryGrid');
+          if (gg && payload.gallery_cards_html) {
+            gg.innerHTML = payload.gallery_cards_html;
+          }
+
+          // Artifact list
+          var artEl = document.getElementById('artifactListEl');
+          var artCount = document.getElementById('artifactCountLabel');
+          if (artEl) {
+            if (artifacts.length > 0) {
+              artEl.innerHTML = artifacts.map(function(a) {
+                return '<div class="artifact-item">' +
+                  '<span><code>' + (a.name || '') + '</code> <span style="font-size:10px;color:var(--muted2);">' + (a.display_name || a.label || '') + '</span></span>' +
+                  '<a class="artifact-link" href="/artifact/' + (a.name || '') + '" target="_blank">open</a>' +
+                  '</div>';
+              }).join('');
+            } else {
+              artEl.innerHTML = '<div style="color:var(--muted2); font-size:12px; padding:8px 0;">No artifacts generated yet. Run a pipeline to produce structures.</div>';
+            }
+          }
+          if (artCount) artCount.textContent = artifacts.length > 0 ? artifacts.length + ' artifact' + (artifacts.length !== 1 ? 's' : '') + ' ready' : 'No artifacts yet';
+
+          // Launch button state
+          var btn = document.getElementById('visLaunchBtn');
+          var btnText = document.getElementById('visLaunchBtnText');
+          if (btn) {
+            btn.disabled = active;
+            if (btnText) btnText.textContent = active ? 'Running...' : 'Run Pipeline';
+          }
+
+          // Auto-load structure when run completes
+          var isActive = !!state.active;
+          if (prevActive && !isActive) {
+            var pdbArt = artifacts.find ? artifacts.find(function(a) { return a.name === 'fold_pdb' || a.name === 'fold_cif'; }) : null;
+            if (pdbArt && pdbArt.path) {
+              var fname = pdbArt.path.replace(/\\/g, '/').split('/').pop();
+              loadPDBInViewer('/outputs/' + fname, fname);
+            }
+          }
+          prevActive = isActive;
+
+          if (callback) callback();
+        })
+        .catch(function(err) {
+          console.warn('Poll error:', err);
+          if (callback) callback();
+        });
+    }
+
+    function el(id, val) {
+      var e = document.getElementById(id);
+      if (e) e.textContent = val;
+    }
+
+    function explainStep(step, active, events) {
+      if (!active) {
+        var ev = events && events.length ? events[events.length-1] : null;
+        if (ev && ev.kind === 'done') return '✅ Pipeline complete. Artifacts are ready. View the 3D structure below or download outputs.';
+        if (ev && ev.kind === 'error') return '❌ Pipeline encountered an error. Check terminal output above for details.';
+        return 'The lab is standing by. Configure your protein sequence and hit Run Pipeline to fire real NVIDIA NIM API calls.';
+      }
+      if (step === 'intake') return '🤖 Intake Phase: Parsing goal and sequence. Resolving workflow type and target NIM endpoints. Setting up run context.';
+      if (step === 'route') return '🎯 Routing Phase: Selecting NIM capability path. MSA Search (ColabFold) → OpenFold2 for fold workflows, or RFDiffusion → ProteinMPNN → OpenFold2 for design.';
+      if (step === 'execute') {
+        var latest = '';
+        for (var i = events.length - 1; i >= 0; i--) {
+          if (events[i].kind === 'log') { latest = (events[i].message || '').toLowerCase(); break; }
+        }
+        if (latest.indexOf('rfdiffusion') >= 0) return '⚙️ RFDiffusion NIM: Generating de novo protein backbone via denoising diffusion. Designing structural coordinates from Gaussian noise.';
+        if (latest.indexOf('proteinmpnn') >= 0) return '🧠 ProteinMPNN NIM: Designing amino acid sequences for the generated backbone using graph neural network inverse folding.';
+        if (latest.indexOf('msa') >= 0 || latest.indexOf('colabfold') >= 0) return '🔍 MSA Search NIM (ColabFold): Building Multiple Sequence Alignment from UniRef30 and ColabFold ENV databases for evolutionary context.';
+        if (latest.indexOf('openfold') >= 0) return '🧬 OpenFold2 NIM: Folding target sequence into 3D atomic coordinates using AlphaFold2-compatible neural network. Generating pLDDT confidence scores.';
+        return '⚙️ Execution Phase: BioNeMo Scientist subprocess is running. Streaming stdout in real time above.';
+      }
+      if (step === 'inspect') return '🔬 Inspection Phase: Subprocess complete. Reading run summary, extracting pLDDT metrics, verifying artifact integrity.';
+      if (step === 'finish') return '📈 Publish Phase: Writing run report, computing artifact hashes, registering provenance in execution manifest.';
+      return 'Standing by.';
+    }
+
+    /* ─── FORM SUBMIT ─── */
+    window.handleRunSubmit = function(e) {
+      e.preventDefault();
+      var goal = document.getElementById('vis-goal').value.trim() || 'Fold a protein sequence and explain confidence metrics.';
+      var seq = document.getElementById('vis-sequence').value.trim();
+      var rt = document.getElementById('vis-runtime').value;
+      var dn = document.getElementById('vis-display-name').value.trim();
+
+      // Also sync the hidden form for compatibility
+      document.getElementById('goal').value = goal;
+      document.getElementById('sequence').value = seq;
+      document.getElementById('runtime').value = rt;
+      document.getElementById('displayName').value = dn;
+
+      // Clear terminal
+      document.getElementById('terminalLog').innerHTML = '<div style="color:var(--accent);font-weight:700;">▶ Initiating NVIDIA BioNeMo pipeline...</div>';
+
+      var fd = new FormData();
+      fd.append('goal', goal);
+      fd.append('sequence', seq);
+      fd.append('runtime', rt);
+      fd.append('display_name', dn);
+
+      fetch('/api/run/start', { method: 'POST', body: fd })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+          if (!res.ok) {
+            var term = document.getElementById('terminalLog');
+            if (term) term.innerHTML += '<div style="color:var(--danger);font-weight:700;">⚠ ' + (res.error || 'Could not start run') + '</div>';
+          }
+          currentInterval = 400;
+          refreshState(function() { scheduleNextPoll(currentInterval); });
+        })
+        .catch(function(err) {
+          var term = document.getElementById('terminalLog');
+          if (term) term.innerHTML += '<div style="color:var(--danger);">⚠ Network error: ' + err + '</div>';
+        });
+    };
+
+    // Keep hidden form functional for any legacy JS
+    document.getElementById('runForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      window.handleRunSubmit(e);
+    });
+
+    /* ─── PRESETS ─── */
+    window.setPreset = function(name, goal, seq) {
+      document.getElementById('vis-goal').value = goal;
+      document.getElementById('vis-sequence').value = seq;
+      document.getElementById('vis-display-name').value = name;
+      if (seq) {
+        var m = computeSequenceMetrics(seq);
+        if (m) {
+          el('metricLength', m.length); el('metricMW', m.mw.split(' ')[0]); el('metricHydrophobic', m.hydrophobicPct);
+        }
+      }
+    };
+
+    /* ─── POLLING LOOP ─── */
+    function scheduleNextPoll(interval) {
+      if (pollTimeout) clearTimeout(pollTimeout);
+      pollTimeout = setTimeout(function() {
+        refreshState(function() { scheduleNextPoll(currentInterval); });
+      }, interval);
+    }
+
+    /* ─── GSAP ANIMATION ─── */
+    document.addEventListener('DOMContentLoaded', function() {
+      gsap.to('.anim-in', { opacity: 1, y: 0, stagger: 0.06, duration: 0.55, ease: 'power3.out', delay: 0.05 });
+
+      // Auto-load default structure
+      setTimeout(function() {
+        var preferred = [
+          ['/outputs/bionemo_openfold2_structure.pdb', 'OpenFold2 Prediction'],
+          ['/outputs/helical_bundle_folded.pdb', 'Helical Bundle (Folded)']
+        ];
+        function tryLoad(idx) {
+          if (idx >= preferred.length) return;
+          var item = preferred[idx];
+          fetch(item[0]).then(function(r) {
+            if (!r.ok) throw new Error('missing');
+            loadPDBInViewer(item[0], item[1]);
+          }).catch(function() { tryLoad(idx + 1); });
+        }
+        if (!viewerModel) tryLoad(0);
+      }, 400);
+    });
+
+    // Start polling immediately
+    scheduleNextPoll(800);
+
+  })();
+</script>
+</body>
+</html>

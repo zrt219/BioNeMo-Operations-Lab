@@ -553,18 +553,16 @@ GALLERY_PDBS = [
 ]
 
 
-def page_html() -> str:
-    summary = read_json(SUMMARY_PATH)
-    run_state = snapshot_state()
-    report = read_text(REPORT_PATH, "# No report yet")
-    artifacts = latest_artifacts()
-    workflow = summary.get("workflow") or infer_workflow_from_goal(run_state.get("goal", "") or summary.get("goal", ""))
-    stages = compute_stage_state(summary, run_state, artifacts)
+def build_gallery_html() -> str:
+    known_pdbs = dict(GALLERY_PDBS)
+    for p in OUTPUTS.glob("*.pdb"):
+        if p.name not in known_pdbs:
+            label = p.stem.replace("_", " ").title()
+            known_pdbs[p.name] = label
 
-    # Find the newest PDB file in the gallery list
     newest_pdb_name = None
     newest_time = 0.0
-    for pdb_name, label in GALLERY_PDBS:
+    for pdb_name in known_pdbs:
         p = OUTPUTS / pdb_name
         if p.exists():
             mtime = p.stat().st_mtime
@@ -572,9 +570,8 @@ def page_html() -> str:
                 newest_time = mtime
                 newest_pdb_name = pdb_name
 
-    # Gallery cards — show available PDBs and viewer images
     gallery_parts = []
-    for pdb_name, label in GALLERY_PDBS:
+    for pdb_name, label in known_pdbs.items():
         p = OUTPUTS / pdb_name
         if p.exists():
             mtime = p.stat().st_mtime
@@ -583,7 +580,6 @@ def page_html() -> str:
             card_class = "gallery-card newest-card" if is_newest else "gallery-card"
             badge_html = '<span class="latest-badge">LATEST</span>' if is_newest else ''
             
-            # Find matching viewer image thumbnail
             base = pdb_name.replace("_folded.pdb", "").replace("_backbone.pdb", "").replace(".pdb", "")
             thumb = None
             for vf in VIEWER_FILES:
@@ -606,15 +602,26 @@ def page_html() -> str:
                     f'<span class="gallery-label">{label}</span>'
                     f'<span class="gallery-time">🕒 {time_str}</span></div>'
                 )
-    gallery_html = "\n".join(gallery_parts) or '<div style="color:var(--muted);font-size:13px;">No PDB files yet. Run a pipeline to generate structures.</div>'
+    return "\n".join(gallery_parts) or '<div style="color:var(--muted);font-size:13px;">No PDB files yet. Run a pipeline to generate structures.</div>'
+
+
+def page_html() -> str:
+    summary = read_json(SUMMARY_PATH)
+    run_state = snapshot_state()
+    report = read_text(REPORT_PATH, "# No report yet")
+    artifacts = latest_artifacts()
+    workflow = summary.get("workflow") or infer_workflow_from_goal(run_state.get("goal", "") or summary.get("goal", ""))
+    stages = compute_stage_state(summary, run_state, artifacts)
+
+    gallery_html = build_gallery_html()
 
     latest_run_id = summary.get("run_id")
     for artifact in artifacts:
         artifact["is_latest"] = bool(latest_run_id and artifact.get("run_id") == latest_run_id)
     artifact_items = "\n".join(
-        f'<li><code>{a["name"]}</code> <span style="color:var(--muted);font-size:11px;">{a["display_name"]}</span> {render_artifact_badge(a)} <a href="/artifact/{a["name"]}" aria-label="Open artifact {a["name"]}">open</a></li>'
+        f'<div class="artifact-item"><span><code>{a["name"]}</code> <span style="font-size:10px;color:var(--muted2);">{a["display_name"]}</span> {render_artifact_badge(a)}</span> <a class="artifact-link" href="/artifact/{a["name"]}" target="_blank">open</a></div>'
         for a in artifacts
-    ) or "<li style='color:var(--muted);'>No artifacts yet. Run the scientist first.</li>"
+    ) or "<div style='color:var(--muted2); font-size:12px; padding:8px 0;'>No artifacts yet. Run the scientist first.</div>"
     stage_cards = render_stage_cards(stages, workflow)
     summary_json = json.dumps(summary, indent=2, sort_keys=True)
     run_state_json = json.dumps(run_state, indent=2, sort_keys=True)
@@ -628,49 +635,53 @@ def page_html() -> str:
     real_stats_html = make_real_nvidia_stats_html(real_stats)
     trust = trust_record_for(summary, run_state, artifacts)
 
-    # Load the cinematic HTML template and substitute
-    template_path = ROOT / "lab_template.html"
+    # Load template and substitute
+    template_path = ROOT / "index.html" if (ROOT / "index.html").exists() else ROOT / "lab_template.html"
     template_text = template_path.read_text(encoding="utf-8")
-    tmpl = Template(template_text)
-    return tmpl.safe_substitute(
-        workflow=workflow,
-        run_status_upper=run_state.get("status", "idle").upper(),
-        run_status=run_state.get("status", "idle"),
-        run_step=run_state.get("step", "idle"),
-        run_runtime=run_state.get("runtime", "auto"),
-        stage_cards_html=stage_cards,
-        gallery_cards_html=gallery_html,
-        artifact_items_html=artifact_items,
-        artifact_count=str(len(artifacts)),
-        summary_json=summary_json,
-        run_state_json=run_state_json,
-        report_safe=report_safe,
-        live_action=live_action,
-        newest_artifact=newest_artifact,
-        newest_run=newest_run,
-        active_command=active_command,
-        real_nvidia_stats_html=real_stats_html,
-        trust_score=str(trust.get("score", 0)),
-        trust_verdict=trust.get("verdict", "EVIDENCE INCOMPLETE"),
-        trust_verified="true" if trust.get("verified") else "false",
-        trust_explanation=trust.get("explanation", ""),
-        trust_missing=json.dumps(trust.get("missing", []), indent=2),
-        trust_reasons=json.dumps(trust.get("reasons", []), indent=2),
-        trust_evidence=json.dumps(trust.get("evidence", {}), indent=2, sort_keys=True),
-        trust_json=json.dumps(trust, indent=2, sort_keys=True),
-        event_log_json=json.dumps(run_state.get("events", []), indent=2, sort_keys=True),
-        execution_trace_json=json.dumps(summary.get("execution_trace", []), indent=2, sort_keys=True),
-        goal_value=summary.get("goal", "Design a protein fold and explain the confidence metrics."),
-        sequence_value=summary.get("sequence", ""),
-        display_name_value=summary.get("display_name", ""),
-        runtime_auto_sel="selected" if run_state.get("runtime", "auto") == "auto" else "",
-        runtime_hosted_sel="selected" if run_state.get("runtime") == "hosted" else "",
-        runtime_demo_sel="selected" if run_state.get("runtime") == "relay" else "",
-    )
 
+    substitutions = {
+        "${workflow}": str(workflow),
+        "${run_status_upper}": str(run_state.get("status", "idle")).upper(),
+        "${run_status}": str(run_state.get("status", "idle")),
+        "${run_step}": str(run_state.get("step", "idle")),
+        "${run_runtime}": str(run_state.get("runtime", "auto")),
+        "${stage_cards_html}": str(stage_cards),
+        "${gallery_cards_html}": str(gallery_html),
+        "${artifact_items_html}": str(artifact_items),
+        "${artifact_count}": str(len(artifacts)),
+        "${summary_json}": str(summary_json),
+        "${run_state_json}": str(run_state_json),
+        "${report_safe}": str(report_safe),
+        "${live_action}": str(live_action),
+        "${newest_artifact}": str(newest_artifact),
+        "${newest_run}": str(newest_run),
+        "${active_command}": str(active_command),
+        "${real_nvidia_stats_html}": str(real_stats_html),
+        "${trust_score}": str(trust.get("score", 0)),
+        "${trust_verdict}": str(trust.get("verdict", "EVIDENCE INCOMPLETE")),
+        "${trust_verified}": "true" if trust.get("verified") else "false",
+        "${trust_explanation}": str(trust.get("explanation", "")),
+        "${trust_missing}": json.dumps(trust.get("missing", []), indent=2),
+        "${trust_reasons}": json.dumps(trust.get("reasons", []), indent=2),
+        "${trust_evidence}": json.dumps(trust.get("evidence", {}), indent=2, sort_keys=True),
+        "${trust_json}": json.dumps(trust, indent=2, sort_keys=True),
+        "${event_log_json}": json.dumps(run_state.get("events", []), indent=2, sort_keys=True),
+        "${execution_trace_json}": json.dumps(summary.get("execution_trace", []), indent=2, sort_keys=True),
+        "${goal_value}": str(summary.get("goal", "Design a protein fold and explain the confidence metrics.")),
+        "${sequence_value}": str(summary.get("sequence", "")),
+        "${display_name_value}": str(summary.get("display_name", "")),
+        "${runtime_auto_sel}": "selected" if run_state.get("runtime", "auto") == "auto" else "",
+        "${runtime_hosted_sel}": "selected" if run_state.get("runtime") == "hosted" else "",
+        "${runtime_demo_sel}": "selected" if run_state.get("runtime") == "relay" else "",
+    }
 
+    result = template_text
+    for key, val in substitutions.items():
+        result = result.replace(key, val)
+        key_nobraces = "$" + key[2:-1]
+        result = result.replace(key_nobraces, val)
 
-
+    return result
 
 def state_payload() -> dict:
     summary = read_json(SUMMARY_PATH)
@@ -690,6 +701,7 @@ def state_payload() -> dict:
         "run_state": run_state,
         "summary": summary,
         "artifacts": artifacts,
+        "gallery_cards_html": build_gallery_html(),
         "report": read_text(REPORT_PATH, "# No report generated yet."),
         "workflow": workflow,
         "stages": stages,
