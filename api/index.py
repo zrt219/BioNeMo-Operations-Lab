@@ -149,35 +149,34 @@ def api_run_start():
         })
     save_state()
 
-    # Synchronous Execution for Vercel
-    try:
-        args_list = ["--runtime", runtime, "--goal", goal]
-        if sequence:
-            args_list.extend(["--sequence", sequence])
-        if display_name:
-            args_list.extend(["--display-name", display_name])
-        if random_seed and random_seed.isdigit():
-            args_list.extend(["--random-seed", random_seed])
-        if max_msa_sequences and max_msa_sequences.isdigit():
-            args_list.extend(["--max-msa-sequences", max_msa_sequences])
+    args_list = ["--runtime", runtime, "--goal", goal]
+    if sequence:
+        args_list.extend(["--sequence", sequence])
+    if display_name:
+        args_list.extend(["--display-name", display_name])
+    if random_seed and random_seed.isdigit():
+        args_list.extend(["--random-seed", random_seed])
+    if max_msa_sequences and max_msa_sequences.isdigit():
+        args_list.extend(["--max-msa-sequences", max_msa_sequences])
 
-        # Run the actual scientist pipeline blockingly
-        bionemo_scientist.main(args_list)
-        
-        with RUN_LOCK:
-            RUN_STATE["step"] = "finish"
-            RUN_STATE["status"] = "success"
-            RUN_STATE["active"] = False
-            RUN_STATE["updated_at"] = now_ts()
-            RUN_STATE["events"].append({"time": now_ts(), "kind": "complete", "message": "Pipeline finished successfully."})
-        save_state()
-        return jsonify({"ok": True, "message": "Scientist run finished.", "run_state": snapshot_state()})
-    except Exception as e:
-        with RUN_LOCK:
-            RUN_STATE["step"] = "finish"
-            RUN_STATE["status"] = "failed"
-            RUN_STATE["active"] = False
-            RUN_STATE["updated_at"] = now_ts()
-            RUN_STATE["events"].append({"time": now_ts(), "kind": "error", "message": str(e)})
-        save_state()
-        return jsonify({"ok": False, "error": str(e), "run_state": snapshot_state()}), 500
+    def worker():
+        try:
+            bionemo_scientist.main(args_list)
+            with RUN_LOCK:
+                RUN_STATE["step"] = "finish"
+                RUN_STATE["status"] = "success"
+                RUN_STATE["active"] = False
+                RUN_STATE["updated_at"] = now_ts()
+                RUN_STATE["events"].append({"time": now_ts(), "kind": "complete", "message": "Pipeline finished successfully."})
+            save_state()
+        except Exception as e:
+            with RUN_LOCK:
+                RUN_STATE["step"] = "finish"
+                RUN_STATE["status"] = "failed"
+                RUN_STATE["active"] = False
+                RUN_STATE["updated_at"] = now_ts()
+                RUN_STATE["events"].append({"time": now_ts(), "kind": "error", "message": str(e)})
+            save_state()
+
+    threading.Thread(target=worker, daemon=True).start()
+    return jsonify({"ok": True, "message": "Scientist run started.", "run_state": snapshot_state()})
