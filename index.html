@@ -1312,16 +1312,26 @@
           var explanationEl = document.getElementById('telDetailedExplanation');
           if (explanationEl) explanationEl.textContent = explainStep(step, active, state.events || []);
 
+          // Gallery grid
+          var gg = document.getElementById('galleryGrid');
+          if (gg && payload.gallery_cards_html) {
+            gg.innerHTML = payload.gallery_cards_html;
+          }
+
           // Artifact list
           var artEl = document.getElementById('artifactListEl');
           var artCount = document.getElementById('artifactCountLabel');
-          if (artEl && artifacts.length > 0) {
-            artEl.innerHTML = artifacts.map(function(a) {
-              return '<div class="artifact-item">' +
-                '<span><code>' + (a.name || '') + '</code> <span style="font-size:10px;color:var(--muted2);">' + (a.label || '') + '</span></span>' +
-                '<a class="artifact-link" href="/artifact/' + (a.name || '') + '" target="_blank">open</a>' +
-                '</div>';
-            }).join('');
+          if (artEl) {
+            if (artifacts.length > 0) {
+              artEl.innerHTML = artifacts.map(function(a) {
+                return '<div class="artifact-item">' +
+                  '<span><code>' + (a.name || '') + '</code> <span style="font-size:10px;color:var(--muted2);">' + (a.display_name || a.label || '') + '</span></span>' +
+                  '<a class="artifact-link" href="/artifact/' + (a.name || '') + '" target="_blank">open</a>' +
+                  '</div>';
+              }).join('');
+            } else {
+              artEl.innerHTML = '<div style="color:var(--muted2); font-size:12px; padding:8px 0;">No artifacts generated yet. Run a pipeline to produce structures.</div>';
+            }
           }
           if (artCount) artCount.textContent = artifacts.length > 0 ? artifacts.length + ' artifact' + (artifacts.length !== 1 ? 's' : '') + ' ready' : 'No artifacts yet';
 

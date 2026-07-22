@@ -1,9 +1,9 @@
 {
-  "request_id": "f57cd9c1174020754007a96f",
+  "request_id": "3ee4dc179cf7c1c095effad0",
   "scores": {
     "confidence_score": null,
     "pLDDT": null,
-    "pTM": 0.32314252853393555
+    "pTM": 0.183860182762146
   },
-  "sequence": "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL"
+  "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSY"
 }
