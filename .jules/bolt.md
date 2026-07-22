@@ -1,0 +1,3 @@
+## 2024-07-22 - [Missing memoization on regex compilation]
+**Learning:** Functions that generate compiled regex patterns on the fly (e.g., `_compiled_context_lexicon` in `openmed.clinical.context`) create severe performance bottlenecks when used repeatedly (e.g., during per-span text evaluations). Without `functools.lru_cache`, the regex compiler is continuously invoked, leading to a massive CPU overhead.
+**Action:** When working on text processing pipelines in openmed, always ensure deterministic regex compilation and lexicon generation steps are memoized (e.g., using `@functools.lru_cache`) to prevent unnecessary computation on repeated text segment evaluations.
