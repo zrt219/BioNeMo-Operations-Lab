@@ -17,9 +17,22 @@ import bionemo_scientist
 
 app = Flask(__name__)
 
-# Force outputs to /tmp for Vercel
+import shutil
+
 OUTPUTS = Path("/tmp/outputs")
 OUTPUTS.mkdir(parents=True, exist_ok=True)
+
+# Seed /tmp/outputs with initial outputs if missing
+SEED_OUTPUTS = ROOT / "outputs"
+if SEED_OUTPUTS.exists():
+    for src in SEED_OUTPUTS.glob("*"):
+        dst = OUTPUTS / src.name
+        if not dst.exists() and src.is_file():
+            try:
+                shutil.copy2(src, dst)
+            except Exception:
+                pass
+
 STATE_FILE = Path("/tmp/run_state.json")
 
 def save_state():
