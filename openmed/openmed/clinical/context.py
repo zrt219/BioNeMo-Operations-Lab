@@ -35,6 +35,7 @@ Sibling axes such as experiencer and absolute-date timeline normalization
 
 from __future__ import annotations
 
+import functools
 import re
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, replace
@@ -99,10 +100,10 @@ NEGATION_CUES = _ENGLISH_CONTEXT_LEXICON.negation
 PSEUDO_NEGATION_CUES = _ENGLISH_CONTEXT_LEXICON.pseudo_negation
 
 
-def _cue_pattern(
-    cues: Iterable[str],
-    *,
-    token_boundaries: bool = True,
+@functools.lru_cache(maxsize=16)
+def _cached_cue_pattern(
+    cues: tuple[str, ...],
+    token_boundaries: bool,
 ) -> re.Pattern[str]:
     alternation = _cue_alternation(cues)
     if not alternation:
@@ -114,17 +115,25 @@ def _cue_pattern(
     return re.compile(pattern, re.IGNORECASE)
 
 
-def _cue_alternation(cues: Iterable[str]) -> str:
+def _cue_pattern(
+    cues: Iterable[str],
+    *,
+    token_boundaries: bool = True,
+) -> re.Pattern[str]:
+    return _cached_cue_pattern(tuple(cues), token_boundaries)
+
+
+def _cue_alternation(cues: tuple[str, ...]) -> str:
     return "|".join(
         r"\s+".join(re.escape(part) for part in cue.split())
         for cue in sorted(set(cues), key=len, reverse=True)
     )
 
 
-def _terminator_pattern(
-    cues: Iterable[str],
-    *,
-    token_boundaries: bool = True,
+@functools.lru_cache(maxsize=16)
+def _cached_terminator_pattern(
+    cues: tuple[str, ...],
+    token_boundaries: bool,
 ) -> re.Pattern[str]:
     alternation = _cue_alternation(cues)
     punctuation = r"[.!?;。！？；]"
@@ -135,6 +144,14 @@ def _terminator_pattern(
     else:
         cue_pattern = rf"(?:{alternation})"
     return re.compile(rf"(?:{punctuation}|{cue_pattern})", re.IGNORECASE)
+
+
+def _terminator_pattern(
+    cues: Iterable[str],
+    *,
+    token_boundaries: bool = True,
+) -> re.Pattern[str]:
+    return _cached_terminator_pattern(tuple(cues), token_boundaries)
 
 
 @dataclass(frozen=True)
@@ -154,6 +171,7 @@ class _CompiledContextLexicon:
     backward_context_cues: frozenset[str]
 
 
+@functools.lru_cache(maxsize=16)
 def _compiled_context_lexicon(language: str | None = None) -> _CompiledContextLexicon:
     lexicon = get_clinical_cue_lexicon(language)
     token_boundaries = lexicon.token_boundaries
