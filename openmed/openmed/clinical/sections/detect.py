@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -244,6 +245,9 @@ def _is_underline(text: str) -> bool:
     return len(stripped) >= 3 and set(stripped) <= _UNDERLINE_CHARS
 
 
+# Bolt ⚡: Cache alias lookups as they are static per language to prevent
+# redundant tuple/dict allocations on every line during clinical section detection.
+@functools.lru_cache(maxsize=None)
 def _alias_lookups(language: str | None) -> tuple[tuple[str, Mapping[str, str]], ...]:
     languages = (
         tuple(dict.fromkeys((get_section_lexicon(language).language, "en")))
