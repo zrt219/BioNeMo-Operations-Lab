@@ -1,0 +1,3 @@
+## 2024-07-25 - Context Lexicon Compilation Bottleneck
+**Learning:** Deterministic regex generation for clinical span lexicons (`_compiled_context_lexicon` in `openmed/clinical/context.py`) is expensive and is repeatedly invoked by various helpers (e.g. `is_negated`, `is_hypothetical`). Since the language argument is hashable, caching this generation avoids massive repetitive computation.
+**Action:** Always verify if computationally heavy dynamic regex generation based on statically loadable parameters (like a language code or fixed taxonomy) is being done per-span, and aggressively memoize these functions (`@functools.lru_cache`) to avoid re-compilation.

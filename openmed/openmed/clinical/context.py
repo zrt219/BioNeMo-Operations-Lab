@@ -39,6 +39,7 @@ import re
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, replace
 from datetime import date
+from functools import lru_cache
 from typing import Any, Literal
 
 from openmed.clinical.lexicons import (
@@ -154,7 +155,13 @@ class _CompiledContextLexicon:
     backward_context_cues: frozenset[str]
 
 
+@lru_cache(maxsize=16)
 def _compiled_context_lexicon(language: str | None = None) -> _CompiledContextLexicon:
+    """Returns regex matchers derived from the context cues lexicon.
+
+    Memoized as cue sets can be large to iterate and regexes are expensive
+    to compile across many invocations.
+    """
     lexicon = get_clinical_cue_lexicon(language)
     token_boundaries = lexicon.token_boundaries
     return _CompiledContextLexicon(
