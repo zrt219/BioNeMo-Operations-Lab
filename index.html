@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BioNeMo Operations Lab — NVIDIA NIM Agent Dashboard</title>
+  <title>BioNeMo Lab by ZRT219</title>
   <meta name="description" content="Real-time NVIDIA BioNeMo NIM pipeline dashboard. MSA Search → OpenFold2 protein structure prediction with live telemetry and audit trail." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="/outputs/js/jquery.min.js"></script>
@@ -416,7 +416,7 @@
       <div class="logo-icon">N</div>
       <div>
         <h1>BioNeMo Lab</h1>
-        <p>NIM Pipeline</p>
+        <p>by ZRT219</p>
       </div>
     </div>
 
@@ -627,7 +627,16 @@
         <div style="margin-top:14px;">
           <div style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:10px;">Load Structure</div>
           <div id="galleryGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap:8px;">
-            ${gallery_cards_html}
+            <div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Helical Bundle (Folded) into the viewer" data-pdb="/outputs/helical_bundle_folded.pdb" data-name="Helical Bundle (Folded)"><img src="/viewer/helical_bundle_viewer.png" alt="Helical Bundle (Folded)" /><span class="gallery-label">Helical Bundle (Folded)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Mixed Fold (Folded) into the viewer" data-pdb="/outputs/mixed_fold_folded.pdb" data-name="Mixed Fold (Folded)"><img src="/viewer/mixed_fold_viewer.png" alt="Mixed Fold (Folded)" /><span class="gallery-label">Mixed Fold (Folded)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Default 100aa (Folded) into the viewer" data-pdb="/outputs/default_folded.pdb" data-name="Default 100aa (Folded)"><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">Default 100aa (Folded)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Helical Bundle (Backbone) into the viewer" data-pdb="/outputs/helical_bundle_backbone.pdb" data-name="Helical Bundle (Backbone)"><img src="/viewer/helical_bundle_viewer.png" alt="Helical Bundle (Backbone)" /><span class="gallery-label">Helical Bundle (Backbone)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Mixed Fold (Backbone) into the viewer" data-pdb="/outputs/mixed_fold_backbone.pdb" data-name="Mixed Fold (Backbone)"><img src="/viewer/mixed_fold_viewer.png" alt="Mixed Fold (Backbone)" /><span class="gallery-label">Mixed Fold (Backbone)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Default 100aa (Backbone) into the viewer" data-pdb="/outputs/default_backbone.pdb" data-name="Default 100aa (Backbone)"><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">Default 100aa (Backbone)</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card newest-card" role="button" tabindex="0" aria-label="Load structure OpenFold2 Prediction into the viewer" data-pdb="/outputs/bionemo_openfold2_structure.pdb" data-name="OpenFold2 Prediction"><span class="latest-badge">LATEST</span><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">OpenFold2 Prediction</span><span class="gallery-time">🕒 Jul 22, 02:16:27</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure RFDiffusion Backbone into the viewer" data-pdb="/outputs/bionemo_rfdiffusion_backbone.pdb" data-name="RFDiffusion Backbone"><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">RFDiffusion Backbone</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Backbone into the viewer" data-pdb="/outputs/backbone.pdb" data-name="Backbone"><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">Backbone</span><span class="gallery-time">🕒 Jul 18, 05:00:01</span></div>
+<div class="gallery-card" role="button" tabindex="0" aria-label="Load structure Folded into the viewer" data-pdb="/outputs/folded.pdb" data-name="Folded"><div style="height:80px;display:grid;place-items:center;font-size:32px;opacity:0.3;margin-bottom:6px;">🧬</div><span class="gallery-label">Folded</span><span class="gallery-time">🕒 Jul 18, 05:00:02</span></div>
           </div>
         </div>
       </section>
@@ -718,7 +727,7 @@
           <summary style="cursor:pointer; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted2); padding:10px; border-radius:10px; border: 1px solid var(--border); list-style:none;">
             ▸ Audit Ready (Click to inspect)
           </summary>
-          <pre id="executionTracePane" style="margin-top:8px; background: rgba(0,0,0,0.4); border-radius:10px; padding:12px; font-size:11px; font-family:var(--mono); color:var(--muted2); max-height:220px; overflow-y:auto; white-space:pre-wrap; word-break:break-all;">${execution_trace_json}</pre>
+          <pre id="executionTracePane" style="margin-top:8px; background: rgba(0,0,0,0.4); border-radius:10px; padding:12px; font-size:11px; font-family:var(--mono); color:var(--muted2); max-height:220px; overflow-y:auto; white-space:pre-wrap; word-break:break-all;">[]</pre>
         </details>
       </section>
 
@@ -731,7 +740,11 @@
           </div>
         </div>
         <div class="artifact-list" id="artifactListEl">
-          ${artifact_items_html}
+          <div class="artifact-item"><span><code>msa_json</code> <span style="font-size:10px;color:var(--muted2);">fold-kras</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span></span> <a class="artifact-link" href="/artifact/msa_json" target="_blank">open</a></div>
+<div class="artifact-item"><span><code>msa_a3m</code> <span style="font-size:10px;color:var(--muted2);">fold-kras</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span></span> <a class="artifact-link" href="/artifact/msa_a3m" target="_blank">open</a></div>
+<div class="artifact-item"><span><code>fold_json</code> <span style="font-size:10px;color:var(--muted2);">fold-kras</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span></span> <a class="artifact-link" href="/artifact/fold_json" target="_blank">open</a></div>
+<div class="artifact-item"><span><code>fold_pdb</code> <span style="font-size:10px;color:var(--muted2);">fold-kras</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span></span> <a class="artifact-link" href="/artifact/fold_pdb" target="_blank">open</a></div>
+<div class="artifact-item"><span><code>fold_scores</code> <span style="font-size:10px;color:var(--muted2);">fold-kras</span> <span class="trust-badge trust-just_ran">JUST_RAN</span><span class="trust-badge trust-runtime">REAL</span><span class="trust-badge trust-latest">LATEST</span><span class="trust-badge trust-just-ran">JUST RAN</span></span> <a class="artifact-link" href="/artifact/fold_scores" target="_blank">open</a></div>
         </div>
       </section>
 
@@ -756,23 +769,23 @@
         <form class="run-form" id="runFormVisible" onsubmit="handleRunSubmit(event)">
           <div class="form-group">
             <label for="vis-goal">Goal / Prompt</label>
-            <input type="text" id="vis-goal" name="goal" placeholder="Fold a protein sequence and explain confidence metrics." value="${goal_value}" />
+            <input type="text" id="vis-goal" name="goal" placeholder="Fold a protein sequence and explain confidence metrics." value="Fold KRAS G12D oncoprotein and analyze." />
           </div>
           <div class="form-group">
             <label for="vis-sequence">Protein Sequence (FASTA or plain AA)</label>
-            <textarea id="vis-sequence" name="sequence" placeholder="MALWMRLLPLLALLALWGPDPAAAFVNQHLCGS...">${sequence_value}</textarea>
+            <textarea id="vis-sequence" name="sequence" placeholder="MALWMRLLPLLALLALWGPDPAAAFVNQHLCGS...">MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSY</textarea>
           </div>
           <div class="form-group">
             <label for="vis-runtime">Runtime</label>
             <select id="vis-runtime" name="runtime">
-              <option value="hosted" ${runtime_hosted_sel}>hosted — real NVIDIA NIM calls</option>
-              <option value="relay" ${runtime_demo_sel}>relay — local artifact scaffold</option>
-              <option value="auto" ${runtime_auto_sel}>auto — detect from credentials</option>
+              <option value="hosted" >hosted — real NVIDIA NIM calls</option>
+              <option value="relay" >relay — local artifact scaffold</option>
+              <option value="auto" selected>auto — detect from credentials</option>
             </select>
           </div>
           <div class="form-group">
             <label for="vis-display-name">Run Name</label>
-            <input type="text" id="vis-display-name" name="display_name" placeholder="openfold2-prediction" value="${display_name_value}" />
+            <input type="text" id="vis-display-name" name="display_name" placeholder="openfold2-prediction" value="fold-kras" />
           </div>
 
           <button class="run-btn" type="submit" id="visLaunchBtn">

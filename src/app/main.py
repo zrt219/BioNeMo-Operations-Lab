@@ -7,7 +7,7 @@ from src.app.api.runs import router as runs_router
 from src.app.api.legacy_routes import legacy_router
 from protein_viewer_web import page_html
 
-app = FastAPI(title="ZRT BioNeMo Operations Lab")
+app = FastAPI(title="BioNeMo Lab by ZRT219")
 
 app.add_middleware(
     CORSMiddleware,
