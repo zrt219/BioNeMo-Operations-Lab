@@ -22,6 +22,7 @@ the section prior. The resolver is deterministic and offline, and reuses the
 
 from __future__ import annotations
 
+import functools
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
@@ -106,6 +107,7 @@ _OTHER_CUES = (
 _CLAUSE_BOUNDARY_RE = re.compile(r"[.!?;]")
 
 
+@functools.lru_cache(maxsize=512)
 def _cue_pattern(cues: tuple[str, ...]) -> re.Pattern[str]:
     alternation = "|".join(
         r"\s+".join(re.escape(part) for part in cue.split())
