@@ -39,6 +39,7 @@ import re
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, replace
 from datetime import date
+from functools import lru_cache
 from typing import Any, Literal
 
 from openmed.clinical.lexicons import (
@@ -154,6 +155,9 @@ class _CompiledContextLexicon:
     backward_context_cues: frozenset[str]
 
 
+# ⚡ Bolt: Cache deterministic context lexicons to avoid compiling the same
+# regex patterns thousands of times during span/text evaluations.
+@lru_cache(maxsize=32)
 def _compiled_context_lexicon(language: str | None = None) -> _CompiledContextLexicon:
     lexicon = get_clinical_cue_lexicon(language)
     token_boundaries = lexicon.token_boundaries
