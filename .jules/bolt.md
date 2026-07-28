@@ -1,0 +1,3 @@
+## 2024-06-25 - Context Lexicon Regex Compilation Bottleneck
+**Learning:** Evaluated span assertions in the openmed NLP pipeline heavily depend on repeated deterministic cue compilations via `_compiled_context_lexicon`. This function constructs and formats numerous regexes for every evaluated axis (negation, temporality, certainty, etc). Doing this on every decision axis per text/span iteration caused massive redundant regex compilations and became a significant CPU bottleneck on the main thread.
+**Action:** Always memoize (e.g. `functools.lru_cache`) deterministic regex lexicons and configuration functions where inputs are purely hashable parameters like `language` strings.
