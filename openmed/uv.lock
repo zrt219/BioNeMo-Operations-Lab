@@ -4439,6 +4439,7 @@ wheels = [
 name = "openmed"
 source = { editable = "." }
 dependencies = [
+    { name = "defusedxml" },
     { name = "faker" },
     { name = "pysbd" },
     { name = "pyyaml" },
@@ -4622,6 +4623,7 @@ requires-dist = [
     { name = "coremltools", marker = "extra == 'coreml'", specifier = ">=8.0" },
     { name = "dask", extras = ["dataframe"], marker = "extra == 'dask'", specifier = ">=2024.8" },
     { name = "dask", extras = ["dataframe"], marker = "extra == 'dev'", specifier = ">=2024.8" },
+    { name = "defusedxml", specifier = ">=0.7.1" },
     { name = "duckdb", marker = "extra == 'dev'", specifier = ">=1.0,<2" },
     { name = "duckdb", marker = "extra == 'duckdb'", specifier = ">=1.0,<2" },
     { name = "easyocr", marker = "extra == 'multimodal'", specifier = ">=1.7" },
