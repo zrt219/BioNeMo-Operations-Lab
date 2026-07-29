@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import unquote
 from xml.etree import ElementTree as ET
+
 from defusedxml.ElementTree import fromstring as safe_fromstring
 
 from .base import ExtractedDocument, SourceSpan, register_handler

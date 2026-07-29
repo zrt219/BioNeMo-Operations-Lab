@@ -926,8 +926,10 @@ def create_app() -> FastAPI:
         log_config=service_log_config_from_env(),
     )
 
-    from fastapi.staticfiles import StaticFiles
     import os
+
+    from fastapi.staticfiles import StaticFiles
+
     outputs_path = r"c:\Users\Zhane\Documents\New project\zrt-bionemo\outputs"
     if os.path.exists(outputs_path):
         app.mount("/outputs", StaticFiles(directory=outputs_path), name="outputs")

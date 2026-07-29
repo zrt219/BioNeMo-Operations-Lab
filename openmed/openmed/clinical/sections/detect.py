@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import functools
+import types
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -244,6 +246,8 @@ def _is_underline(text: str) -> bool:
     return len(stripped) >= 3 and set(stripped) <= _UNDERLINE_CHARS
 
 
+# ⚡ Bolt: Cache language alias lookups as they are repeated per document
+@functools.lru_cache(maxsize=None)
 def _alias_lookups(language: str | None) -> tuple[tuple[str, Mapping[str, str]], ...]:
     languages = (
         tuple(dict.fromkeys((get_section_lexicon(language).language, "en")))
@@ -253,14 +257,17 @@ def _alias_lookups(language: str | None) -> tuple[tuple[str, Mapping[str, str]],
     return tuple((code, _aliases_for_language(code)) for code in languages)
 
 
-def _aliases_for_language(language: str) -> dict[str, str]:
+# ⚡ Bolt: Memoize alias construction to prevent redundant dictionary allocation.
+# Returns MappingProxyType to safely prevent cached dictionary mutations.
+@functools.lru_cache(maxsize=None)
+def _aliases_for_language(language: str) -> types.MappingProxyType[str, str]:
     lexicon = get_section_lexicon(language)
     aliases: dict[str, str] = {}
     for label, headers in lexicon.sections.items():
         aliases[normalize_section_header(label)] = label
         for header in headers:
             aliases[normalize_section_header(header)] = label
-    return aliases
+    return types.MappingProxyType(aliases)
 
 
 def _dedupe_hits(hits: Iterable[_HeaderHit]) -> tuple[_HeaderHit, ...]:
