@@ -35,6 +35,7 @@ Sibling axes such as experiencer and absolute-date timeline normalization
 
 from __future__ import annotations
 
+import functools
 import re
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, replace
@@ -154,6 +155,8 @@ class _CompiledContextLexicon:
     backward_context_cues: frozenset[str]
 
 
+# Memoize lexicon compilation to prevent repeated regex generation and improve performance
+@functools.lru_cache
 def _compiled_context_lexicon(language: str | None = None) -> _CompiledContextLexicon:
     lexicon = get_clinical_cue_lexicon(language)
     token_boundaries = lexicon.token_boundaries
